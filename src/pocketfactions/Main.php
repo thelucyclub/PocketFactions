@@ -81,22 +81,7 @@ class Main extends Prt implements Listener, EvtExe{
 		case "fmgr":
 		case "faction":
 				if(!($issuer instanceof Player)){
-				$issuer->sendMessage("-=[ Pocket Faction Commands (P.1/2) ]=-");
-				$issuer->sendMessage("/f create - Create a Faction.");
-				$issuer->sendMessage("/f invite - Invite someone in your Faction.");
-				$issuer->sendMessage("/f accept - Accept Faction Invitation.");
-				$issuer->sendMessage("/f decline - Decline Faction Invitation.");
-				$issuer->sendMessage("/f join - Join public Faction.");
-				$issuer->sendMessage("/f claim - Claim areas for your Faction.");
-				$issuer->sendMessage("/f unclaim - Unclaim areas by your Faction.");
-				$issuer->sendMessage("/f unclaimall - Unclaim all areas by your Faction.");
-				$issuer->sendMessage("/f kick - Kick someone in your Faction.");
-				$issuer->sendMessage("/f setperm - Set permissions in your Faction.");
-				$issuer->sendMessage("/f sethome - Set Faction home.");
-				$issuer->sendMessage("/f home - Teleport back to Faction home.");
-				$issuer->sendMessage("/f money - View Faction Money balance.");
-				$issuer->sendMessage("/f quit - Quit a Faction.");
-				$issuer->sendMessage("/f disband - Disband your Faction.");
+				$issuer->sendMessage("Type '/f help' for the lists of commands.");
 				if($issuer instanceof Console)
 					$isuer->sendMessage("Run this command in-game.");
 				return true;
