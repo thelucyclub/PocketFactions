@@ -63,6 +63,7 @@ class Main extends Prt implements Listener, EvtExe{
 		$main->setDescription("PocketFactions commands");
 		$main->setPermission("pocketfactions.cmd");
 		$main->setAliases(array("f"));
+		$main->reg();
 	//Faction Commands for Server Owners
 		$main2 = new PCmd("fmanager", $this);
 		$main2->setUsage("/fmanager <wclaim|smoney|gmoney|fdelete>");
