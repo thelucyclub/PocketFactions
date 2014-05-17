@@ -127,11 +127,27 @@ class Main extends Prt implements Listener, EvtExe{
 					break;
 				
 				case "create":
-				//TODO code
+					if(count($arg)!=1){
+						return("Usage: \n/f create <faction-name>");
+					}
+					if(strlen($arg[0])>10) //avoid faction spam name
+					{
+					return "[PF] Faction name is too long!\n[PF] The faction must not exceed 10 letters.\n";
+					}
+					//more TODO code ...
+					// ..
 				break;
 				
 				case "invite":
-				//TODO code
+					if(count($arg)!=1){
+						return("Usage: \n/f invite <target-player>");
+					}
+					$targetp = $this->api->player->get($arg[0]);
+					if($targetp == false){
+						return("[PF] Invalid Player Name. ");
+					}
+					//more TODO code ...
+					// ..
 				break;
 				
 				case "accept":
@@ -159,11 +175,27 @@ class Main extends Prt implements Listener, EvtExe{
 				break;
 				
 				case "kick":
-				//TODO code
+					if(count($arg)!=1){
+						return("Usage: \n/f kick <target-player>");
+					}
+					$targetp = $this->api->player->get($arg[0]);
+					if($targetp == false){
+						return("[PF] Invalid Player Name. ");
+					}
+					//more TODO code ...
+					// ..
 				break;
 				
 				case "setperm":
-				//TODO code
+					if(count($arg)!=2){
+						return("Usage: \n/f setperm <target-player> <rank>");
+					}
+					$targetp = $this->api->player->get($arg[0]);
+					if($targetp == false){
+						return("[PF] Invalid Player Name. ");
+					}
+					//more TODO code ...
+					// ..
 				break;
 				
 				case "sethome":
