@@ -1,0 +1,6 @@
+name: PocketFactions alpha
+authors: [PEMapModder, iJoshuaHD]
+api: [1.0.0]
+version: 0.0.0
+load: POSTWORLD
+main: pocketfactions\Main
