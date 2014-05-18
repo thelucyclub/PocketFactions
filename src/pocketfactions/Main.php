@@ -21,7 +21,7 @@ require_once(dirname(__FILE__)."/functions.php");
 
 class Main extends Prt implements Listener, EvtExe{
 	const NAME = "PocketFactions";
-	private $db;
+	private $flist;
 	public function onEnable(){
 		console("Initializing", false, 1);
 		$this->initDatabase();
@@ -39,8 +39,12 @@ class Main extends Prt implements Listener, EvtExe{
 	protected function registerPerms(){
 		$me = strtolower(self::NAME);
 		$root = $this->regPerm("$me", "Allow using everything of PocketFactions");
-		$cmd = $this->regPerm("$me.cmd", "Allow using main command /f", null, $root);
+		$cmd = $this->regPerm("$me.cmd.f", "Allow using main command /f", null, $root);
+		$adminCmd = $this->regPerm("$me.cmd.fmgr", "Allow using main command /fmgr", Permission::DEFAULT_OP, $root);
 		$create = $this->regPerm("$me.create", "Allow creating a faction", null, $root);
+		$claim = $this->regPerm("$me.claim", "Allow claiming a chunk", null, $root);
+		$unclaim = $this->regPerm("$me.unclaim", "Allow unclaiming a chunk", null, $root);
+		$this->regPerm("$me.unclaimall", "Allow unclaiming all chunks in once", null, $unclaim);
 	}
 	public function regPerm($name, $desc, $default = null, $parent = null){
 		if($default === null){
@@ -48,6 +52,9 @@ class Main extends Prt implements Listener, EvtExe{
 		}
 		elseif(is_bool($default)){
 			$default = $default ? Permission::DEFAULT_TRUE:Permission::DEFAULT_FALSE;
+		}
+		elseif($default === 2){
+			$default = Permission::DEFAULT_OP;
 		}
 		return DefaultPermissions::registerPermission(new Permission($name, $desc, $default), $parent);
 	}
@@ -57,167 +64,23 @@ class Main extends Prt implements Listener, EvtExe{
 		$this->getServer()->getPluginManager()->registerEvent("pocketmine\\event\\$simpleName", $this, $priority, $this, $this);
 	}
 	protected function registerCmds(){
-	//Faction Commands for Players
+		//Faction Commands for Players
 		$main = new PCmd("faction", $this);
 		$main->setUsage("/faction <help|cmd>");
 		$main->setDescription("PocketFactions commands");
-		$main->setPermission("pocketfactions.cmd");
+		$main->setPermission("pocketfactions.cmd.f");
 		$main->setAliases(array("f"));
 		$main->reg();
-	//Faction Commands for Server Owners
+		//Faction Commands for Server Admins
 		$main2 = new PCmd("fmanager", $this);
 		$main2->setUsage("/fmanager <wclaim|smoney|gmoney|fdelete>");
 		$main2->setDescription("PocketFactions Admin commands");
-		$main2->setPermission("admin.pocketfactions.cmd");
-		$main2->setAliases(array("frmgr"));
+		$main2->setPermission("pocketfactions.cmd.fmgr");
+		$main2->setAliases(array("fmgr"));
 		$main2->reg();
 	}
-	public function getDb(){
-		return $this->db;
-	}
-	public function onCommand(Issuer $issuer, Command $cmd, $lbl, array $args){
-	switch($cmd->getName()){
-	
-		case "fmgr":
-		case "faction":
-				if(!($issuer instanceof Player)){
-				$issuer->sendMessage("Type '/f help' for the lists of commands.");
-				if($issuer instanceof Console)
-					$isuer->sendMessage("Run this command in-game.");
-				return true;
-			}
-			$subcmd = @array_shift($args);
-			switch($subcmd){ // manage subcommand
-				case "help":
-				if(isset($args[0])){
-						if(strtolower($args[0]) === "1"){
-							$issuer->sendMessage("-=[ Pocket Faction Commands (P.1/3) ]=-");
-							$issuer->sendMessage("/f create - Create a Faction.");
-							$issuer->sendMessage("/f invite - Invite someone in your Faction.");
-							$issuer->sendMessage("/f accept - Accept Faction Invitation.");
-							$issuer->sendMessage("/f decline - Decline Faction Invitation.");
-							$issuer->sendMessage("/f join - Join public Faction.");
-							break;
-						}
-						if(strtolower($args[0]) === "2"){
-							$issuer->sendMessage("-=[ Pocket Faction Commands (P.2/3) ]=-");
-							$issuer->sendMessage("/f claim - Claim areas for your Faction.");
-							$issuer->sendMessage("/f unclaim - Unclaim areas by your Faction.");
-							$issuer->sendMessage("/f unclaimall - Unclaim all areas by your Faction.");
-							$issuer->sendMessage("/f kick - Kick someone in your Faction.");
-							$issuer->sendMessage("/f setperm - Set permissions in your Faction.");
-							$issuer->sendMessage("/f sethome - Set Faction home.");
-							break;
-						}
-						if(strtolower($args[0]) === "3"){
-							$issuer->sendMessage("-=[ Pocket Faction Commands (P.3/3) ]=-");
-							$issuer->sendMessage("/f home - Teleport back to Faction home.");
-							$issuer->sendMessage("/f money - View Faction Money balance.");
-							$issuer->sendMessage("/f quit - Quit a Faction.");
-							$issuer->sendMessage("/f disband - Disband your Faction.");
-							break;
-						}
-					}
-					$issuer->sendMessage("-=[ Pocket Faction Commands (P.1/3) ]=-");
-					$issuer->sendMessage("/f create - Create a Faction.");
-					$issuer->sendMessage("/f invite - Invite someone in your Faction.");
-					$issuer->sendMessage("/f accept - Accept Faction Invitation.");
-					$issuer->sendMessage("/f decline - Decline Faction Invitation.");
-					$issuer->sendMessage("/f join - Join public Faction.");
-					break;
-				
-				case "create":
-					if(count($arg)!=1){
-						return("Usage: \n/f create <faction-name>");
-					}
-					if(strlen($arg[0])>10) //avoid faction spam name
-					{
-					return "[PF] Faction name is too long!\n[PF] The faction must not exceed 10 letters.\n";
-					}
-					//more TODO code ...
-					// ..
-				break;
-				
-				case "invite":
-					if(count($arg)!=1){
-						return("Usage: \n/f invite <target-player>");
-					}
-					$targetp = $this->api->player->get($arg[0]);
-					if($targetp == false){
-						return("[PF] Invalid Player Name. ");
-					}
-					//more TODO code ...
-					// ..
-				break;
-				
-				case "accept":
-				//TODO code
-				break;
-				
-				case "decline":
-				//TODO code
-				break;
-				
-				case "join":
-				//TODO code
-				break;
-				
-				case "claim":
-				//TODO code
-				break;
-				
-				case "unclaim":
-				//TODO code
-				break;
-				
-				case "unclaimall"
-				//TODO code
-				break;
-				
-				case "kick":
-					if(count($arg)!=1){
-						return("Usage: \n/f kick <target-player>");
-					}
-					$targetp = $this->api->player->get($arg[0]);
-					if($targetp == false){
-						return("[PF] Invalid Player Name. ");
-					}
-					//more TODO code ...
-					// ..
-				break;
-				
-				case "setperm":
-					if(count($arg)!=2){
-						return("Usage: \n/f setperm <target-player> <rank>");
-					}
-					$targetp = $this->api->player->get($arg[0]);
-					if($targetp == false){
-						return("[PF] Invalid Player Name. ");
-					}
-					//more TODO code ...
-					// ..
-				break;
-				
-				case "sethome":
-				//TODO code
-				break;
-				
-				case "home":
-				//TODO code
-				break;
-				
-				case "money":
-				//TODO code
-				break;
-				
-				case "quit":
-				//TODO code
-				break;
-				
-				case "disband":
-				//TODO code
-				break;
-				
+	public function getFList(){
+		return $this->flist;
 	}
 	public static function get(){
 		return Server::getInstance()->getPluginManager()->getPlugin(self::NAME);
