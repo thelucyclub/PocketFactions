@@ -34,7 +34,7 @@ class Main extends Prt implements Listener, EvtExe{
 		echo " Done!".PHP_EOL.Font::RESET;
 	}
 	protected function initDatabase(){
-		$this->db = new Database($this->getDataFolder()."db/");
+		$this->flist = new FactionList($this->getDataFolder()."factions.dat");
 	}
 	protected function registerPerms(){
 		$me = strtolower(self::NAME);
