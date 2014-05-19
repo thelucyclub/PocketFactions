@@ -1,7 +1,8 @@
 
+
 name: PocketFactions
 authors: [PEMapModder, iJoshuaHD, LDX]
 api: [1.0.0]
 version: 0.0.1
 load: POSTWORLD
-main: PocketFactions\Main
+main: pocketfactions\Main
