@@ -1,6 +1,6 @@
 <?php
 
-nanespace pocketfactions\tasks;
+namespace pocketfactions\tasks;
 
 use pocketmine\scheduler\AsyncTask;
 
