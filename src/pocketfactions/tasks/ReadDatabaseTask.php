@@ -60,6 +60,7 @@ class ReadDatabaseTask extends AsyncTask{
 			$factions[] = new Faction(array(
 				"name" => $name,
 				"id" => $id,
+				"claims" => 5, //default amount of claims without xEcon
 				"founder" => $founder,
 				"ranks" => $ranks,
 				"default-rank" => $defaultRank,
