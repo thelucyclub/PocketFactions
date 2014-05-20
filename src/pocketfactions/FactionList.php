@@ -2,7 +2,7 @@
 
 namespace pocketfactions;
 
-use pocketfactions\factino\Faction;
+use pocketfactions\faction\Faction;
 use pocketfactions\tasks\ReadDatabaseTask;
 use pocketfactions\tasks\WriteDatabaseTask;
 
