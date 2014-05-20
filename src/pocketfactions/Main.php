@@ -21,6 +21,8 @@ require_once(dirname(__FILE__)."/functions.php");
 
 class Main extends Prt implements Listener, EvtExe{
 	const NAME = "PocketFactions";
+	const V_INIT = "\0x00";
+	const V_CURRENT = "\0x00";
 	private $flist;
 	public function onEnable(){
 		console("Initializing", false, 1);
@@ -34,7 +36,10 @@ class Main extends Prt implements Listener, EvtExe{
 		echo " Done!".PHP_EOL.Font::RESET;
 	}
 	protected function initDatabase(){
-		$this->flist = new FactionList($this->getDataFolder()."factions.dat");
+		$this->flist = new FactionList($this->getDataFolder()."database/factions.dat");
+		$this->config = new Config($this->getDataFolder()."database/data.json", Config::JSON, array(
+			"next-fid" => 0
+		));
 	}
 	protected function registerPerms(){
 		$me = strtolower(self::NAME);
