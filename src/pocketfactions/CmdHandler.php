@@ -47,9 +47,10 @@ class CmdHandler implements CommandExecutor{
 							return("Usage: \n/f invite <target-player>");
 						}
 						
-						$targetp = $this->api->player->get($args[0]);
+						// what am i doing btw?
+						$targetp = $this->getValidPlayer($args[0]);
 						
-						if($targetp == false){
+						if(!$targetp instanceof Player){
 							return("[PF] Invalid Player Name. ");
 						}
 						break;
@@ -77,18 +78,22 @@ class CmdHandler implements CommandExecutor{
 						if(count($args) != 1){
 							return("Usage: \n/f kick <target-player>");
 						}
-						$targetp = $this->api->player->get($args[0]);
-						if($targetp == false){
+						
+						$targetp = $this->getValidPlayer($args[0]);
+						
+						if(!$targetp instanceof Player){
 							return("[PF] Invalid Player Name. ");
 						}
+						
 						break;
 						
 					case "setperm":
 						if(count($args)!=2){
 							return("Usage: \n/f setperm <target-player> <rank>");
 						}
-						$targetp = $this->api->player->get($args[0]);
-						if($targetp == false){
+						$targetp = $this->getValidPlayer($args[0]);
+						
+						if(!$targetp instanceof Player){
 							return("[PF] Invalid Player Name. ");
 						}
 						
