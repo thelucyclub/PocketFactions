@@ -30,23 +30,25 @@ class CmdHandler implements CommandExecutor{
 						return $this->help((int) $args[0]);
 						
 					case "create":
-						if(count($arg)!=1){
+						if(count($args)!=1){
 							return("Usage: \n/f create <faction-name>");
 						}
 						
 						$maxLength = $this->config->get("max-faction-name-length");
 						
-						if(strlen($arg[0]) > $maxLength){ //avoid faction spam name
+						if(strlen($args[0]) > $maxLength){ //avoid faction spam name
 							return "[PF] Faction name is too long!\n[PF] The faction must not exceed $maxLength letters.\n";
 						}
 						
 						break;
 						
 					case "invite":
-						if(count($arg)!=1){
+						if(count($args)!=1){
 							return("Usage: \n/f invite <target-player>");
 						}
-						$targetp = $this->api->player->get($arg[0]);
+						
+						$targetp = $this->api->player->get($args[0]);
+						
 						if($targetp == false){
 							return("[PF] Invalid Player Name. ");
 						}
@@ -72,20 +74,20 @@ class CmdHandler implements CommandExecutor{
 						
 					case "kick":
 						
-						if(count($arg) != 1){
+						if(count($args) != 1){
 							return("Usage: \n/f kick <target-player>");
 						}
-						$targetp = $this->api->player->get($arg[0]);
+						$targetp = $this->api->player->get($args[0]);
 						if($targetp == false){
 							return("[PF] Invalid Player Name. ");
 						}
 						break;
 						
 					case "setperm":
-						if(count($arg)!=2){
+						if(count($args)!=2){
 							return("Usage: \n/f setperm <target-player> <rank>");
 						}
-						$targetp = $this->api->player->get($arg[0]);
+						$targetp = $this->api->player->get($args[0]);
 						if($targetp == false){
 							return("[PF] Invalid Player Name. ");
 						}
@@ -105,6 +107,15 @@ class CmdHandler implements CommandExecutor{
 					case "disband":
 						break;
 		}
+		
+	// getValidPlayer() from xPermsMgr (thx 64ff00 :D) (O_o) 
+	
+	private function getValidPlayer($username)
+	{
+		$player = $this->getServer()->getPlayer($username);
+		
+		return $player instanceof Player ? $player : $this->getServer()->getOfflinePlayer($username);
+	}
 	
 	public function help($page){
 		
