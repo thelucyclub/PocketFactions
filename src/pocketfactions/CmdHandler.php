@@ -37,7 +37,7 @@ class CmdHandler implements CommandExecutor{
 						$maxLength = $this->config->get("max-faction-name-length");
 						
 						if(strlen($args[0]) > $maxLength){ //avoid faction spam name
-							return "[PF] Faction name is too long!\n[PF] The faction must not exceed $maxLength letters.\n";
+							return "[PF] The faction name is too long!\n[PF] The faction name must not exceed $maxLength letters.\n";
 						}
 						
 						break;
