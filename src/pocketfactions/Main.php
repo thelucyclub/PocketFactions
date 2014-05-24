@@ -47,8 +47,20 @@ class Main extends Prt implements Listener, EvtExe{
 		$cmd = $this->regPerm("$me.cmd.f", "Allow using main command /f", null, $root);
 		$adminCmd = $this->regPerm("$me.cmd.fmgr", "Allow using main command /fmgr", Permission::DEFAULT_OP, $root);
 		$create = $this->regPerm("$me.create", "Allow creating a faction", null, $root);
+		$invite = $this->regPerm("$me.invite", "Allow inviting players in a faction", null, $root);
+		$accept = $this->regPerm("$me.accept", "Allow to accept faction request", null, $root);
+		$decline = $this->regPerm("$me.decline", "Allow to decline faction request", null, $root);
+		$join = $this->regPerm("$me.join", "Allow join a faction", null, $root);
 		$claim = $this->regPerm("$me.claim", "Allow claiming a chunk", null, $root);
 		$unclaim = $this->regPerm("$me.unclaim", "Allow unclaiming a chunk", null, $root);
+		$unclaimall = $this->regPerm("$me.unclaimall", "Allow unclaiming all chunk", null, $root);
+		$kick = $this->regPerm("$me.kick", "Allow to kick members in faction", null, $root);
+		$setperm = $this->regPerm("$me.setperm", "Allow to set permissions in faction", null, $root);
+		$sethome = $this->regPerm("$me.sethome", "Allow to set home of faction", null, $root);
+		$home = $this->regPerm("$me.home", "Allow to tp to faction home", null, $root);
+		$money = $this->regPerm("$me.money", "Allow to view faction money", null, $root); //requires xEcon plugin installed
+		$quit = $this->regPerm("$me.quit", "Allow to quit a faction", null, $root);
+		$disband = $this->regPerm("$me.disband", "Allow to disband a faction", null, $root);
 		$this->regPerm("$me.unclaimall", "Allow unclaiming all chunks in once", null, $unclaim);
 	}
 	public function regPerm($name, $desc, $default = null, $parent = null){
