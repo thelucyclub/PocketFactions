@@ -1,6 +1,8 @@
 <?php
 
 use pocketfactions\utils\PluginCmd as PCmd;
+use pocketfactions\tasks\WriteDatabaseTask;
+use pocketfactions\tasks\ReadDatabaseTask;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandExecutor;
@@ -36,9 +38,13 @@ class CmdHandler implements CommandExecutor{
 						
 						$maxLength = $this->config->get("max-faction-name-length");
 						
-						if(strlen($args[0]) > $maxLength){ //avoid faction spam name
+						if(strlen($args[0]) > $maxLength){
 							return "[PF] The faction name is too long!\n[PF] The faction name must not exceed $maxLength letters.\n";
 						}
+						
+						$fcreate = $this->fcreate($args[0], $issuer->iusername);
+						
+						//todo
 						
 						break;
 						
@@ -47,7 +53,6 @@ class CmdHandler implements CommandExecutor{
 							return("Usage: \n/f invite <target-player>");
 						}
 						
-						// what am i doing btw?
 						$targetp = $this->getValidPlayer($args[0]);
 						
 						if(!$targetp instanceof Player){
@@ -56,27 +61,34 @@ class CmdHandler implements CommandExecutor{
 						break;
 					
 					case "accept":
+					
 						break;
 						
 					case "decline":
+					
 						break;
 						
 					case "join":
+					
 						break;
 						
 					case "claim":
+					
 						break;
 						
 					case "unclaim":
+					
 						break;
 						
 					case "unclaimall":
+					
 						break;
 						
 					case "kick":
 						
 						if(count($args) != 1){
 							return("Usage: \n/f kick <target-player>");
+							
 						}
 						
 						$targetp = $this->getValidPlayer($args[0]);
@@ -110,6 +122,11 @@ class CmdHandler implements CommandExecutor{
 						break;
 						
 					case "disband":
+					
+						$fdisband = $this->fdisband($issuer->iusername);
+						
+							//todo
+					
 						break;
 		}
 		
@@ -120,6 +137,14 @@ class CmdHandler implements CommandExecutor{
 		$player = $this->getServer()->getPlayer($username);
 		
 		return $player instanceof Player ? $player : $this->getServer()->getOfflinePlayer($username);
+	}
+	
+	public function fcreate(){
+	//todo
+	}
+	
+	public function fdisband(){
+	//todo
 	}
 	
 	public function help($page){
