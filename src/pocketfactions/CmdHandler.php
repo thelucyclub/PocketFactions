@@ -32,7 +32,7 @@ class CmdHandler implements CommandExecutor{
 						
 					case "create":
 						if(count($args)!=1){
-							return("Usage: \n/f create <faction-name>");
+							return("Usage: /f create <faction-name>");
 						}
 						
 						$maxLength = $this->config->get("max-faction-name-length");
@@ -49,7 +49,7 @@ class CmdHandler implements CommandExecutor{
 						
 					case "invite":
 						if(count($args)!=1){
-							return("Usage: \n/f invite <target-player>");
+							return("Usage: /f invite <target-player>");
 						}
 						
 						$targetp = $this->getValidPlayer($args[0]);
@@ -57,10 +57,45 @@ class CmdHandler implements CommandExecutor{
 						if(!$targetp instanceof Player){
 							return("[PF] Invalid Player Name. ");
 						}
+						
+						if($this->usrFaction($issuer->iusername) == false){
+							return("[PF] You are not in a member of any faction.");
+							}
+						if($this->usrFactionRank($issuer->iusername) != $rankowner){ // rank check. im not sure what ur going to do. edit this later.
+							return("[PF] Only faction owner can do this.");
+							}	
+						
+						//more will be added later.. still thinking - ijoshuahd
+						
 						break;
 					
 					case "accept":
-					
+						if(count($args) != 0){
+							return("Usage: /f accept");
+							}
+							
+						if(isset($this->invFaction[$issuer->iusername]) == false){
+							return("[PF] You don't have any invitations.\n[PF] You need to be invited.");
+							}
+						if($this->usrFaction($issuer->iusername) != false){
+							return("[PF] You are already in a faction.");
+							}
+							
+						$tgtFaction = $this->invFaction[$issuer->iusername]["TargetFaction"];
+						
+						unset($this->invFaction[$issuer->iusername]);
+						if($this->existFaction($targetFaction) == false){
+							return("[PF] The faction do not exist.\n[PF] Please try to be invited again.");
+							}
+							
+						$joinFac = $this->joinFaction($issuer->username, $targetFaction, $rank); //im not sure about ranks yet. edit this later.
+						
+							if($joinFac == true){
+								return("[PF] You're now a member of " . $tgtFaction . " faction.");
+								}else{
+									return("[PF] The session has expired/ended.\n[PF] Please try to be invited again.");
+										}
+										
 						break;
 						
 					case "decline":
@@ -100,7 +135,7 @@ class CmdHandler implements CommandExecutor{
 						
 					case "setperm":
 						if(count($args)!=2){
-							return("Usage: \n/f setperm <target-player> <rank>");
+							return("Usage: /f setperm <target-player> <rank>");
 						}
 						$targetp = $this->getValidPlayer($args[0]);
 						
