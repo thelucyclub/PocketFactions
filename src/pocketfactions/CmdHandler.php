@@ -1,8 +1,7 @@
 <?php
 
 use pocketfactions\utils\PluginCmd as PCmd;
-use pocketfactions\tasks\WriteDatabaseTask;
-use pocketfactions\tasks\ReadDatabaseTask;
+use pocketfactions\FactionList;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandExecutor;
@@ -42,7 +41,7 @@ class CmdHandler implements CommandExecutor{
 							return "[PF] The faction name is too long!\n[PF] The faction name must not exceed $maxLength letters.\n";
 						}
 						
-						$fcreate = $this->fcreate($args[0], $issuer->iusername);
+						$fcreate = $this->addFaction($args[0], $issuer->iusername);
 						
 						//todo
 						
@@ -123,7 +122,7 @@ class CmdHandler implements CommandExecutor{
 						
 					case "disband":
 					
-						$fdisband = $this->fdisband($issuer->iusername);
+						$fdisband = $this->addFaction($issuer->iusername); //there is no rmFaction/delFaction?
 						
 							//todo
 					
@@ -137,14 +136,6 @@ class CmdHandler implements CommandExecutor{
 		$player = $this->getServer()->getPlayer($username);
 		
 		return $player instanceof Player ? $player : $this->getServer()->getOfflinePlayer($username);
-	}
-	
-	public function fcreate(){
-	//todo
-	}
-	
-	public function fdisband(){
-	//todo
 	}
 	
 	public function help($page){
