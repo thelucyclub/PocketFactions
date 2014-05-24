@@ -122,7 +122,7 @@ class CmdHandler implements CommandExecutor{
 						
 					case "disband":
 					
-						$fdisband = $this->addFaction($issuer->iusername); //there is no rmFaction/delFaction?
+						$fdisband = $this->rmFaction($issuer->iusername);
 						
 							//todo
 					
