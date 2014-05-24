@@ -57,10 +57,12 @@ class Main extends Prt implements Listener, EvtExe{
 		$kick = $this->regPerm("$me.kick", "Allow to kick members in faction", null, $root);
 		$setperm = $this->regPerm("$me.setperm", "Allow to set permissions in faction", null, $root);
 		$sethome = $this->regPerm("$me.sethome", "Allow to set home of faction", null, $root);
+		$setopen = $this->regPerm("$me.setopen", "Allow to set faction available to public", null, $root);
 		$home = $this->regPerm("$me.home", "Allow to tp to faction home", null, $root);
 		$money = $this->regPerm("$me.money", "Allow to view faction money", null, $root); //requires xEcon plugin installed
 		$quit = $this->regPerm("$me.quit", "Allow to quit a faction", null, $root);
 		$disband = $this->regPerm("$me.disband", "Allow to disband a faction", null, $root);
+		$motto = $this->regPerm("$me.motto", "Allow to set motto of faction", null, $root);
 		$this->regPerm("$me.unclaimall", "Allow unclaiming all chunks in once", null, $unclaim);
 	}
 	public function regPerm($name, $desc, $default = null, $parent = null){

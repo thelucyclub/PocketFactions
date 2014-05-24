@@ -109,15 +109,23 @@ class CmdHandler implements CommandExecutor{
 						}
 						
 					case "sethome":
+					
+						break;
+						
+					case "setopen":
+					
 						break;
 						
 					case "home":
+					
 						break;
 						
 					case "money":
+					
 						break;
 						
 					case "quit":
+					
 						break;
 						
 					case "disband":
@@ -127,6 +135,11 @@ class CmdHandler implements CommandExecutor{
 							//todo
 					
 						break;
+						
+					case "motto":
+						
+						break;
+						
 		}
 		
 	// getValidPlayer() from xPermsMgr (thx 64ff00 :D) (O_o) 
@@ -169,10 +182,12 @@ class CmdHandler implements CommandExecutor{
 				
 			case 3:
 				$output .= "-=[ Pocket Faction Commands (P.3/3) ]=-\n";
+				$output .= "/f setopen - Set Faction available to Public.\n";
 				$output .= "/f home - Teleport back to Faction home.\n";
 				$output .= "/f money - View Faction Money balance.\n";
 				$output .= "/f quit - Quit a Faction.\n";
 				$output .= "/f disband - Disband your Faction.\n";
+				$output .= "/f motto - Set a faction motto.\n";
 				
 				break;
 		}
