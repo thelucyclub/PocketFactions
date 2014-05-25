@@ -61,7 +61,7 @@ class CmdHandler implements CommandExecutor{
 						if($this->usrFaction($issuer->iusername) == false){
 							return("[PF] You are not in a member of any faction.");
 							}
-						if($this->usrFactionRank($issuer->iusername) != $rankowner){ // rank check. im not sure what ur going to do. edit this later.
+						if($this->usrFactionPerm($issuer->iusername) != $perm_owner){ // rank check. im not sure what ur going to do. edit this later.
 							return("[PF] Only faction owner can do this.");
 							}	
 						

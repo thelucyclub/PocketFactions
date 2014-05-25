@@ -27,6 +27,24 @@ class FactionList{
 		}
 		$this->factions[] = new Faction($this->nextID());
 	}
+    public function rmFaction($args){
+        //remove a faction
+    }
+    public function usrFaction($args){
+        //get user info
+    }
+    public function usrFactionPerm($name){
+        //get user rank
+    }
+    public function invFaction(Player $p){
+        //invite target player in a faction
+    }
+    public function existFaction($name){
+        //checks if faction exist or not
+    }
+    public function joinFaction($args){
+        //join a faction
+    }
 	public function nextID(){
 		$fid = $this->main->getConfig()->get("next-fid");
 		$this->main->getConfig()->set("next-fid", $fid + 1);
