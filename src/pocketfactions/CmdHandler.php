@@ -26,35 +26,30 @@ class CmdHandler implements CommandExecutor{
 						if(count($args)!=1){
 							return("Usage: /f create <faction-name>");
 						}
-						$minLen = $this->config->get("min-faction-name-length");
-						$maxLen = $this->config->get("max-faction-name-length");
-						if(preg_replace("#[A-Za-z0-9\\-_]{$minLen,$maxLen}#i", "", $args[0]) !== ""){
-							return "[PF] The faction name is too long!\n[PF] The faction name must be alphanumeric\n    and optionally with hyphens and underscores\n    in not less than $minLen characters and not more than $maxLen characters.";
+						$min = $this->config->get("min-faction-name-length");
+						$max = $this->config->get("max-faction-name-length");
+						if(preg_replace("#[A-Za-z0-9\\-_]{".$min.",".$max."}#i", "", $args[0]) !== ""){
+							return "[PF] The faction name is too long!\n".
+                                    "[PF] The faction name must be alphanumeric\n    ".
+                                    "and optionally with hyphens and underscores\n    ".
+                                    "in not less than $minLen characters and not more than $maxLen characters.";
 						}
-						$fcreate = $this->addFaction($args[0], $issuer->iusername);
-						
-						//todo
-						
-						break;
-						
+						$this->addFaction($args[0], $issuer->iusername);
+                        return "Faction $args[0] created.";
 					case "invite":
 						if(count($args)!=1){
 							return("Usage: /f invite <target-player>");
 						}
-						
 						$targetp = $this->getValidPlayer($args[0]);
-						
-						if(!$targetp instanceof Player){
+						if(!($targetp instanceof Player)){
 							return("[PF] Invalid Player Name. ");
 						}
-						
 						if($this->usrFaction($issuer->iusername) == false){
 							return("[PF] You are not in a member of any faction.");
-							}
+						}
 						if($this->usrFactionPerm($issuer->iusername) != $perm_owner){ // rank check. im not sure what ur going to do. edit this later.
 							return("[PF] Only faction owner can do this.");
 							}	
-						
 						//more will be added later.. still thinking - ijoshuahd
 						
 						break;
