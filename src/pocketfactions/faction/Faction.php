@@ -12,6 +12,14 @@ class Faction{
 	protected $chunks;
 	protected $baseChunk;
 	public function __construct(array $args){
+		$this->name = $args["name"];
+		$this->id = $args["id"];
+		$this->founder = $args["founder"];
+		$this->ranks = $args["ranks"];
+		$this->defaultRank = $args["default-rank"];
+		$this->members = $args["members"];
+		$this->chunks = $args["chunks"];
+		$this->baseChunk = $args["base-chunk"];
 	}
 	public function getName(){
 		return $this->name;
