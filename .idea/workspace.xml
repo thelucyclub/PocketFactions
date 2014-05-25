@@ -35,7 +35,7 @@
       <file leaf-file-name="FactionList.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/pocketfactions/FactionList.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="40" column="5" selection-start="998" selection-end="998" vertical-scroll-proportion="0.398773" vertical-offset="417" max-vertical-offset="1241">
+            <state line="32" column="36" selection-start="800" selection-end="800" vertical-scroll-proportion="0.1206544" vertical-offset="417" max-vertical-offset="1241">
               <folding />
             </state>
           </provider>
@@ -260,7 +260,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pocketfactions/FactionList.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="5" selection-start="998" selection-end="998" vertical-scroll-proportion="0.398773" vertical-offset="417" max-vertical-offset="1241">
+        <state line="32" column="36" selection-start="800" selection-end="800" vertical-scroll-proportion="0.1206544" vertical-offset="417" max-vertical-offset="1241">
           <folding />
         </state>
       </provider>

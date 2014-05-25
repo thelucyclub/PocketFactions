@@ -30,7 +30,7 @@ class FactionList{
     public function rmFaction($args){
         //remove a faction
     }
-    public function usrFaction($args){
+    public function usrFaction($name){
         //get user info
     }
     public function usrFactionPerm($name){
