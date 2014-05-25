@@ -34,6 +34,6 @@ class FactionEntity extends Entity{
 		// TODO return a chest at the base chunk
 	}
 	protected static function getAbsEntityType(){
-		return "PocketFactionEnt>";
+		return "PocketFactionEnt";
 	}
 }
