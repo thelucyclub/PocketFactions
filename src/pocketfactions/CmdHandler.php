@@ -10,37 +10,27 @@ use pocketmine\command\CommandSender as Issuer;
 class CmdHandler implements CommandExecutor{
 	
 	public function onCommand(Issuer $issuer, Command $cmd, $lbl, array $args){
-		
 		switch($cmd->getName()){
-			
 			case "faction":
-				
 				if(!($issuer instanceof Player)){
 					return PCmd::RUN_IN_GAME;
 				}
-				
 				if(count($args) === 0){
 					$args = array("help");
 				}
-				
 				$subcmd = array_shift($args);
-				
 				switch($subcmd){ // manage subcommand
-				
 					case "help":
 						return $this->help((int) $args[0]);
-						
 					case "create":
 						if(count($args)!=1){
 							return("Usage: /f create <faction-name>");
 						}
-						
-						$maxLength = $this->config->get("max-faction-name-length");
-						
-						if(strlen($args[0]) > $maxLength){
-							return "[PF] The faction name is too long!\n[PF] The faction name must not exceed $maxLength letters.\n";
+						$minLen = $this->config->get("min-faction-name-length");
+						$maxLen = $this->config->get("max-faction-name-length");
+						if(preg_replace("#[A-Za-z0-9\\-_]{$minLen,$maxLen}#i", "", $args[0]) !== ""){
+							return "[PF] The faction name is too long!\n[PF] The faction name must be alphanumeric\n    and optionally with hyphens and underscores\n    in not less than $minLen characters and not more than $maxLen characters.";
 						}
-						
 						$fcreate = $this->addFaction($args[0], $issuer->iusername);
 						
 						//todo

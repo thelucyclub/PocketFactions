@@ -25,7 +25,7 @@ class Main extends Prt implements Listener, EvtExe{
 	const V_CURRENT = "\0x00";
 	private $flist;
 	public function onEnable(){
-		console("Initializing", false, 1);
+		console(Font::AQUA."Initializing", false, 1);
 		$this->initDatabase();
 		echo ".";
 		$this->registerPerms();
@@ -33,7 +33,7 @@ class Main extends Prt implements Listener, EvtExe{
 		$this->registerEvents();
 		echo ".";
 		$this->registerCmds();
-		echo " Done!".PHP_EOL.Font::RESET;
+		echo Font::GREEN." Done!".Font::RESET.PHP_EOL;
 	}
 	protected function initDatabase(){
 		$this->flist = new FactionList($this->getDataFolder()."database/factions.dat");
@@ -83,15 +83,16 @@ class Main extends Prt implements Listener, EvtExe{
 		$this->getServer()->getPluginManager()->registerEvent("pocketmine\\event\\$simpleName", $this, $priority, $this, $this);
 	}
 	protected function registerCmds(){
+		$this->cmdExe = CmdHandler;
 		//Faction Commands for Players
-		$main = new PCmd("faction", $this);
+		$main = new PCmd("faction", $this, $this->cmdExe);
 		$main->setUsage("/faction <help|cmd>");
 		$main->setDescription("PocketFactions commands");
 		$main->setPermission("pocketfactions.cmd.f");
 		$main->setAliases(array("f"));
 		$main->reg();
 		//Faction Commands for Server Admins
-		$main2 = new PCmd("fmanager", $this);
+		$main2 = new PCmd("fmanager", $this, $this->cmdExe);
 		$main2->setUsage("/fmanager <wclaim|smoney|gmoney|fdelete>");
 		$main2->setDescription("PocketFactions Admin commands");
 		$main2->setPermission("pocketfactions.cmd.fmgr");
