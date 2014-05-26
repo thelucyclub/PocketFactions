@@ -2,24 +2,20 @@
 
 namespace pocketfactions;
 
-use pocketfactions\io\Database;
 use pocketfactions\utils\PluginCmd as PCmd;
 
-use pocketmine\Player;
 use pocketmine\Server;
-use pocketmine\command\Command;
-use pocketmine\command\CommandSender as Issuer;
 use pocketmine\event\EventPriority;
 use pocketmine\event\Listener;
 use pocketmine\permission\Permission;
 use pocketmine\permission\DefaultPermissions;
-use pocketmine\plugin\EventExecutor as EvtExe;
 use pocketmine\plugin\PluginBase as Prt;
+use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as Font;
 
 require_once(dirname(__FILE__)."/functions.php");
 
-class Main extends Prt implements Listener, EvtExe{
+class Main extends Prt implements Listener{
 	const NAME = "PocketFactions";
 	const V_INIT = "\0x00";
 	const V_CURRENT = "\0x00";
@@ -37,7 +33,7 @@ class Main extends Prt implements Listener, EvtExe{
 	}
 	protected function initDatabase(){
 		$this->flist = new FactionList($this->getDataFolder()."database/factions.dat");
-		$this->config = new Config($this->getDataFolder()."database/data.json", Config::JSON, array(
+		$this->cleanSave = new Config($this->getDataFolder()."database/data.json", Config::JSON, array(
 			"next-fid" => 0
 		));
 	}

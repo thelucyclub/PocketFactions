@@ -3,7 +3,7 @@
 namespace pocketfactions\tasks;
 
 use pocketfactions\FactionList;
-use pocketfactions\faction\Chunk
+use pocketfactions\faction\Chunk;
 use pocketfactions\faction\Faction;
 use pocketfactions\faction\Rank;
 
@@ -30,7 +30,7 @@ class ReadDatabaseTask extends AsyncTask{
 		$factions = array();
 		for($i = 0; $i < $total; $i++){
 			$id = Bin::readBin($this->read($res, 4));
-			$name = Bin:readBin($this->read($res, 1));
+			$name = Bin::readBin($this->read($res, 1));
 			$name = $this->read($res, $name);
 			$founder = Bin::readBin($this->read($res, 1));
 			$founder = $this->read($res, $founder);
