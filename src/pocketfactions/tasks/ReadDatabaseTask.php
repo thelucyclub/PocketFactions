@@ -57,15 +57,21 @@ class ReadDatabaseTask extends AsyncTask{
 				$world = $this->read($res, $world);
 				$chunks[] = new Chunk($X, $Z, $world);
 			}
+			if(count($chunks) == 0){
+				$this->setResult(self::CORRUPTED);
+				return;
+			}
+			$baseChunk = array_shift($chunks);
 			$factions[] = new Faction(array(
 				"name" => $name,
 				"id" => $id,
-				"claims" => 5, //default amount of claims without xEcon
+				// "claims" => 5, //default amount of claims without xEcon // later
 				"founder" => $founder,
 				"ranks" => $ranks,
 				"default-rank" => $defaultRank,
 				"members" => $members,
-				"chunks" => $chunks
+				"chunks" => $chunks,
+				"base-chunk" => $baseChunk
 			));
 		}
 		$length = $this->read($res, strlen(FactionList::MAGIC_S));

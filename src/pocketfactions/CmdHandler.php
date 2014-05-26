@@ -82,78 +82,45 @@ class CmdHandler implements CommandExecutor{
 										}
 										
 						break;
-						
 					case "decline":
-					
 						break;
-						
 					case "join":
-					
 						break;
-						
 					case "claim":
-					
 						break;
-						
 					case "unclaim":
-					
 						break;
-						
 					case "unclaimall":
-					
 						break;
-						
 					case "kick":
-						
 						if(count($args) != 1){
 							return("Usage: \n/f kick <target-player>");
-							
 						}
-						
 						$targetp = $this->getValidPlayer($args[0]);
-						
 						if(!$targetp instanceof Player){
 							return("[PF] Invalid Player Name. ");
 						}
-						
-						break;
-						
+						return "todo"; // lol
 					case "setperm":
 						if(count($args)!=2){
 							return("Usage: /f setperm <target-player> <rank>");
 						}
 						$targetp = $this->getValidPlayer($args[0]);
-						
 						if(!$targetp instanceof Player){
 							return("[PF] Invalid Player Name. ");
 						}
-						
 					case "sethome":
-					
 						break;
-						
 					case "setopen":
-					
 						break;
-						
 					case "home":
-					
 						break;
-						
 					case "money":
-					
 						break;
-						
 					case "quit":
-					
 						break;
-						
 					case "disband":
-					
 						$fdisband = $this->rmFaction($issuer->iusername);
-						
-							//todo
-					
 						break;
 						
 					case "motto":
@@ -172,13 +139,9 @@ class CmdHandler implements CommandExecutor{
 	}
 	
 	public function help($page){
-		
 		$page = (1 <= $page and $page <= 3) ? $page : 1;
-		
 		$output = "";
-		
 		switch($page){
-			
 			case 1:
 				$output .= "-=[ Pocket Faction Commands (P.1/3) ]=-\n";
 				$output .= "/f create - Create a Faction.\n";
@@ -186,9 +149,7 @@ class CmdHandler implements CommandExecutor{
 				$output .= "/f accept - Accept Faction Invitation.\n";
 				$output .= "/f decline - Decline Faction Invitation.\n";
 				$output .= "/f join - Join public Faction.\n";
-				
 				break;
-				
 			case 2:
 				$output .= "-=[ Pocket Faction Commands (P.2/3) ]=-\n";
 				$output .= "/f claim - Claim areas for your Faction.\n";
@@ -197,9 +158,7 @@ class CmdHandler implements CommandExecutor{
 				$output .= "/f kick - Kick someone in your Faction.\n";
 				$output .= "/f setperm - Set permissions in your Faction.\n";
 				$output .= "/f sethome - Set Faction home.\n";
-				
 				break;
-				
 			case 3:
 				$output .= "-=[ Pocket Faction Commands (P.3/3) ]=-\n";
 				$output .= "/f setopen - Set Faction available to Public.\n";
@@ -208,10 +167,8 @@ class CmdHandler implements CommandExecutor{
 				$output .= "/f quit - Quit a Faction.\n";
 				$output .= "/f disband - Disband your Faction.\n";
 				$output .= "/f motto - Set a faction motto.\n";
-				
 				break;
 		}
-		
 		return $output;
 	}
 }
