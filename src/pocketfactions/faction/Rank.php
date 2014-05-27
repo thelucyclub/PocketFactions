@@ -10,6 +10,7 @@ class Rank{
 	const P_ADD_PLAYER		= 0b00010000;
 	const P_BUILD			= 0b00100000;
 	const P_BUILD_CENTRE	= 0b01000000;
+	const P_KICK_PLAYER = 0b10000000
 	const P_ALL				= 0xFFFF;
 	public function __construct($id, $name, $perms){
 		$this->id = $id;
