@@ -79,7 +79,7 @@ class CmdHandler implements CommandExecutor{
 								return("[PF] You're now a member of " . $tgtFaction . " faction.");
 								}else{
 									return("[PF] The session has expired/ended.\n[PF] Please try to be invited again.");
-										}
+								}
 										
 						break;
 					case "decline":
@@ -101,13 +101,10 @@ class CmdHandler implements CommandExecutor{
 							return("[PF] Invalid Player Name. ");
 						}
 						return "todo"; // lol
-					case "setperm":
-						if(count($args)!=2){
-							return("Usage: /f setperm <target-player> <rank>");
-						}
-						$targetp = $this->getValidPlayer($args[0]);
-						if(!$targetp instanceof Player){
-							return("[PF] Invalid Player Name. ");
+					case "perm":
+						$sub = array_shift($args);
+						switch($sub){
+							
 						}
 					case "sethome":
 						break;
