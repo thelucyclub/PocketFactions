@@ -55,12 +55,13 @@ class Faction{
 		return $this->founder;
 	}
 	
-        /**
-         * Gets the name of a faction.
-         *
-         * @return string The name of the faction.
-         *
-         */
+       /**
+        * Gets the name of a faction.
+        *
+        * @return string The name of the faction.
+        *
+        */
+        
 	public function getRanks(){
 		return $this->ranks;
 	}
