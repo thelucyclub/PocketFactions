@@ -10,7 +10,7 @@ use pocketmine\command\CommandSender as Issuer;
 class CmdHandler implements CommandExecutor{
 	
 	public function onCommand(Issuer $issuer, Command $cmd, $lbl, array $args){
-		switch($cmd->getName()){
+		switch(strtolower($cmd->getName())){
 			case "faction":
 				if(!($issuer instanceof Player)){
 					return PCmd::RUN_IN_GAME;
@@ -19,7 +19,7 @@ class CmdHandler implements CommandExecutor{
 					$args = array("help");
 				}
 				$subcmd = array_shift($args);
-				switch($subcmd){ // manage subcommand
+				switch(strtolower($subcmd)){ // manage subcommand
 					case "help":
 						return $this->help((int) $args[0]);
 					case "create":
