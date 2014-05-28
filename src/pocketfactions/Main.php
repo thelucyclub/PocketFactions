@@ -7,6 +7,8 @@ use pocketfactions\utils\PluginCmd as PCmd;
 use pocketmine\Server;
 use pocketmine\event\EventPriority;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerCommandPreprocessEvent;
+use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\permission\Permission;
 use pocketmine\permission\DefaultPermissions;
 use pocketmine\plugin\PluginBase as Prt;
@@ -20,6 +22,7 @@ class Main extends Prt implements Listener{
 	const V_INIT = "\0x00";
 	const V_CURRENT = "\0x00";
 	private $flist;
+	private $inbox = [];
 	public function onEnable(){
 		console(Font::AQUA."Initializing", false, 1);
 		$this->initDatabase();
@@ -74,9 +77,7 @@ class Main extends Prt implements Listener{
 		return DefaultPermissions::registerPermission(new Permission($name, $desc, $default), $parent);
 	}
 	protected function registerEvents(){
-	}
-	protected function event($simpleName, $priority = EventPriority::NORMAL){
-		$this->getServer()->getPluginManager()->registerEvent("pocketmine\\event\\$simpleName", $this, $priority, $this, $this);
+		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
 	protected function registerCmds(){
 		$this->cmdExe = CmdHandler;
@@ -94,6 +95,33 @@ class Main extends Prt implements Listener{
 		$main2->setPermission("pocketfactions.cmd.fmgr");
 		$main2->setAliases(array("fmgr"));
 		$main2->reg();
+	}
+	public function onPreCmd(PlayerCommandPreprocessEvent $evt){
+		$cmd = substr(strstr($evt->getMessage(), " ", true), 1);
+		if($cmd === "poaccept"){
+			$evt->setCancelled(true);
+		}
+		if($cmd === "podeny"){
+			$evt->setCancelled(true);
+		}
+		if($cmd === "polist"){
+			$evt->setCancelled(true);
+		}
+		// TODO
+	}
+	public function addOfflineMessage($player, $msg){
+		if(!isset($this->inbox[$player])){
+			$this->inbox[$player] = [];
+		}
+		$this->inbox[$player][] = $msg;
+	}
+	public function onJoin(PlayerJoinEvent $evt){
+		if(isset($this->inbox[$player])){
+			foreach($this->inbox[$player] as $k => $msg){
+				$player->sendMessage("Offline message #$k: $msg");
+			}
+			$this->inbox[$player] = [];
+		}
 	}
 	public function getFList(){
 		return $this->flist;
