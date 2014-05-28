@@ -2,6 +2,10 @@
 
 namespace pocketfactions\session;
 
+use pocketfactions\Main;
+
+use pocketmine\Player;
+
 abstract class Invitation extends PendingOperation{
 	public function __construct(callable $op, Player $inviter, $invited, $invitationMessage){
 		parent::__construct($op);
