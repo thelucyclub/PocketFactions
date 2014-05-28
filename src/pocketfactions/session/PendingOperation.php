@@ -1,5 +1,7 @@
 <?php
 
+namespace pocketfactions\session;
+
 abstract class PendingOperation{
 	protected $op;
 	public static $poid = 0;
