@@ -1,6 +1,6 @@
 <?php
 
-abstract class WaitingOperation{
+abstract class PendingOperation{
 	protected $op;
 	public function __construct(callable $onOp){
 		$this->op = $op;
