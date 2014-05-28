@@ -30,12 +30,12 @@ class CmdHandler implements CommandExecutor{
 						$max = $this->config->get("max-faction-name-length");
 						if(preg_replace("#[A-Za-z0-9\\-_]{".$min.",".$max."}#i", "", $args[0]) !== ""){
 							return "[PF] The faction name is too long!\n".
-                                    "[PF] The faction name must be alphanumeric\n    ".
-                                    "and optionally with hyphens and underscores\n    ".
-                                    "in not less than $minLen characters and not more than $maxLen characters.";
+								"[PF] The faction name must be alphanumeric\n    ".
+								"and optionally with hyphens and underscores\n    ".
+								"in not less than $minLen characters and not more than $maxLen characters.";
 						}
 						Faction::addFaction($args[0], $issuer->iusername);
-                        return "Faction $args[0] created.";
+						return "Faction $args[0] created.";
 					case "invite":
 						if(count($args)!=1){
 							return("Usage: /f invite <target-player>");
@@ -49,7 +49,7 @@ class CmdHandler implements CommandExecutor{
 						}
 						if(Faction::usrFactionPerm($issuer->iusername) != $perm_owner){ // rank check. im not sure what ur going to do. edit this later.
 							return("[PF] Only faction owner can do this.");
-							}	
+						}	
 						//more will be added later.. still thinking - ijoshuahd
 						
 						break;
@@ -153,7 +153,7 @@ class CmdHandler implements CommandExecutor{
 				$output .= "/f unclaim - Unclaim areas by your Faction.\n";
 				$output .= "/f unclaimall - Unclaim all areas by your Faction.\n";
 				$output .= "/f kick - Kick someone in your Faction.\n";
-				$output .= "/f setperm - Set permissions in your Faction.\n";
+				$output .= "/f perm - Manage permissions in your Faction.\n";
 				$output .= "/f sethome - Set Faction home.\n";
 				break;
 			case 3:
