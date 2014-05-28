@@ -3,6 +3,8 @@
 namespace pocketfactions\faction;
 
 class Faction{
+	public static $factions;
+	private static $main, $path;
 	protected $name;
 	protected $id;
 	protected $founder;
@@ -105,4 +107,65 @@ class Faction{
 	public function getBaseChunk(){
             return $this->baseChunk;
 	}
+
+	public static function addFaction($args){
+	    if($this->factions === false){
+			return false;
+		}
+		$this->factions[] = new Faction($this->nextID());
+	}
+    
+    public static function rmFaction($args){
+        //remove a faction
+    }
+   
+    public static function usrFaction($name){
+        //get user info
+    }
+   
+    public static function usrFactionPerm($name){
+        //get user rank
+    }
+    
+    public static function invFaction(Player $p){
+        //invite target player in a faction
+    }
+   
+    public static function existFaction($name){
+        //checks if faction exist or not
+    }
+   
+    public static function joinFaction($args){
+        //join a faction
+    }
+    
+    public static function nextID(){
+	$fid = $this->main->getConfig()->get("next-fid");
+	$this->main->getConfig()->set("next-fid", $fid + 1);
+	$this->main->getConfig()->save();
+	return $fid;
+    }
+	
+    public static function load(){
+	$res = fopen($this->path, "rb");
+	$this->loadFrom($res);
+    }
+    
+    public static function loadFrom($res){
+	Server::getInstance()->getScheduler()->scheduleAsyncTask(new ReadDatabaseTask($res), array($this, "onLoaded"));
+    }
+    
+    public static function onLoaded(array $factions){
+	$this->factions = $factions;
+    }
+    
+	public static function save(){
+		$res = fopen($this->path, "wb");
+		$this->saveTo($res);
+	}
+	
+	public static function saveTo($res){
+		Server::getInstance()->getScheduler()->scheduleAsyncTask(new WriteDatabaseTask($res));
+	}
+	
 }
