@@ -141,14 +141,14 @@ class Faction{
     
     public static function nextID(){
 	$fid = $this->main->getConfig()->get("next-fid");
-	$this->main->getConfig()->set("next-fid", $fid + 1);
-	$this->main->getConfig()->save();
+	self::main->getConfig()->set("next-fid", $fid + 1);
+	self::main->getConfig()->save();
 	return $fid;
     }
 	
     public static function load(){
 	$res = fopen($this->path, "rb");
-	$this->loadFrom($res);
+        self::loadFrom($res);
     }
     
     public static function loadFrom($res){
@@ -156,16 +156,16 @@ class Faction{
     }
     
     public static function onLoaded(array $factions){
-	$this->factions = $factions;
+	self::factions = $factions;
     }
     
-	public static function save(){
-		$res = fopen($this->path, "wb");
-		$this->saveTo($res);
-	}
+    public static function save(){
+	$res = fopen($this->path, "wb");
+	self::saveTo($res);
+    }
 	
-	public static function saveTo($res){
-		Server::getInstance()->getScheduler()->scheduleAsyncTask(new WriteDatabaseTask($res));
-	}
+    public static function saveTo($res){
+	Server::getInstance()->getScheduler()->scheduleAsyncTask(new WriteDatabaseTask($res));
+    }
 	
 }
