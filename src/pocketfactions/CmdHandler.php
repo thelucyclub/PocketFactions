@@ -1,7 +1,7 @@
 <?php
 
 use pocketfactions\utils\PluginCmd as PCmd;
-use pocketfactions\FactionList;
+use pocketfactions\faction\Faction
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandExecutor;
@@ -34,7 +34,7 @@ class CmdHandler implements CommandExecutor{
                                     "and optionally with hyphens and underscores\n    ".
                                     "in not less than $minLen characters and not more than $maxLen characters.";
 						}
-						$this->addFaction($args[0], $issuer->iusername);
+						Faction::addFaction($args[0], $issuer->iusername);
                         return "Faction $args[0] created.";
 					case "invite":
 						if(count($args)!=1){
@@ -44,10 +44,10 @@ class CmdHandler implements CommandExecutor{
 						if(!($targetp instanceof Player)){
 							return("[PF] Invalid Player Name. ");
 						}
-						if($this->usrFaction($issuer->iusername) == false){
+						if(Faction::usrFaction($issuer->iusername) == false){
 							return("[PF] You are not in a member of any faction.");
 						}
-						if($this->usrFactionPerm($issuer->iusername) != $perm_owner){ // rank check. im not sure what ur going to do. edit this later.
+						if(Faction::usrFactionPerm($issuer->iusername) != $perm_owner){ // rank check. im not sure what ur going to do. edit this later.
 							return("[PF] Only faction owner can do this.");
 							}	
 						//more will be added later.. still thinking - ijoshuahd
@@ -59,21 +59,21 @@ class CmdHandler implements CommandExecutor{
 							return("Usage: /f accept");
 							}
 							
-						if(isset($this->invFaction[$issuer->iusername]) == false){
+						if(isset(Faction::invFaction[$issuer->iusername]) == false){
 							return("[PF] You don't have any invitations.\n[PF] You need to be invited.");
 							}
-						if($this->usrFaction($issuer->iusername) != false){
+						if(Faction::usrFaction($issuer->iusername) != false){
 							return("[PF] You are already in a faction.");
 							}
 							
-						$tgtFaction = $this->invFaction[$issuer->iusername]["TargetFaction"];
+						$tgtFaction = Faction::invFaction[$issuer->iusername]["TargetFaction"];
 						
-						unset($this->invFaction[$issuer->iusername]);
-						if($this->existFaction($targetFaction) == false){
+						unset(Faction::invFaction[$issuer->iusername]);
+						if(Faction::existFaction($targetFaction) == false){
 							return("[PF] The faction do not exist.\n[PF] Please try to be invited again.");
 							}
 							
-						$joinFac = $this->joinFaction($issuer->username, $targetFaction, $rank); //im not sure about ranks yet. edit this later.
+						$joinFac = Faction::joinFaction($issuer->username, $targetFaction, $rank); //im not sure about ranks yet. edit this later.
 						
 							if($joinFac == true){
 								return("[PF] You're now a member of " . $tgtFaction . " faction.");
@@ -117,7 +117,7 @@ class CmdHandler implements CommandExecutor{
 					case "quit":
 						break;
 					case "disband":
-						$fdisband = $this->rmFaction($issuer->iusername);
+						$fdisband = Faction::rmFaction($issuer->iusername);
 						break;
 						
 					case "motto":
