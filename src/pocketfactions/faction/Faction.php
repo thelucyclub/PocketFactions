@@ -2,10 +2,15 @@
 
 namespace pocketfactions\faction;
 
+use pocketmine\level\Position;
+use pocketmine\level\Level;
+use pocketmine\Server;
+
 class Faction{
 	public static $factions;
 	private static $main, $path;
 	protected $name;
+	protected $motto;
 	protected $id;
 	protected $founder;
 	protected $ranks;
@@ -13,8 +18,10 @@ class Faction{
 	protected $members;
 	protected $chunks;
 	protected $baseChunk;
+	protected $home;
 	public function __construct(array $args){
 		$this->name = $args["name"];
+		$this->motto = $args["motto"];
 		$this->id = $args["id"];
 		$this->founder = $args["founder"];
 		$this->ranks = $args["ranks"];
@@ -22,45 +29,96 @@ class Faction{
 		$this->members = $args["members"];
 		$this->chunks = $args["chunks"];
 		$this->baseChunk = $args["base-chunk"];
+		if(Server::getInstance()->isLevelLoaded($args["world"])) {
+	    	$this->world = Server::getInstance()->getLevel($args["world"]);
+		}elseif(Server::getInstance()->isLevelGenerated($args["world"])) {
+			Server::getInstance()->loadLevel($args["world"]);
+			$this->world = Server::getInstance()->getLevel($args["world"]);
+			if(!$this->world instanceof Level) {
+				$this->world = Server::getInstance()->getDefaultLevel();
+			}
+		}
+		$this->home = new Position($args["home"][0], $args["home"][1], $args["home"][2], $this->world);
 	}
 	
-       /**
-        * 
-        * Gets the name of a faction.
-        *
-        * @return string The name of the faction.
-        *
-        */
+    /**
+     * 
+     * Gets the name of a faction.
+     *
+     * @return string The name of the faction.
+     *
+     */
 	public function getName(){
 		return $this->name;
 	}
-	
-       /**
-        * 
-        * Gets the ID of a faction.
-        *
-        * @return int The ID of the faction.
-        *
-        */
+    
+   /**
+    *
+    * Gets the motto for this faction.
+    *  
+    * @return string The motto for this faction.
+    *
+    */
+    public function getMotto() {
+        return $this->motto;
+    }
+  
+   /**
+    *
+    * Sets the motto for this faction.
+    *
+    */
+    public function setMotto(string motto) {
+        $this->motto = $motto;
+    }
+    
+   /**
+    *
+    * Gets the home point for this faction.
+    *  
+    * @return Position The home for this faction.
+    *
+    */
+    public function getHome() {
+        return $this->home;
+    }
+  
+   /**
+    *
+    * Sets the home point for this faction.
+    *
+    */
+    public function setHome(Position $pos) {
+        $pos->level = $this->world;
+        $this->home = $pos;
+    }
+
+    /**
+     * 
+     * Gets the ID of a faction.
+     *
+     * @return int The ID of the faction.
+     *
+     */   
 	public function getID(){
 		return $this->id;
 	}
 
-       /**
-        * Gets the Player object for the 
-        * person who started the faction.
-        *
-        * @return Player The founder of this faction.
-        *
-        */	
+    /**
+     * Gets the Player object for the 
+     * person who started the faction.
+     *
+     * @return Player The founder of this faction.
+     *
+      */	
 	public function getFounder(){
 		return $this->founder;
 	}
 	
        /**
-        * Gets the name of a faction.
+        * Gets all ranks into an array for this faction. 
         *
-        * @return string The name of the faction.
+        * @return Rank[] An array of ranks.
         *
         */
         
