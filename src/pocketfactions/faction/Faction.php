@@ -1,7 +1,6 @@
 <?php
 
 namespace pocketfactions\faction;
-
 use pocketfactions\Main;
 use pocketmine\Player;
 use pocketmine\level\Position;
