@@ -9,7 +9,7 @@ use pocketmine\nbt\tag\NamedTag;
 
 class Chunk{
 	public $X, $Z, $level;
-	public function __construct($X, $Z){
+	public function __construct($X, $Z, $level){
 		$this->X = $X;
 		$this->Z = $Z;
 		$this->level = $level;

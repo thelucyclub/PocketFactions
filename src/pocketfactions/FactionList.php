@@ -5,6 +5,7 @@ namespace pocketfactions;
 use pocketfactions\faction\Faction;
 use pocketfactions\tasks\ReadDatabaseTask;
 use pocketfactions\tasks\WriteDatabaseTask;
+use pocketmine\Player;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 
@@ -66,17 +67,24 @@ class FactionList{
 			case is_string($identifier): // faction name
 				foreach($this->factions as $faction){
 					if($faction->getName() === $identifier){
-						return true;
+						return $faction;
 					}
 				}
 				return false;
 			case is_int($identifier):
 				return isset($this->factions[$identifier]) ? $this->factions[$identifier]:false;
+			case $identifier instanceof Player:
+				foreach($this->factions as $faction){
+					if(in_array(strtolower($identifier->getName()), $faction->getMembers())){
+						return $faction;
+					}
+				}
+				return false;
 			default:
 				return false;
 		}
 	}
-	public function addFaction(array $args){
-		$this->factions[Faction::nextID()] = new Faction($args);
+	public function addFaction(array $args, $id){
+		$this->factions[$id] = new Faction($args);
 	}
 }

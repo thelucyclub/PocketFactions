@@ -1,14 +1,24 @@
 <?php
 
+namespace pocketfactions;
+
+use pocketfactions\faction\Chunk;
+use pocketfactions\faction\Rank;
 use pocketfactions\utils\PluginCmd as PCmd;
-use pocketfactions\faction\Faction
+use pocketfactions\faction\Faction;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandExecutor;
 use pocketmine\command\CommandSender as Issuer;
+use pocketmine\Player;
+use pocketmine\Server;
 
 class CmdHandler implements CommandExecutor{
-	
+	public function __construct(){
+		$this->config = Main::get()->getConfig();
+		$this->main = Main::get();
+		$this->server = Server::getInstance();
+	}
 	public function onCommand(Issuer $issuer, Command $cmd, $lbl, array $args){
 		switch(strtolower($cmd->getName())){
 			case "faction":
@@ -32,57 +42,37 @@ class CmdHandler implements CommandExecutor{
 							return "[PF] The faction name is too long!\n".
 								"[PF] The faction name must be alphanumeric\n    ".
 								"and optionally with hyphens and underscores\n    ".
-								"in not less than $minLen characters and not more than $maxLen characters.";
+								"in not less than $min characters and not more than $max characters.";
 						}
-						Faction::addFaction($args[0], $issuer->iusername);
+						$id = Faction::nextID();
+						$this->main->getFList()->addFaction([
+							"name" => $args[0],
+							"motto" => "",
+							"id" => $id,
+							"founder" => strtolower($issuer->getName()),
+							"ranks" => Rank::defaults(),
+							"members" => array(strtolower($issuer->getName()) => Rank::defaults()[0]),
+							"chunks" => [],
+							"base-chunk" => new Chunk($issuer->x / 16, $issuer->z / 16, $issuer->getLevel()->getName()),
+							"whitelist" => false
+						], $id);
 						return "Faction $args[0] created.";
 					case "invite":
 						if(count($args)!=1){
-							return("Usage: /f invite <target-player>");
+							return "Usage: /f invite <target-player>";
 						}
-						$targetp = $this->getValidPlayer($args[0]);
+						$targetp = $this->server->getOfflinePlayer(array_shift($args));
 						if(!($targetp instanceof Player)){
-							return("[PF] Invalid Player Name. ");
+							return "[PF] Invalid player.";
 						}
-						if(Faction::usrFaction($issuer->iusername) == false){
-							return("[PF] You are not in a member of any faction.");
+						if($this->main->getFList()->getFaction($targetp) === false){
+							return "[PF] You do not belong to any factions!";
 						}
-						if(Faction::usrFactionPerm($issuer->iusername) != $perm_owner){ // rank check. im not sure what ur going to do. edit this later.
-							return("[PF] Only faction owner can do this.");
-						}	
-						//more will be added later.. still thinking - ijoshuahd
-						
-						break;
-					
-					case "accept":
-						if(count($args) != 0){
-							return("Usage: /f accept");
-							}
-							
-						if(isset(Faction::invFaction[$issuer->iusername]) == false){
-							return("[PF] You don't have any invitations.\n[PF] You need to be invited.");
-							}
-						if(Faction::usrFaction($issuer->iusername) != false){
-							return("[PF] You are already in a faction.");
-							}
-							
-						$tgtFaction = Faction::invFaction[$issuer->iusername]["TargetFaction"];
-						
-						unset(Faction::invFaction[$issuer->iusername]);
-						if(Faction::existFaction($targetFaction) == false){
-							return("[PF] The faction do not exist.\n[PF] Please try to be invited again.");
-							}
-							
-						$joinFac = Faction::joinFaction($issuer->username, $targetFaction, $rank); //im not sure about ranks yet. edit this later.
-						
-							if($joinFac == true){
-								return("[PF] You're now a member of " . $tgtFaction . " faction.");
-								}else{
-									return("[PF] The session has expired/ended.\n[PF] Please try to be invited again.");
-								}
-										
-						break;
-					case "decline":
+						$faction = $this->main->getFList()->getFaction($issuer);
+						if($faction->getMemberRank($issuer->getName())->hasPerm(Rank::P_INVITE)){ // rank check. im not sure what ur going to do. edit this later.
+							return "[PF] You don't have permission to invite a player.";
+						}
+						// TODO invitation handling
 						break;
 					case "join":
 						break;
@@ -94,17 +84,19 @@ class CmdHandler implements CommandExecutor{
 						break;
 					case "kick":
 						if(count($args) != 1){
-							return("Usage: \n/f kick <target-player>");
+							return "Usage: \n/f kick <target-player>";
 						}
-						$targetp = $this->getValidPlayer($args[0]);
+						$targetp = $this->server->getOfflinePlayer(array_shift($args));
 						if(!$targetp instanceof Player){
-							return("[PF] Invalid Player Name. ");
+							return "[PF] Invalid Player Name. ";
 						}
-						return "todo"; // lol
+						$faction = $this->main->getFList()->getFaction($issuer);
+						if(!$faction->getMemberRank($issuer->getName())->hasPerm(Rank::P_KICK_PLAYER)){
+							return "[PF] You don't have permission to kick a player!";
+						}
 					case "perm":
 						$sub = array_shift($args);
 						switch($sub){
-							
 						}
 					case "sethome":
 						break;
@@ -117,24 +109,15 @@ class CmdHandler implements CommandExecutor{
 					case "quit":
 						break;
 					case "disband":
-						$fdisband = Faction::rmFaction($issuer->iusername);
 						break;
-						
 					case "motto":
-						
-						break;
-						
+						$this->main->getFList()->getFaction($issuer)->setMotto(implode(" ", $args));
+						return "Motto set."; // first completed command! :)
+				}
+				break;
 		}
-		
-	// getValidPlayer() from xPermsMgr (thx 64ff00 :D) (O_o) 
-	
-	private function getValidPlayer($username)
-	{
-		$player = $this->getServer()->getPlayer($username);
-		
-		return $player instanceof Player ? $player : $this->getServer()->getOfflinePlayer($username);
 	}
-	
+	// Server::getOfflinePlayer() returns an online player if possible.
 	public function help($page){
 		$page = (1 <= $page and $page <= 3) ? $page : 1;
 		$output = "";

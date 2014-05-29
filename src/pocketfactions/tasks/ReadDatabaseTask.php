@@ -31,7 +31,14 @@ class ReadDatabaseTask extends AsyncTask{
 		for($i = 0; $i < $total; $i++){
 			$id = Bin::readBin($this->read($res, 4));
 			$name = Bin::readBin($this->read($res, 1));
+			$whitelist = false;
+			if($name & 0b10000000){
+				$whitelist = true;
+			}
+			$name &= 0b01111111;
 			$name = $this->read($res, $name);
+			$motto = Bin::readBin($this->read($res, 1));
+			$motto = $this->read($res, $motto);
 			$founder = Bin::readBin($this->read($res, 1));
 			$founder = $this->read($res, $founder);
 			$ranks = array();
@@ -49,11 +56,14 @@ class ReadDatabaseTask extends AsyncTask{
 				return;
 			}
 			$defaultRank = $ranks[$defaultRank];
+			/**
+			 * @var Rank[] $members Ranks indexed by member names.
+			 */
 			$members = array();
 			for($i = 0; $i < Bin::readBin($this->read($res, 4)); $i++){
 				$mbName = Bin::readBin($this->read($res, 1));
 				$mbName = $this->read($res, $mbName);
-				$members[$mbName] = Bin::readBin($this->read($res, 1));
+				$members[$mbName] = $ranks[Bin::readBin($this->read($res, 1))];
 			}
 			$chunks = array();
 			for($i = 0; $i < Bin::readBin($this->read($res, 2)); $i++){
@@ -70,13 +80,15 @@ class ReadDatabaseTask extends AsyncTask{
 			$baseChunk = array_shift($chunks);
 			$factions[$id] = new Faction(array(
 				"name" => $name,
+				"motto" => $motto,
 				"id" => $id,
 				"founder" => $founder,
 				"ranks" => $ranks,
 				"default-rank" => $defaultRank,
 				"members" => $members,
 				"chunks" => $chunks,
-				"base-chunk" => $baseChunk
+				"base-chunk" => $baseChunk,
+				"whitelist" => $whitelist
 			));
 		}
 		$length = $this->read($res, strlen(FactionList::MAGIC_S));
