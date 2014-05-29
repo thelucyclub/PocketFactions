@@ -43,6 +43,12 @@ class ReadDatabaseTask extends AsyncTask{
 				$ranks[$id] = new Rank($id, $rkName, $perms);
 			}
 			$defaultRank = Bin::readBin($this->read($res, 1));
+			if(!isset($ranks[$defaultRank])){
+				trigger_error("Cannot find default rank $defaultRank from resource {$this->res}", E_USER_WARNING);
+				$this->setResult(self::CORRUPTED);
+				return;
+			}
+			$defaultRank = $ranks[$defaultRank];
 			$members = array();
 			for($i = 0; $i < Bin::readBin($this->read($res, 4)); $i++){
 				$mbName = Bin::readBin($this->read($res, 1));
@@ -62,10 +68,9 @@ class ReadDatabaseTask extends AsyncTask{
 				return;
 			}
 			$baseChunk = array_shift($chunks);
-			$factions[] = new Faction(array(
+			$factions[$id] = new Faction(array(
 				"name" => $name,
 				"id" => $id,
-				// "claims" => 5, //default amount of claims without xEcon // later
 				"founder" => $founder,
 				"ranks" => $ranks,
 				"default-rank" => $defaultRank,
@@ -82,7 +87,7 @@ class ReadDatabaseTask extends AsyncTask{
 		if($this->getResult() === self::WIP){
 			$this->setResult(self::COMPLETED);
 		}
-		\call_user_func($this->onFInished, $factions);
+		call_user_func($this->onFInished, $factions, $this);
 	}
 	protected function read($res, $length){
 		$string = fread($res, $length);

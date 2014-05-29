@@ -2,10 +2,11 @@
 
 namespace pocketfactions;
 
+use pocketfactions\session\Invitation;
+use pocketfactions\session\PendingOperation;
 use pocketfactions\utils\PluginCmd as PCmd;
 
 use pocketmine\Server;
-use pocketmine\event\EventPriority;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
 use pocketmine\event\player\PlayerJoinEvent;
@@ -15,13 +16,23 @@ use pocketmine\plugin\PluginBase as Prt;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as Font;
 
-require_once(dirname(__FILE__)."/functions.php");
+require_once dirname(__FILE__)."/functions.php";
 
 class Main extends Prt implements Listener{
 	const NAME = "PocketFactions";
-	const V_INIT = "\0x00";
-	const V_CURRENT = "\0x00";
-	private $flist;
+	const V_INIT = "\x00";
+	const V_CURRENT = "\x00";
+	/**
+	 * @var Config
+	 */
+	public $cleanSave;
+	/**
+	 * @var PendingOperation[] pending operations indexed with the POID
+	 */
+	public $op = array();
+	/**
+	 * @var string[][] Unread inbox messages indexed with lowercase player name
+	 */
 	private $inbox = [];
 	public function onEnable(){
 		console(Font::AQUA."Initializing", false, 1);
@@ -35,7 +46,6 @@ class Main extends Prt implements Listener{
 		echo Font::GREEN." Done!".Font::RESET.PHP_EOL;
 	}
 	protected function initDatabase(){
-		$this->flist = new FactionList($this->getDataFolder()."database/factions.dat");
 		$this->cleanSave = new Config($this->getDataFolder()."database/data.json", Config::JSON, array(
 			"next-fid" => 0
 		));
@@ -97,17 +107,22 @@ class Main extends Prt implements Listener{
 		$main2->reg();
 	}
 	public function onPreCmd(PlayerCommandPreprocessEvent $evt){
-		$cmd = substr(strstr($evt->getMessage(), " ", true), 1);
-		if($cmd === "poaccept"){
+		$cmd = strstr($evt->getMessage(), " ", true);
+		if($cmd === "/poaccept"){
 			$evt->setCancelled(true);
 		}
-		if($cmd === "podeny"){
+		if($cmd === "/podeny"){
 			$evt->setCancelled(true);
 		}
-		if($cmd === "polist"){
+		if($cmd === "/polist"){ // reminds me of politics or police
 			$evt->setCancelled(true);
 		}
-		// TODO
+	}
+	public function addPendingOp(PendingOperation $op, $autoInvite = true){
+		$this->op[$op->getID()] = $op;
+		if($autoInvite and ($op instanceof Invitation)){
+			$this->invitations[$op->getInvited()] = true;
+		}
 	}
 	public function addOfflineMessage($player, $msg){
 		if(!isset($this->inbox[$player])){
@@ -116,16 +131,33 @@ class Main extends Prt implements Listener{
 		$this->inbox[$player][] = $msg;
 	}
 	public function onJoin(PlayerJoinEvent $evt){
-		if(isset($this->inbox[$player])){
-			foreach($this->inbox[$player] as $k => $msg){
-				$player->sendMessage("Offline message #$k: $msg");
+		if(isset($this->inbox[strtolower($evt->getPlayer()->getName())])){
+			$msgs = $this->inbox[strtolower($evt->getPlayer()->getName())];
+			if(count($msgs) === 0){
+				return;
 			}
-			$this->inbox[$player] = [];
+			$evt->getPlayer()->sendMessage("Welcome back! You have ".count($msgs)." new inbox messages.");
+			foreach($msgs as $k => $msg){
+				$evt->getPlayer()->sendMessage("Offline message #$k: $msg");
+			}
+			$this->inbox[strtolower($evt->getPlayer()->getName())] = [];
 		}
 	}
-	public function getFList(){
-		return $this->flist;
+	/**
+	 * @return string
+	 */
+	public function getFactionsFilePath(){
+		return $this->getDataFolder()."factions.dat";
 	}
+	/**
+	 * @return Config
+	 */
+	public function getConfig(){
+		return $this->cleanSave;
+	}
+	/**
+	 * @return static
+	 */
 	public static function get(){
 		return Server::getInstance()->getPluginManager()->getPlugin(self::NAME);
 	}
