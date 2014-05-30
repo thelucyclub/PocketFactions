@@ -3,7 +3,7 @@
 namespace pocketfactions\tasks;
 
 use pocketfactions\FactionList;
-
+use pocketfactions\Main;
 use pocketmine\scheduler\AsyncTask;
 
 class WriteDatabaseTask extends AsyncTask{
@@ -14,11 +14,13 @@ class WriteDatabaseTask extends AsyncTask{
 		$res = $this->res;
 		fwrite($res, FactionList::MAGIC_P);
 		fwrite($res, Main::V_CURRENT);
-		fwrite($res, Bin::writeInt(count(Main::get()->getFList()->factions)));
-		foreach(Main::get()->getFList()->factions as $f){
-			fwrite($res, Bin::writeInt($f->getID());
-			fwrite($res, Bin::writeByte(strlen($f->getName())));
+		fwrite($res, Bin::writeInt(count(Main::get()->getFList()->getAll())));
+		foreach(Main::get()->getFList()->getAll() as $f){
+			fwrite($res, Bin::writeInt($f->getID()));
+			fwrite($res, Bin::writeByte(strlen($f->getName()) | ($f->isWhitelisted() ? 0b10000000:0)));
 			fwrite($res, $f->getName());
+			fwrite($res, Bin::writeShort(strlen($f->getMotto())));
+			fwrite($res, $f->getMotto());
 			fwrite($res, Bin::writeByte(strlen($f->getFounder())));
 			fwrite($res, $f->getFounder());
 			$ranks = $f->getRanks();
@@ -40,12 +42,12 @@ class WriteDatabaseTask extends AsyncTask{
 			$chunks = $f->getChunks();
 			fwrite($res, Bin::writeShort(count($chunks)));
 			foreach($chunks as $c){
-				fwrite($c, Bin::writeShort($c->x));
-				fwrite($c, Bin::writeShort($c->z));
-				fwrite($c, Bin::writeByte(strlen($c->level)));
-				fwrite($c, $c->level);
+				fwrite($res, Bin::writeShort($c->getX()));
+				fwrite($res, Bin::writeShort($c->getZ()));
+				fwrite($res, Bin::writeByte(strlen($c->getLevel())));
+				fwrite($res, $c->getLevel());
 			}
 		}
-		fwrite($res, self::MAGIC_S);
+		fwrite($res, FactionList::MAGIC_S);
 	}
 }

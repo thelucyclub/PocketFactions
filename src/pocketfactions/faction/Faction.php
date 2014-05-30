@@ -1,10 +1,9 @@
 <?php
 
 namespace pocketfactions\faction;
+
 use pocketfactions\Main;
 use pocketmine\Player;
-use pocketmine\level\Position;
-use pocketmine\level\Level;
 use pocketmine\Server;
 
 class Faction{
@@ -20,6 +19,7 @@ class Faction{
 	protected $baseChunk;
 	protected $home;
 	protected $whitelist;
+	public $server;
 	public function __construct(array $args){
 		$this->name = $args["name"];
 		$this->motto = $args["motto"];
@@ -29,8 +29,31 @@ class Faction{
 		$this->defaultRank = $args["default-rank"];
 		$this->members = $args["members"];
 		$this->chunks = $args["chunks"];
+//		$this->chunks = [];
+//		/** @var Chunk[] $chunks */
+//		$chunks = $args["chunks"];
+//		foreach($chunks as $c){
+//			if(!isset($this->chunks[$c->getLevel()])){
+//				$this->chunks[$c->getLevel()] = [];
+//			}
+//			$this->chunks[$c->getLevel()][$c->getX().",".$c->getZ()] = $c;
+//		}
 		$this->baseChunk = $args["base-chunk"];
 		$this->whitelist = $args["whitelist"];
+		$this->server = Server::getInstance();
+		$levels = [];
+		foreach($this->chunks as $chunk){
+			$level = $chunk->getLevel();
+			if(!isset($levels[$level])){
+				$levels[] = $level;
+				if(!$this->server->isLevelLoaded($level)){
+					if(!$this->server->isLevelGenerated($this->server->loadLevel($level))){
+						$this->server->generateLevel($level, Main::get()->getUserConfig()->get("seed"));
+					}
+					$this->server->loadLevel($level);
+				}
+			}
+		}
 //		if(Server::getInstance()->isLevelLoaded($args["world"])) {
 //	    	$this->world = Server::getInstance()->getLevel($args["world"]);
 //		}
@@ -112,6 +135,24 @@ class Faction{
 	 */
 	public function isWhitelisted(){
 		return $this->whitelist;
+	}
+	/**
+	 * @param Player $newMember
+	 */
+	public function join(Player $newMember){
+
+	}
+	/**
+	 * @param string $memberName
+	 */
+	public function kick($memberName){
+
+	}
+	public function claim(Chunk $chunk){
+
+	}
+	public function hasChunk(Chunk $chunk){
+
 	}
 	/**
 	 * @return int The next unique faction ID

@@ -37,7 +37,7 @@ class ReadDatabaseTask extends AsyncTask{
 			}
 			$name &= 0b01111111;
 			$name = $this->read($res, $name);
-			$motto = Bin::readBin($this->read($res, 1));
+			$motto = Bin::readBin($this->read($res, 2));
 			$motto = $this->read($res, $motto);
 			$founder = Bin::readBin($this->read($res, 1));
 			$founder = $this->read($res, $founder);

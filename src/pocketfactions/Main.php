@@ -2,10 +2,8 @@
 
 namespace pocketfactions;
 
-use pocketfactions\session\Invitation;
-use pocketfactions\session\PendingOperation;
 use pocketfactions\utils\PluginCmd as PCmd;
-
+use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\Server;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
@@ -31,9 +29,9 @@ class Main extends Prt implements Listener{
 	 */
 	public $cleanSave;
 	/**
-	 * @var PendingOperation[] pending operations indexed with the POID
+	 * @var
 	 */
-	public $op = array();
+	public $userConfig;
 	/**
 	 * @var string[][] Unread inbox messages indexed with lowercase player name
 	 */
@@ -54,10 +52,13 @@ class Main extends Prt implements Listener{
 		echo Font::GREEN." Done!".Font::RESET.PHP_EOL;
 	}
 	protected function initDatabase(){
-		$this->cleanSave = new Config($this->getDataFolder()."database/data.json", Config::JSON, array(
-			"next-fid" => 0
-		));
 		$this->flist = new FactionList;
+		$this->cleanSave = new Config($this->getDataFolder()."database/data.json", Config::JSON, [
+			"next-fid" => 0
+		]);
+		$this->userConfig = new Config($this->getDataFolder()."config.yml", Config::YAML, [
+			"level generation default seed (leave as null for random)" => null,
+		]);
 	}
 	protected function registerPerms(){
 		$me = strtolower(self::NAME);
@@ -127,30 +128,31 @@ class Main extends Prt implements Listener{
 			$evt->setCancelled(true);
 		}
 	}
-	public function addPendingOp(PendingOperation $op, $autoInvite = true){
-		$this->op[$op->getID()] = $op;
-		if($autoInvite and ($op instanceof Invitation)){
-			$this->invitations[$op->getInvited()] = true;
-		}
-	}
+	/**
+	 * @param string $player
+	 * @param string $msg
+	 */
 	public function addOfflineMessage($player, $msg){
+		$player = strtolower($player);
 		if(!isset($this->inbox[$player])){
 			$this->inbox[$player] = [];
 		}
 		$this->inbox[$player][] = $msg;
 	}
 	public function onJoin(PlayerJoinEvent $evt){
-		if(isset($this->inbox[strtolower($evt->getPlayer()->getName())])){
-			$msgs = $this->inbox[strtolower($evt->getPlayer()->getName())];
-			if(count($msgs) === 0){
-				return;
+		$name = strtolower($evt->getPlayer()->getName());
+		if(isset($this->inbox[$name])){
+			$evt->getPlayer()->sendMessage("You have ".count($this->inbox[$name])." messages in your offline inbox:");
+			while(count($this->inbox[$name]) > 0){
+				$evt->getPlayer()->sendMessage(array_shift($this->inbox[$name]));
 			}
-			$evt->getPlayer()->sendMessage("Welcome back! You have ".count($msgs)." new inbox messages.");
-			foreach($msgs as $k => $msg){
-				$evt->getPlayer()->sendMessage("Offline message #$k: $msg");
-			}
-			$this->inbox[strtolower($evt->getPlayer()->getName())] = [];
 		}
+	}
+	/**
+	 * @priority HIGH
+	 */
+	public function onBlockTouch(PlayerInteractEvent $evt){
+		$f = $this->getFList()->getFaction($evt->getPlayer());
 	}
 	/**
 	 * @return string
@@ -163,6 +165,12 @@ class Main extends Prt implements Listener{
 	 */
 	public function getConfig(){
 		return $this->cleanSave;
+	}
+	/**
+	 * @return Config
+	 */
+	public function getUserConfig(){
+		return $this->userConfig;
 	}
 	/**
 	 * @return FactionList

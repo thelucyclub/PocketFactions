@@ -62,7 +62,7 @@ class Rank{
 	/**
 	 * @return static[] the default ranks for a faction
 	 */
-	public function defaults(){
+	public static function defaults(){
 		return [
 			0 => new static(0, "owner", self::P_ALL),
 			1 => new static(1, "member", self::P_ENTER),

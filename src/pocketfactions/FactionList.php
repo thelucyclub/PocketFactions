@@ -2,14 +2,17 @@
 
 namespace pocketfactions;
 
+use pocketfactions\faction\Chunk;
 use pocketfactions\faction\Faction;
 use pocketfactions\tasks\ReadDatabaseTask;
 use pocketfactions\tasks\WriteDatabaseTask;
-use pocketmine\Player;
+use pocketmine\IPlayer;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 
 class FactionList{
+	const MAGIC_P = "\x00\x00\xff\xffFACTION-LIST";
+	const MAGIC_S = "END-OF-LIST-\xff\xff\x00\x00";
 	/**
 	 * @var bool|Faction[]
 	 */
@@ -59,6 +62,16 @@ class FactionList{
 	public function __destruct(){
 		$this->save();
 	}
+	/**
+	 * @return bool|Faction[]
+	 */
+	public function getAll(){
+		return $this->factions;
+	}
+	/**
+	 * @param string|int|IPlayer|Chunk $identifier
+	 * @return bool|null|Faction
+	 */
 	public function getFaction($identifier){
 		if($this->factions === false){
 			return null;
@@ -73,9 +86,16 @@ class FactionList{
 				return false;
 			case is_int($identifier):
 				return isset($this->factions[$identifier]) ? $this->factions[$identifier]:false;
-			case $identifier instanceof Player:
+			case $identifier instanceof IPlayer:
 				foreach($this->factions as $faction){
 					if(in_array(strtolower($identifier->getName()), $faction->getMembers())){
+						return $faction;
+					}
+				}
+				return false;
+			case $identifier instanceof Chunk:
+				foreach($this->factions as $faction){
+					if($faction->hasChunk($identifier)){
 						return $faction;
 					}
 				}

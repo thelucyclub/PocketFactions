@@ -94,10 +94,13 @@ class CmdHandler implements CommandExecutor{
 						if(!$faction->getMemberRank($issuer->getName())->hasPerm(Rank::P_KICK_PLAYER)){
 							return "[PF] You don't have permission to kick a player!";
 						}
+						// TODO
+						break;
 					case "perm":
 						$sub = array_shift($args);
 						switch($sub){
 						}
+						break;
 					case "sethome":
 						break;
 					case "setopen":
@@ -116,6 +119,7 @@ class CmdHandler implements CommandExecutor{
 				}
 				break;
 		}
+		return true;
 	}
 	// Server::getOfflinePlayer() returns an online player if possible.
 	public function help($page){
