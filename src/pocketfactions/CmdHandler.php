@@ -53,7 +53,7 @@ class CmdHandler implements CommandExecutor{
 							"ranks" => Rank::defaults(),
 							"members" => array(strtolower($issuer->getName()) => Rank::defaults()[0]),
 							"chunks" => [],
-							"base-chunk" => new Chunk($issuer->x / 16, $issuer->z / 16, $issuer->getLevel()->getName()),
+							"base-chunk" => new Chunk((int) $issuer->x / 16, (int) $issuer->z / 16, $issuer->getLevel()->getName()),
 							"whitelist" => false
 						], $id);
 						return "Faction $args[0] created.";
