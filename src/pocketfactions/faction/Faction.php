@@ -124,17 +124,35 @@ class Faction{
 		return $this->baseChunk;
 	}
 	/**
-	 * @param string
+	 * @param string $member
 	 * @return Rank
 	 */
 	public function getMemberRank($member){
-		return $this->members[strtolower($member)];
+		return isset($this->members[strtolower($member)]) ? $this->members[strtolower($member)]:null;
 	}
 	/**
 	 * @return bool
 	 */
 	public function isWhitelisted(){
 		return $this->whitelist;
+	}
+	/**
+	 * @param bool $white
+	 */
+	public function setWhitelisted($white){
+		$this->whitelist = $white;
+	}
+	/**
+	 * @return bool
+	 */
+	public function isOpen(){
+		return !$this->whitelist;
+	}
+	/**
+	 * @param bool $open
+	 */
+	public function setOpen($open){
+		$this->whitelist = !$open;
 	}
 	/**
 	 * @param Player $newMember
@@ -148,6 +166,9 @@ class Faction{
 	public function kick($memberName){
 
 	}
+	/**
+	 * @param Chunk $chunk
+	 */
 	public function claim(Chunk $chunk){
 
 	}

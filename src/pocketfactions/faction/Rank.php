@@ -13,7 +13,9 @@ class Rank{
 	const P_BUILD          = 0b01000000;
 	const P_BUILD_CENTRE  = 0b11000000;
 	const P_KICK_PLAYER   = 0b0100000000;
-	const P_ENTER          = 0b1000000000;
+	const P_ENTER         = 0b01000000000;
+	const P_ENTER_CENTRE = 0b10000000000;
+	const P_SET_MOTTO     = 0b100000000000;
 	const P_ALL = 0xFFFF;
 	public function __construct($id, $name, $perms){
 		$this->id = $id;
@@ -65,10 +67,17 @@ class Rank{
 	public static function defaults(){
 		return [
 			0 => new static(0, "owner", self::P_ALL),
-			1 => new static(1, "member", self::P_ENTER),
+			1 => new static(1, "member", self::P_ENTER, self::P_ENTER_CENTRE),
 			2 => new static(2, "builder", self::P_BUILD),
-			3 => new static(3, "core-builder", self::P_BUILD_CENTRE)
+			3 => new static(3, "core-builder", self::P_BUILD_CENTRE),
+			4 => new static(4, "new-member", self::P_ENTER),
 		];
 		// TODO use config
+	}
+	/**
+	 * @return int default rank internal ID
+	 */
+	public static function defaultRank(){
+		return 4;
 	}
 }

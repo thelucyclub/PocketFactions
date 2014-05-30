@@ -70,7 +70,7 @@ class CmdHandler implements CommandExecutor{
 						}
 						$faction = $this->main->getFList()->getFaction($issuer);
 						if($faction->getMemberRank($issuer->getName())->hasPerm(Rank::P_INVITE)){ // rank check. im not sure what ur going to do. edit this later.
-							return "[PF] You don't have permission to invite a player.";
+							return PCmd::NO_PERM;
 						}
 						// TODO invitation handling
 						break;
@@ -88,11 +88,17 @@ class CmdHandler implements CommandExecutor{
 						}
 						$targetp = $this->server->getOfflinePlayer(array_shift($args));
 						if(!$targetp instanceof Player){
-							return "[PF] Invalid Player Name. ";
+							return PCmd::INVALID_PLAYER;
 						}
 						$faction = $this->main->getFList()->getFaction($issuer);
+						if($faction === null){
+							return PCmd::DB_LOADING;
+						}
+						if($faction === false){
+							return PCmd::NO_FACTION;
+						}
 						if(!$faction->getMemberRank($issuer->getName())->hasPerm(Rank::P_KICK_PLAYER)){
-							return "[PF] You don't have permission to kick a player!";
+							return PCmd::NO_PERM;
 						}
 						// TODO
 						break;
@@ -104,7 +110,31 @@ class CmdHandler implements CommandExecutor{
 					case "sethome":
 						break;
 					case "setopen":
-						break;
+						$bool = strtolower(array_shift($args));
+						if($bool === "true" or $bool === "open" or $bool === "on"){
+							$bool = true;
+						}
+						if($bool === "false" or $bool === "close" or $bool === "closed" or $bool === "not-open" or $bool === "notopen" or $bool === "off"){
+							$bool = false;
+						}
+						if(!is_bool($bool)){
+							return false;
+						}
+						$faction = $this->main->getFList()->getFaction($issuer);
+						if($faction === null){
+							return PCmd::DB_LOADING;
+						}
+						if($faction === false){
+							return PCmd::NO_FACTION;
+						}
+						if(!$faction->getMemberRank($issuer->getName())->hasPerm(Rank::P_SET_WHITE)){
+							return PCmd::NO_PERM;
+						}
+						if($faction->isOpen() === $bool){
+							return "Your faction is already ".($bool ? "opened":"closed")."!";
+						}
+						$faction->setOpen($bool);
+						return "Your faction's open status has been set to ".($bool ? "opened":"closed").".";
 					case "home":
 						break;
 					case "money":
@@ -114,6 +144,16 @@ class CmdHandler implements CommandExecutor{
 					case "disband":
 						break;
 					case "motto":
+						$faction = $this->main->getFList()->getFaction($issuer);
+						if($faction === null){
+							return PCmd::DB_LOADING;
+						}
+						if($faction === false){
+							return PCmd::NO_FACTION;
+						}
+						if(!$faction->getMemberRank($issuer->getName())->hasPerm(Rank::P_SET_MOTTO)){
+							return PCmd::NO_PERM;
+						}
 						$this->main->getFList()->getFaction($issuer)->setMotto(implode(" ", $args));
 						return "Motto set."; // first completed command! :)
 				}

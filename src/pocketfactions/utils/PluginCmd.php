@@ -17,6 +17,9 @@ class PluginCmd extends ParentClass{
 	const TOO_FEW_ARGS = 0b0100;
 	const RUN_CONSOLE = 0b1000;
 	const RUN_IN_GAME = 0b10000;
+	const DB_LOADING = 0b100000;
+	const NO_FACTION = 0b1000000;
+	const INVALID_PLAYER = 0b10000000;
 	/**
 	 * Constructs a new PluginCmd instance.
 	 * @param string $name
@@ -57,7 +60,7 @@ class PluginCmd extends ParentClass{
 				$isr->sendMessage("Incorrect usage. Usage: ".$this->getUsage());
 			}
 			if($result & self::TOO_FEW_ARGS){
-				$isr->sendMessage("Too few arguments given. Usage: ".$this->getUsage());
+				$isr->sendMessage("Not enough arguments are given. Usage: ".$this->getUsage());
 			}
 			if($result & self::RUN_CONSOLE){
 				$isr->sendMessage("This command can only be run on console.");
@@ -65,7 +68,16 @@ class PluginCmd extends ParentClass{
 			if($result & self::RUN_IN_GAME){
 				$isr->sendMessage("Please run this command in-game.");
 			}
-			return false;
+			if($result & self::DB_LOADING){
+				$isr->sendMessage("Sorry, the faction database has not finished loading. Please wait for a while.");
+			}
+			if($result & self::NO_FACTION){
+				$isr->sendMessage("You don't belong to any factions!");
+			}
+			if($result & self::INVALID_PLAYER){
+				$isr->sendMessage("Player not found!");
+			}
+			return true;
 		}
 	}
 	/**

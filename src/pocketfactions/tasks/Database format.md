@@ -16,7 +16,7 @@ The following is a brief of the database format of PocketFactions.
 | Text | `RawString` | A string saved directly | Any strings | The number of characters in the string |
 | Text | `ByteString` | A string saved prefixed with a `byte` of string length | Any strings of not more than 255 characters long | 1 + The number of characters in the string |
 | Text | `ShortString` | A string saved prefixed with a `short` of string length | Any strings of not more than 65535 characters long | 2 + The number of characters in the string |
-| Boolean + Text | `CompoundString` | A string prefixed with a `CompoundByte` of a description of the string and string length | `true` or `false` + Any strings of not more than 127 characters long | 1 + The number of characters in the strsing |
+| Boolean + Text | `CompoundString` | A string prefixed with a `CompoundByte` of a boolean description of the string and string length | `true` or `false` + Any strings of not more than 127 characters long | 1 + The number of characters in the strsing |
 
 ## Format
 ```
