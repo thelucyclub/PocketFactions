@@ -75,7 +75,19 @@ class CmdHandler implements CommandExecutor{
 						$this->main->getReqList()->add(new Request($issuer, $targetp, "Invitation to join faction $faction", "f-inv-$faction"));
 						break;
 					case "join":
-						break;
+						$fname = array_shift($args);
+						$faction = $this->main->getFList()->getFaction($fname);
+						if($faction === null){
+							return PCmd::DB_LOADING;
+						}
+						if($faction === false){
+							return PCmd::INVALID_FACTION;
+						}
+						if(!$faction->isOpen()){
+							return "This faction is whitelisted. Please use /req accpet <invitation id> if you had been invited.";
+						}
+						$success = $faction->join($issuer);
+						return null;
 					case "claim":
 						break;
 					case "unclaim":

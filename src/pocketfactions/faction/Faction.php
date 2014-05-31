@@ -7,13 +7,33 @@ use pocketmine\Player;
 use pocketmine\Server;
 
 class Faction{
-	public static $factions;
+	/**
+	 * @var string $name
+	 */
 	protected $name;
+	/**
+	 * @var string $motto
+	 */
 	protected $motto;
+	/**
+	 * @var int $id
+	 */
 	protected $id;
+	/**
+	 * @var string $founder
+	 */
 	protected $founder;
+	/**
+	 * @var Rank[] $ranks indexed by internal rank IDs
+	 */
 	protected $ranks;
+	/**
+	 * @var int $defaultRank internal rank ID of the default rank
+	 */
 	protected $defaultRank;
+	/**
+	 * @var Rank[] $members use <code>array_keys()</code> to get a plain list of members
+	 */
 	protected $members;
 	protected $chunks;
 	protected $baseChunk;
@@ -156,9 +176,11 @@ class Faction{
 	}
 	/**
 	 * @param Player $newMember
+	 * @return bool $success
 	 */
 	public function join(Player $newMember){
-
+		$this->members[strtolower($newMember->getName())] = $this->getDefaultRank();
+		return true;
 	}
 	/**
 	 * @param string $memberName

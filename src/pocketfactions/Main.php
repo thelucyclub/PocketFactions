@@ -21,6 +21,10 @@ class Main extends Prt implements Listener{
 	const V_INIT = "\x00";
 	const V_CURRENT = "\x00";
 	/**
+	 * @var RequestList $reqList
+	 */
+	private $reqList;
+	/**
 	 * @var CmdHandler
 	 */
 	private $cmdExe;
@@ -53,6 +57,7 @@ class Main extends Prt implements Listener{
 	}
 	protected function initDatabase(){
 		$this->flist = new FactionList;
+		$this->reqList = new RequestList;
 		$this->cleanSave = new Config($this->getDataFolder()."database/data.json", Config::JSON, [
 			"next-fid" => 0
 		]);
@@ -177,6 +182,12 @@ class Main extends Prt implements Listener{
 	 */
 	public function getFList(){
 		return $this->flist;
+	}
+	/**
+	 * @return RequestList
+	 */
+	public function getReqList(){
+		return $this->reqList;
 	}
 	/**
 	 * @return static

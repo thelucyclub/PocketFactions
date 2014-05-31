@@ -20,6 +20,7 @@ class PluginCmd extends ParentClass{
 	const DB_LOADING = 0b100000;
 	const NO_FACTION = 0b1000000;
 	const INVALID_PLAYER = 0b10000000;
+	const INVALID_FACTION = 0b100000000;
 	/**
 	 * Constructs a new PluginCmd instance.
 	 * @param string $name
@@ -76,6 +77,9 @@ class PluginCmd extends ParentClass{
 			}
 			if($result & self::INVALID_PLAYER){
 				$isr->sendMessage("Player not found!");
+			}
+			if($result & self::INVALID_FACTION){
+				$isr->sendMessage("Faction not found!");
 			}
 			return true;
 		}

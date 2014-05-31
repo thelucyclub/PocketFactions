@@ -6,7 +6,7 @@ use pocketfactions\FactionList;
 use pocketfactions\faction\Chunk;
 use pocketfactions\faction\Faction;
 use pocketfactions\faction\Rank;
-
+use pocketfactions\Main;
 use pocketmine\scheduler\AsyncTask;
 
 class ReadDatabaseTask extends AsyncTask{
@@ -26,6 +26,12 @@ class ReadDatabaseTask extends AsyncTask{
 			return;
 		}
 		$version = $this->read($res, 1);
+		if($version !== Main::V_CURRENT){
+			switch($version){
+				case Main::V_INIT:
+					break;
+			}
+		}
 		$total = Bin::readBin($this->read($res, 4));
 		$factions = array();
 		for($i = 0; $i < $total; $i++){
@@ -57,13 +63,13 @@ class ReadDatabaseTask extends AsyncTask{
 			}
 			$defaultRank = $ranks[$defaultRank];
 			/**
-			 * @var Rank[] $members Ranks indexed by member names.
+			 * @var Rank[] $members Ranks indexed by member names, object reference from $ranks (not cloned)
 			 */
 			$members = array();
 			for($i = 0; $i < Bin::readBin($this->read($res, 4)); $i++){
 				$mbName = Bin::readBin($this->read($res, 1));
 				$mbName = $this->read($res, $mbName);
-				$members[$mbName] = $ranks[Bin::readBin($this->read($res, 1))];
+				$members[$mbName] = $ranks[Bin::readBin($this->read($res, 1))]; // not cloned
 			}
 			$chunks = array();
 			for($i = 0; $i < Bin::readBin($this->read($res, 2)); $i++){
@@ -99,7 +105,7 @@ class ReadDatabaseTask extends AsyncTask{
 		if($this->getResult() === self::WIP){
 			$this->setResult(self::COMPLETED);
 		}
-		call_user_func($this->onFInished, $factions, $this);
+		call_user_func($this->onFinished, $factions, $this);
 	}
 	protected function read($res, $length){
 		$string = fread($res, $length);
