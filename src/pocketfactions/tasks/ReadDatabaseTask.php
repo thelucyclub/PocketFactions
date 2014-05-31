@@ -7,11 +7,13 @@ use pocketfactions\faction\Chunk;
 use pocketfactions\faction\Faction;
 use pocketfactions\faction\Rank;
 use pocketfactions\Main;
+use pocketmine\level\Position;
 use pocketmine\scheduler\AsyncTask;
+use pocketmine\Server;
 
 class ReadDatabaseTask extends AsyncTask{
-	const CORRUPTED	= 0;
-	const COMPLETED	= 1;
+	const CORRUPTED	= 1;
+	const COMPLETED	= null;
 	const WIP		= null;
 	public function __construct($res, callable $onFinished){
 		$this->res = $res;
@@ -84,6 +86,20 @@ class ReadDatabaseTask extends AsyncTask{
 				return;
 			}
 			$baseChunk = array_shift($chunks);
+			$x = Bin::readBin($this->read($res, 4)) - 2147483648;
+			$y = Bin::readBin($this->read($res, 2));
+			$z = Bin::readBin($this->read($res, 4)) - 2147483648;
+			$level = Bin::readBin($this->read($res, 1));
+			$level = $this->read($res, $level);
+			$server = Server::getInstance();
+			if(!$server->isLevelLoaded($level)){
+				if(!$server->isLevelGenerated($level)){
+					$server->generateLevel($level, null);
+				}
+				$server->loadLevel($level);
+			}
+			$level = $server->getLevel($level);
+			$home = new Position($x, $y, $z, $level);
 			$factions[$id] = new Faction(array(
 				"name" => $name,
 				"motto" => $motto,
@@ -94,11 +110,11 @@ class ReadDatabaseTask extends AsyncTask{
 				"members" => $members,
 				"chunks" => $chunks,
 				"base-chunk" => $baseChunk,
-				"whitelist" => $whitelist
+				"whitelist" => $whitelist,
+				"home" => $home,
 			));
 		}
-		$length = $this->read($res, strlen(FactionList::MAGIC_S));
-		if($this->read($res, $length) !== FactionList::MAGIC_S){
+		if($this->read($res, strlen(FactionList::MAGIC_S)) !== FactionList::MAGIC_S){
 			$this->setResult(self::CORRUPTED);
 			return;
 		}

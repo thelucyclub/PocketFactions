@@ -40,6 +40,7 @@ class WriteDatabaseTask extends AsyncTask{
 				fwrite($res, Bin::writeByte($rank));
 			}
 			$chunks = $f->getChunks();
+			array_unshift($chunks, $f->getBaseChunk());
 			fwrite($res, Bin::writeShort(count($chunks)));
 			foreach($chunks as $c){
 				fwrite($res, Bin::writeShort($c->getX()));
@@ -47,6 +48,11 @@ class WriteDatabaseTask extends AsyncTask{
 				fwrite($res, Bin::writeByte(strlen($c->getLevel())));
 				fwrite($res, $c->getLevel());
 			}
+			fwrite($res, Bin::writeInt($f->getHome()->getX() + 2147483648));
+			fwrite($res, Bin::writeShort($f->getHome()->getY()));
+			fwrite($res, Bin::writeInt($f->getHome()->getZ() + 2147483648));
+			fwrite($res, Bin::writeByte(strlen($f->getHome()->getLevel()->getName())));
+			fwrite($res, $f->getHome()->getLevel()->getName());
 		}
 		fwrite($res, FactionList::MAGIC_S);
 	}

@@ -32,13 +32,30 @@ class Faction{
 	 */
 	protected $defaultRank;
 	/**
-	 * @var Rank[] $members use <code>array_keys()</code> to get a plain list of members
+	 * This array is a list keyed with lowercase member names and filled with Rank object references to $Faction->ranks.
+	 * Use <code>array_keys()</code> to get a plain list of members.
+	 * @var Rank[] $members
 	 */
 	protected $members;
+	/**
+	 * @var Chunk[] $chunks numerically keyed chunks with undefined order (possibly sequence of claiming)
+	 */
 	protected $chunks;
+	/**
+	 * @var Chunk $baseChunk The base chunk o a faction. TODO should we remove it? Possibly yes.
+	 */
 	protected $baseChunk;
+	/**
+	 * @var \pocketmine\level\Position $home
+	 */
 	protected $home;
+	/**
+	 * @var bool
+	 */
 	protected $whitelist;
+	/**
+	 * @var Server
+	 */
 	public $server;
 	public function __construct(array $args){
 		$this->name = $args["name"];
@@ -49,6 +66,7 @@ class Faction{
 		$this->defaultRank = $args["default-rank"];
 		$this->members = $args["members"];
 		$this->chunks = $args["chunks"];
+		$this->home = $args["home"];
 //		$this->chunks = [];
 //		/** @var Chunk[] $chunks */
 //		$chunks = $args["chunks"];
@@ -74,17 +92,6 @@ class Faction{
 				}
 			}
 		}
-//		if(Server::getInstance()->isLevelLoaded($args["world"])) {
-//	    	$this->world = Server::getInstance()->getLevel($args["world"]);
-//		}
-//		elseif(Server::getInstance()->isLevelGenerated($args["world"])) {
-//			Server::getInstance()->loadLevel($args["world"]);
-//			$this->world = Server::getInstance()->getLevel($args["world"]);
-//			if(!$this->world instanceof Level) {
-//				$this->world = Server::getInstance()->getDefaultLevel();
-//			}
-//		}
-//		$this->home = new Position($args["home"][0], $args["home"][1], $args["home"][2], $this->world);
 	}
 	/**
 	 * @return string
@@ -173,6 +180,12 @@ class Faction{
 	 */
 	public function setOpen($open){
 		$this->whitelist = !$open;
+	}
+	/**
+	 * @return \pocketmine\level\Position
+	 */
+	public function getHome(){
+		return $this->home;
 	}
 	/**
 	 * @param Player $newMember

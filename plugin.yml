@@ -5,3 +5,4 @@ version: 0.0.1
 load: POSTWORLD
 main: pocketfactions\Main
 prefix: PF
+website: https://github.com/LegendOfMCPE/PocketFactions
