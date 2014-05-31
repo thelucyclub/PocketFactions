@@ -63,10 +63,10 @@ class CmdHandler implements CommandExecutor{
 						}
 						$targetp = $this->server->getOfflinePlayer(array_shift($args));
 						if(!($targetp instanceof Player)){
-							return "[PF] Invalid player.";
+							return PCmd::INVALID_PLAYER;
 						}
 						if($this->main->getFList()->getFaction($targetp) === false){
-							return "[PF] You do not belong to any factions!";
+							return PCmd::NO_FACTION;
 						}
 						$faction = $this->main->getFList()->getFaction($issuer);
 						if($faction->getMemberRank($issuer->getName())->hasPerm(Rank::P_INVITE)){ // rank check. im not sure what ur going to do. edit this later.
