@@ -72,7 +72,7 @@ class CmdHandler implements CommandExecutor{
 						if($faction->getMemberRank($issuer->getName())->hasPerm(Rank::P_INVITE)){ // rank check. im not sure what ur going to do. edit this later.
 							return PCmd::NO_PERM;
 						}
-						// TODO invitation handling
+						$this->main->getReqList()->add(new Request($issuer, $targetp, "Invitation to join faction $faction", "f-inv-$faction"));
 						break;
 					case "join":
 						break;

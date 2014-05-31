@@ -175,6 +175,9 @@ class Faction{
 	public function hasChunk(Chunk $chunk){
 
 	}
+	public function __toString(){
+		return $this->getName();
+	}
 	/**
 	 * @return int The next unique faction ID
 	 */

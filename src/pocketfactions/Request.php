@@ -5,10 +5,10 @@ namespace pocketfactions;
 use pocketmine\Player;
 
 class Request{
-	public function __construct(Player $from, Player $to, $name, $strId){
+	public function __construct(Player $from, Player $to, $content, $strId){
 		$this->from = $from;
 		$this->to= $to;
-		$this->name = $name;
+		$this->content = $content;
 		$this->strId = $strId;
 	}
 	public function getTo(){
@@ -16,5 +16,8 @@ class Request{
 	}
 	public function getStrId(){
 		return $this->strId;
+	}
+	public function getContent(){
+		return $this->content;
 	}
 }
