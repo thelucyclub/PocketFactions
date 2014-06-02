@@ -1,0 +1,14 @@
+Plugin name: PocketFactions
+Description:
+Documentation:
+Version string:
+Dependency plugins: none
+Optional plugins: xEcon
+Plugin accesses: manages worlds, commands, data saving, databases, custom threading, items/blocks
+Category: general
+Alternate categories: (all? lol)
+Prefix: no prefix
+Tag line:
+Additional Information URL:
+Alternative Support URL:
+FAQ:
