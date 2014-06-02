@@ -22,7 +22,7 @@ class RequestList implements Listener{
 		$p->sendMessage("You have ".count($data)." unprocessed requests.\nUse /req accept <id>, /req decline <id> to accept/decline; use /req read [id] to read the request(s) again."); // unprocessed is not a good verb. Please, English experts (LDX seems to be one), please optimize this sentence.
 		foreach($data as $k=>$req){
 			$n = 1;
-			$p->sendMessage("Request #".($n++).: ID $k; Content: ".$req->getContent());
+			$p->sendMessage("Request #".($n++).": ID $k; Content: ".$req->getContent());
 		}
 	}
 	public function onPreCmd(PreCmdEvt $evt){
