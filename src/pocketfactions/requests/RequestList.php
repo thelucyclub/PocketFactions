@@ -1,10 +1,12 @@
 <?php
 
-namespace pocketfactions;
+namespace pocketfactions\requests;
 
+use pocketfactions\Main;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerCommandPreprocessEvent as PreCmdEvt;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\Server;
 
 class RequestList implements Listener{
 	/** @var Request[][] */

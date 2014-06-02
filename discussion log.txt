@@ -512,3 +512,93 @@
 [18:58] <PEMapModder_> from unknown sources
 [18:59] <PEMapModder_> yes
 (LegionPE talk hidden)
+(Random talk hidden)
+[19:05] <PEMapModder> sorry crashed again
+[19:05] <iJoshuaHD> ...
+[19:05] <PEMapModder> I just read your "one man army" the last message!
+[19:05] <iJoshuaHD> now im switching stuff lol
+[19:05] <PEMapModder> I am far behind shoghicp of course
+[19:05] <iJoshuaHD> one army coder
+[19:05] <iJoshuaHD> you're one army coder xD
+[19:05] <PEMapModder> at least I only know java and js and php
+[19:05] <PEMapModder> and a little command line things
+[19:06] <iJoshuaHD> do u know how to store stuffs in a database mysql?
+[19:06] <PEMapModder> neither
+[19:06] <PEMapModder> I don't know about MySQL and SQLite3
+[19:06] <iJoshuaHD> i want this to learn
+[19:06] <PEMapModder> I love designing my own databases better :D
+[19:06] <iJoshuaHD> but hostingitall owner gave me his $250 worth custom plugin he let freelancers made for him
+[19:07] <iJoshuaHD> its a login system conencting to database
+[19:07] <iJoshuaHD> remote database
+[19:07] <iJoshuaHD> i ask him to give me a piece to explore more so he did
+[19:07] <PEMapModder> anyway
+[19:07] <PEMapModder> where were we?
+[19:07] <iJoshuaHD> if u want, i can share u that
+[19:07] <PEMapModder> no thanks
+[19:08] <PEMapModder> I don't understand those network + SQLite3 things
+[19:08] <iJoshuaHD> we are talking about u pushed a commit
+[19:08] <PEMapModder> and earlier?
+[19:08] <PEMapModder> oh
+[19:08] <PEMapModder> dependencies
+[19:08] <PEMapModder> about LegionPE
+[19:08] <PEMapModder> I mean
+[19:08] <PEMapModder> about xEcon
+[19:08] <iJoshuaHD> yea?
+[19:09] <PEMapModder> so let's make xEcon "hard" dependency
+[19:09] <PEMapModder> so when argument 1 for claiming chunks is not reached
+[19:09] <iJoshuaHD> is the xEcon not going to be rewritten?
+[19:09] <PEMapModder> do you think
+[19:09] <PEMapModder> IDK
+[19:09] <PEMapModder> xEcon is now as blank as nothing to me
+[19:09] <iJoshuaHD> just dont
+[19:10] <iJoshuaHD> pls
+[19:10] <PEMapModder> I don't understand what I wrote
+[19:10] <PEMapModder> I frgot
+[19:10] <PEMapModder> ok
+[19:10] <PEMapModder> https://github.com/LegendOfMCPE/PocketFactions/blob/master/discussion%20log.txt
+[19:10] <iJoshuaHD> ok
+[19:11] <PEMapModder> how are chunks sieged?
+[19:11] <PEMapModder> I mean
+[19:11] <iJoshuaHD> sieged?
+[19:11] <PEMapModder> if a faction has 10 claimed chunks
+[19:11] <iJoshuaHD> ill google that word
+[19:11] <PEMapModder> but its power only allows claiming 9.3 chunks (e.g.)
+[19:11] <PEMapModder> then one of its chunks is overdraft
+[19:12] <PEMapModder> and it can be sieged
+[19:12] <iJoshuaHD> ahh
+[19:12] <PEMapModder> do you agree about this?
+[19:12] <iJoshuaHD> sieged is a bad idea
+[19:12] <iJoshuaHD> i dont like it
+[19:12] <PEMapModder> then
+[19:13] <PEMapModder> what happens when a faction overdrafts?
+[19:13] <iJoshuaHD> why did u add legionpe talk hidden at the end of the conversation in a commit -_-
+[19:13] <PEMapModder> well
+[19:13] <PEMapModder> conincidence
+[19:14] <PEMapModder> then [19:13] <PEMapModder> what happens when a faction overdrafts?
+[19:14] <iJoshuaHD> being to honest is too risky xD
+[19:14] <iJoshuaHD> overdrafts ...
+[19:14] <iJoshuaHD> loose that area i guess
+[19:14] <PEMapModder> but WHICH area?
+[19:14] <iJoshuaHD> the attacker's choice
+[19:14] <PEMapModder> so
+[19:14] <PEMapModder> the attacker
+[19:14] <iJoshuaHD> borderline of the faction
+[19:14] <PEMapModder> although the word is different
+[19:14] <iJoshuaHD> the margin u said
+[19:15] <PEMapModder> although you don't call it siege
+[19:15] <PEMapModder> it is still the same
+[19:15] <PEMapModder> someone attack and claim the chunk their own
+[19:15] <PEMapModder> but how?
+[19:15] <PEMapModder> you just can't say
+[19:15] <iJoshuaHD> thats so complicated
+[19:15] <iJoshuaHD> xD
+[19:16] <PEMapModder> a random player is the first one to go in and his faction is brand new and can claim one more chunk so the overdraft chunk is his
+[19:16] <iJoshuaHD> dont add overdraft then
+[19:17] <PEMapModder> what do you think if
+[19:17] <PEMapModder> someone needs to be in the faction
+[19:17] <iJoshuaHD> u wont take dinner?
+[19:17] <PEMapModder> to guard the overdraft chunk
+[19:17] <PEMapModder> well
+[19:17] <iJoshuaHD> its 7:20pm xD
+[19:17] <PEMapModder> 19:17 pm xD
+[19:17] <PEMapModder> I usually dine at 20:30

@@ -1,6 +1,6 @@
 <?php
 
-namespace pocketfactions;
+namespace pocketfactions\requests;
 
 use pocketmine\Player;
 
