@@ -16,6 +16,7 @@ class Rank{
 	const P_ENTER         = 0b01000000000;
 	const P_ENTER_CENTRE = 0b10000000000;
 	const P_SET_MOTTO     = 0b100000000000;
+	const P_TP_HOME        = 0b1000000000000;
 	const P_ALL = 0xFFFF;
 	public function __construct($id, $name, $perms){
 		$this->id = $id;

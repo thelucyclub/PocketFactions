@@ -2,8 +2,8 @@ Plugin name: PocketFactions
 Description:
 Documentation:
 Version string:
-Dependency plugins: none
-Optional plugins: xEcon
+Dependency plugins: xEcon
+Optional plugins: SimpleAuth
 Plugin accesses: manages worlds, commands, data saving, databases, custom threading, items/blocks
 Category: general
 Alternate categories: (all? lol)
