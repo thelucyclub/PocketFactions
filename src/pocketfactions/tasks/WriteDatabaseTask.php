@@ -56,5 +56,6 @@ class WriteDatabaseTask extends AsyncTask{
 			fwrite($res, $f->getHome()->getLevel()->getName());
 		}
 		fwrite($res, FactionList::MAGIC_S);
+		fclose($res);
 	}
 }

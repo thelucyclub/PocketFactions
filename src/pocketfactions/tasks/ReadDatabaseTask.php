@@ -123,6 +123,7 @@ class ReadDatabaseTask extends AsyncTask{
 		if($this->getResult() === self::WIP){
 			$this->setResult(self::COMPLETED);
 		}
+		fclose($res);
 		call_user_func($this->onFinished, $factions, $this);
 	}
 	protected function read($res, $length){
