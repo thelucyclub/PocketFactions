@@ -16,7 +16,7 @@ abstract class Bin{
 	public static function writeInt($int){
 		$int &= 0xFFFFFFFF;
 		$output = "";
-		$output .= chr(($int & 0xFF000000) >> 32);
+		$output .= chr(($int & 0xFF000000) >> 24);
 		$output .= chr(($int & 0x00FF0000) >> 16);
 		$output .= chr(($int & 0x0000FF00) >> 8);
 		$output .= chr($int & 0x000000FF);
