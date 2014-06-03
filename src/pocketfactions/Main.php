@@ -2,8 +2,10 @@
 
 namespace pocketfactions;
 
+use pocketfactions\faction\Faction;
 use pocketfactions\utils\PluginCmd as PCmd;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\Server;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
@@ -44,6 +46,10 @@ class Main extends Prt implements Listener{
 	 * @var FactionList
 	 */
 	private $flist;
+	/**
+	 * @var bool[] (all elements should be true)
+	 */
+	private $loggedIn = array();
 	public function onEnable(){
 		console(Font::AQUA."Initializing", false, 1);
 		$this->initDatabase();
@@ -164,6 +170,25 @@ class Main extends Prt implements Listener{
 	 */
 	public function getFactionsFilePath(){
 		return $this->getDataFolder()."factions.dat";
+	}
+	public function onLogin(PlayerJoinEvent $evt){
+		$f = $this->getFList()->getFaction($evt->getPlayer());
+		if(!($f instanceof Faction)){
+			return;
+		}
+		$f->setActiveNow();
+		$this->loggedIn[$evt->getPlayer()->CID] = true;
+	}
+	public function onQuit(PlayerQuitEvent $evt){
+		$cid = $evt->getPlayer()->CID;
+		if(isset($this->loggedIn[$cid]) and $this->loggedIn[$cid] === true){
+			$this->loggedIn[$cid] = false;
+			unset($this->loggedIn[$cid]);
+			$f = $this->getFList()->getFaction($evt->getPlayer());
+			if($f instanceof Faction){
+				$f->setActiveNow();
+			}
+		}
 	}
 	/**
 	 * @return Config

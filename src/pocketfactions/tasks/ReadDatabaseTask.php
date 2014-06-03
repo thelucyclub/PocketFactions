@@ -73,6 +73,7 @@ class ReadDatabaseTask extends AsyncTask{
 				$mbName = $this->read($res, $mbName);
 				$members[$mbName] = $ranks[Bin::readBin($this->read($res, 1))]; // not cloned
 			}
+			$lastActive = Bin::readBin($this->read($res, 8));
 			$chunks = array();
 			for($i = 0; $i < Bin::readBin($this->read($res, 2)); $i++){
 				$X = Bin::readBin($this->read($res, 2));
@@ -108,6 +109,7 @@ class ReadDatabaseTask extends AsyncTask{
 				"ranks" => $ranks,
 				"default-rank" => $defaultRank,
 				"members" => $members,
+				"last-active" => $lastActive,
 				"chunks" => $chunks,
 				"base-chunk" => $baseChunk,
 				"whitelist" => $whitelist,

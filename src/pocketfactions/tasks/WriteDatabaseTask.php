@@ -39,6 +39,7 @@ class WriteDatabaseTask extends AsyncTask{
 				fwrite($res, $name);
 				fwrite($res, Bin::writeByte($rank));
 			}
+			fwrite($res, Bin::writeLong($f->getLastActive()));
 			$chunks = $f->getChunks();
 			array_unshift($chunks, $f->getBaseChunk());
 			fwrite($res, Bin::writeShort(count($chunks)));

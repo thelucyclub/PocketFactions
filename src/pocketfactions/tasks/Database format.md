@@ -40,6 +40,7 @@ int Count of saved factions
     -> for each member:
         ByteString Lowercase name of the member
         byte Internal ID of the rank of the member
+    long last active timestamp
     short Number of chunks claimed by the faction
     -> for each chunk: (the base chunk is the first chunk shifted)
         short The X-index of the claimed chunk in the world

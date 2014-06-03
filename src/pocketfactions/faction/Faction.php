@@ -38,6 +38,10 @@ class Faction{
 	 */
 	protected $members;
 	/**
+	 * @var  int $lastActive
+	 */
+	protected $lastActive;
+	/**
 	 * @var Chunk[] $chunks numerically keyed chunks with undefined order (possibly sequence of claiming)
 	 */
 	protected $chunks;
@@ -65,6 +69,7 @@ class Faction{
 		$this->ranks = $args["ranks"];
 		$this->defaultRank = $args["default-rank"];
 		$this->members = $args["members"];
+		$this->lastActive = $args["last-active"];
 		$this->chunks = $args["chunks"];
 		$this->home = $args["home"];
 //		$this->chunks = [];
@@ -186,6 +191,15 @@ class Faction{
 	 */
 	public function getHome(){
 		return $this->home;
+	}
+	/**
+	 * @return int
+	 */
+	public function getLastActive(){
+		return $this->lastActive;
+	}
+	public function setActiveNow(){
+		$this->lastActive = time();
 	}
 	/**
 	 * @param Player $newMember
