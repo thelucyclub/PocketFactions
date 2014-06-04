@@ -3,10 +3,12 @@
 namespace pocketfactions\faction;
 
 use pocketfactions\Main;
+use pocketmine\inventory\InventoryHolder;
 use pocketmine\Player;
 use pocketmine\Server;
+use xecon\account\DummyInventory;
 
-class Faction{
+class Faction implements InventoryHolder{
 	/**
 	 * @var string $name
 	 */
@@ -58,6 +60,10 @@ class Faction{
 	 */
 	protected $whitelist;
 	/**
+	 * @var FactionEntity
+	 */
+	protected $econEnt;
+	/**
 	 * @var Server
 	 */
 	public $server;
@@ -83,6 +89,7 @@ class Faction{
 //		}
 		$this->baseChunk = $args["base-chunk"];
 		$this->whitelist = $args["whitelist"];
+		$this->econEnt = new FactionEntity($this);
 		$this->server = Server::getInstance();
 		$levels = [];
 		foreach($this->chunks as $chunk){
@@ -97,6 +104,9 @@ class Faction{
 				}
 			}
 		}
+	}
+	public function getEconomicEntity(){
+		return $this->entity;
 	}
 	/**
 	 * @return string
@@ -219,10 +229,30 @@ class Faction{
 	 * @param Chunk $chunk
 	 */
 	public function claim(Chunk $chunk){
-
+		if(count($this->chunks) + 1 > $this->powerClaimable()){
+			return false;
+		}
+		$this->chunks[] = $chunk;
+		return true;
 	}
 	public function hasChunk(Chunk $chunk){
+		foreach($this->chunks as $chunk){
+			if($chunk->equals($chunk)){
+				return true;
+			}
+		}
+		return false;
+	}
+	public function powerClaimable(){
+		$power = $this->getPower();
+	}
+	public function getPower(){
+		foreach($this->members as $mbr){
 
+		}
+	}
+	public function getInventory(){
+		return new DummyInventory($this, "Faction Account"); // TODO replace the dummy placeholder
 	}
 	public function __toString(){
 		return $this->getName();

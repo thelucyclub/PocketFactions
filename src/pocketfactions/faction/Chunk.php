@@ -26,4 +26,7 @@ class Chunk{
 	public function getWorld(){
 		return $this->getLevel();
 	}
+	public function equals(self $that){
+		return $this->X === $that->X and $this->Z === $that->Z and $this->level = $that->level;
+	}
 }

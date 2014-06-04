@@ -18,22 +18,16 @@ class FactionEntity extends Entity{
 	public function __construct(Faction $faction){
 		$this->faction = $faction;
 	}
-	public function sendMessage($msg){
-		// TODO find the faction member(s) of the highest authority to send this to
+	public function getName(){
+		return "FactionEntity";
 	}
-	public function getAbsName(){
-		return "pocketfaction-faction-".$this->getFaction()->getName();
+	public function getAbsolutePrefix(){
+		return "PCFT_FACTION_ENT";
 	}
-	public function getFaction(){
-		return $this->faction;
+	public function getClass(){
+		return "pocketfactions\\faction\\FactionEntity";
 	}
-	public function onMoneyAdded(){
-		return true; // TODO
-	}
-	public function getMoneyInventory(){
-		// TODO return a chest at the base chunk
-	}
-	protected static function getAbsEntityType(){
-		return "PocketFactionEnt";
+	public function initDefaultAccounts(){
+		$this->addAccount("Cash", 400);
 	}
 }
