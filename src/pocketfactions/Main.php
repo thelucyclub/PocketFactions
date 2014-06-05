@@ -3,14 +3,17 @@
 namespace pocketfactions;
 
 use pocketfactions\faction\Faction;
+use pocketfactions\faction\Rank;
+use pocketfactions\requests\RequestList;
 use pocketfactions\utils\PluginCmd as PCmd;
-use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\event\player\PlayerQuitEvent;
+use pocketfactions\utils\FactionList;
+
 use pocketmine\Server;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
+use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\permission\Permission;
 use pocketmine\permission\DefaultPermissions;
 use pocketmine\plugin\PluginBase as Prt;
@@ -47,6 +50,7 @@ class Main extends Prt implements Listener{
 	 * @var FactionList
 	 */
 	private $flist;
+	private $playerDb;
 	/**
 	 * @var bool[] (all elements should be true)
 	 */
@@ -165,6 +169,13 @@ class Main extends Prt implements Listener{
 	 */
 	public function onBlockTouch(PlayerInteractEvent $evt){
 		$f = $this->getFList()->getFaction($evt->getPlayer());
+		if($f instanceof Faction){
+			if(!$f->getMemberRank($evt->getPlayer()->getName())->hasPerm(Rank::P_BUILD)){
+				$evt->setCancelled(true);
+				$evt->getPlayer()->sendMessage("You don't have permission to build here!");
+				return;
+			}
+		}
 	}
 	/**
 	 * @return string
@@ -208,6 +219,9 @@ class Main extends Prt implements Listener{
 	 */
 	public function getFList(){
 		return $this->flist;
+	}
+	public function getPlayerDb(){
+		return $this->playerDb;
 	}
 	/**
 	 * @return RequestList

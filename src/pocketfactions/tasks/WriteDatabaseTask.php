@@ -2,7 +2,7 @@
 
 namespace pocketfactions\tasks;
 
-use pocketfactions\FactionList;
+use pocketfactions\utils\FactionList;
 use pocketfactions\Main;
 use pocketmine\scheduler\AsyncTask;
 
@@ -54,6 +54,13 @@ class WriteDatabaseTask extends AsyncTask{
 			fwrite($res, Bin::writeInt($f->getHome()->getZ() + 2147483648));
 			fwrite($res, Bin::writeByte(strlen($f->getHome()->getLevel()->getName())));
 			fwrite($res, $f->getHome()->getLevel()->getName());
+		}
+		$states = Main::get()->getFList()->getFactionsStates();
+		fwrite($res, Bin::writeLong(count($states)));
+		foreach($states as $state){
+			fwrite($res, Bin::writeInt($state->getF0()->getID()));
+			fwrite($res, Bin::writeInt($state->getF1()->getID()));
+			fwrite($res, Bin::writeByte($state->getState()));
 		}
 		fwrite($res, FactionList::MAGIC_S);
 		fclose($res);

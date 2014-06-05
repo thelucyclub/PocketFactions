@@ -2,7 +2,8 @@
 
 namespace pocketfactions\tasks;
 
-use pocketfactions\FactionList;
+use pocketfactions\faction\State;
+use pocketfactions\utils\FactionList;
 use pocketfactions\faction\Chunk;
 use pocketfactions\faction\Faction;
 use pocketfactions\faction\Rank;
@@ -15,9 +16,10 @@ class ReadDatabaseTask extends AsyncTask{
 	const CORRUPTED	= 1;
 	const COMPLETED	= null;
 	const WIP		= null;
-	public function __construct($res, callable $onFinished){
+	public function __construct($res, callable $onFinished, callable $statesSetter){
 		$this->res = $res;
 		$this->onFinished = $onFinished;
+		$this->statesSetter = $statesSetter;
 	}
 	public function onRun(){
 		$res = $this->res;
@@ -116,6 +118,13 @@ class ReadDatabaseTask extends AsyncTask{
 				"home" => $home,
 			));
 		}
+		$states = [];
+		for($i = 0; $i < Bin::readBin($this->read($res, 8)); $i++){
+			$f0 = Bin::readBin($this->read($res, 4));
+			$f1 = Bin::readBin($this->read($res, 4));
+			$state = Bin::readBin($this->read($res, 1));
+			$states[] = new State($factions[$f0], $factions[$f1], $state);
+		}
 		if($this->read($res, strlen(FactionList::MAGIC_S)) !== FactionList::MAGIC_S){
 			$this->setResult(self::CORRUPTED);
 			return;
@@ -124,6 +133,7 @@ class ReadDatabaseTask extends AsyncTask{
 			$this->setResult(self::COMPLETED);
 		}
 		fclose($res);
+		call_user_func($this->statesSetter, $states);
 		call_user_func($this->onFinished, $factions, $this);
 	}
 	protected function read($res, $length){

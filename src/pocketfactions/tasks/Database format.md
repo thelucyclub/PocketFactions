@@ -46,7 +46,12 @@ int Count of saved factions
         short The X-index of the claimed chunk in the world
         short The Z-index of the claimed chunk in the world
         ByteString The world name of the chunk
-     Position The home position
+    Position The home position
+long number of faction relationships
+    -> for each faction relationship:
+        int ID of faction 0 in the relationship
+        int ID of faction 1 in the relationship
+        byte state
 RawString MAGIC SUFFIX at \pocketfactions\Main::MAGIC_S (16 bytes long)
 ```
 

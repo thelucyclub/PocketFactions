@@ -1,11 +1,14 @@
 <?php
 
-namespace pocketfactions;
+namespace pocketfactions\utils;
 
+use pocketfactions\faction\State;
+use pocketfactions\Main;
 use pocketfactions\faction\Chunk;
 use pocketfactions\faction\Faction;
 use pocketfactions\tasks\ReadDatabaseTask;
 use pocketfactions\tasks\WriteDatabaseTask;
+
 use pocketmine\IPlayer;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
@@ -16,11 +19,15 @@ class FactionList{
 	/**
 	 * @var bool|Faction[]
 	 */
-	public $factions = false;
+	private $factions = false;
 	/**
 	 * @var null|AsyncTask
 	 */
 	public $currentAsyncTask = null;
+	/**
+	 * @var State[]
+	 */
+	private $states = [];
 	public function __construct(){
 		$this->path = Main::get()->getFactionsFilePath();
 		$this->server = Server::getInstance();
@@ -33,7 +40,7 @@ class FactionList{
 	 * @param resource $res
 	 */
 	public function loadFrom($res){
-		$this->scheduleAsyncTask(new ReadDatabaseTask($res, array($this, "setAll")));
+		$this->scheduleAsyncTask(new ReadDatabaseTask($res, array($this, "setAll"), array($this, "setFactionsStates")));
 	}
 	public function save(){
 		$this->saveTo(fopen($this->path, "wb"));
@@ -106,5 +113,25 @@ class FactionList{
 	}
 	public function addFaction(array $args, $id){
 		$this->factions[$id] = new Faction($args);
+	}
+	public function getFactionsState(Faction $f0, Faction $f1){
+		return $this->states[$f0->getID()."-".$f1->getID()];
+	}
+	public function setFactionsState(State $state){
+		$this->states[$state->getF0()->getID()."-".$state->getF1()->getID()] = $state;
+	}
+	/**
+	 * @param State[] $states
+	 */
+	public function setFactionsStates(array $states){
+		foreach($states as $state){
+			$this->setFactionsState($state);
+		}
+	}
+	/**
+	 * @return State[]
+	 */
+	public function getFactionsStates(){
+		return $this->states;
 	}
 }

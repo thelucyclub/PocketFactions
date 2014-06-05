@@ -2,6 +2,8 @@
 
 namespace pocketfactions\faction;
 
+use pocketfactions\Main;
+
 class Rank{
 	const P_NONE = 0;
 	const P_CLAIM         = 0b01;
@@ -80,5 +82,8 @@ class Rank{
 	 */
 	public static function defaultRank(){
 		return 4;
+	}
+	public static function getFactionsInterrank(Faction $f0, Faction $f1){
+		$state = Main::get()->getFList()->getFactionsState($f0, $f1);
 	}
 }

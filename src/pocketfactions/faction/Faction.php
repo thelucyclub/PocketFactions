@@ -248,6 +248,7 @@ class Faction implements InventoryHolder{
 	}
 	public function getPower(){
 		foreach($this->members as $mbr){
+			$data = Main::get()->getPlayerDb();
 
 		}
 	}
