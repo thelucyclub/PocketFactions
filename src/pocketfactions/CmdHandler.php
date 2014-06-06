@@ -42,13 +42,13 @@ class CmdHandler implements CommandExecutor{
 						if(preg_replace("#[A-Za-z0-9\\-_]{".$min.",".$max."}#i", "", $args[0]) !== ""){
 							return "[PF] The faction name is too long!\n".
 								"[PF] The faction name must be alphanumeric\n    ".
-								"and optionally with hyphens and underscores\n    ".
-								"in not less than $min characters and not more than $max characters.";
+								"[PF] and optionally with hyphens and underscores\n    ".
+								"[PF] in not less than $min characters and not more than $max characters.";
 						}
 						$id = Faction::nextID();
 						$this->main->getFList()->addFaction([
 							"name" => $args[0],
-							"motto" => "",
+							"motto" => "Your Faction Motto. /f motto",
 							"id" => $id,
 							"founder" => strtolower($issuer->getName()),
 							"ranks" => Rank::defaults(),
@@ -57,7 +57,7 @@ class CmdHandler implements CommandExecutor{
 							"base-chunk" => new Chunk((int) $issuer->x / 16, (int) $issuer->z / 16, $issuer->getLevel()->getName()),
 							"whitelist" => false
 						], $id);
-						return "Faction $args[0] created.";
+						return "[PF] Faction $args[0] created.";
 					case "invite":
 						if(count($args)!=1){
 							return "Usage: /f invite <target-player>";
@@ -85,7 +85,7 @@ class CmdHandler implements CommandExecutor{
 							return PCmd::INVALID_FACTION;
 						}
 						if(!$faction->isOpen()){
-							return "This faction is whitelisted. Please use /req accpet <invitation id> if you had been invited.";
+							return "[PF] This faction is whitelisted.\n[PF] Please use /f accept <invitation id>\n[PF] if you had been invited."; //why cant you use /f instead? Same thing anyways.
 						}
 						$success = $faction->join($issuer);
 						return null;
@@ -144,10 +144,10 @@ class CmdHandler implements CommandExecutor{
 							return PCmd::NO_PERM;
 						}
 						if($faction->isOpen() === $bool){
-							return "Your faction is already ".($bool ? "opened":"closed")."!";
+							return "[PF] Your faction is already ".($bool ? "opened":"closed")."!";
 						}
 						$faction->setOpen($bool);
-						return "Your faction's open status has been set to ".($bool ? "opened":"closed").".";
+						return "[PF] Your faction's open status has been set to ".($bool ? "opened":"closed").".";
 					case "home":
 						break;
 					case "money":
@@ -168,7 +168,7 @@ class CmdHandler implements CommandExecutor{
 							return PCmd::NO_PERM;
 						}
 						$this->main->getFList()->getFaction($issuer)->setMotto(implode(" ", $args));
-						return "Motto set."; // first completed command! :)
+						return "[PF] Motto set."; // first completed command! :)
 				}
 				break;
 		}
@@ -183,9 +183,9 @@ class CmdHandler implements CommandExecutor{
 				$output .= "-=[ Pocket Faction Commands (P.1/3) ]=-\n";
 				$output .= "/f create - Create a Faction.\n";
 				$output .= "/f invite - Invite someone in your Faction.\n";
-				$output .= "/f accept - Accept Faction Invitation.\n";
-				$output .= "/f decline - Decline Faction Invitation.\n";
 				$output .= "/f join - Join public Faction.\n";
+				$output .= "/f accept <invitation id>\n";
+				$output .= "/f decline <invitation id>\n";
 				break;
 			case 2:
 				$output .= "-=[ Pocket Faction Commands (P.2/3) ]=-\n";
