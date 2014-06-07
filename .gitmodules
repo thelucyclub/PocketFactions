@@ -1,0 +1,4 @@
+[submodule "src/legendofmcpe/utils"]
+	path = src/legendofmcpe/utils
+	url = https://github.com/LegendOfMCPE/Utils.git
+	branch = master
