@@ -15,7 +15,8 @@ function debug($msg, $level = 2){
 function print_var($var, $return = true){
 	$info = \print_r($var, true);
 	if(is_resource($var)){
-		return false;
+		trigger_error("Trying to print variable $var, rejected due to it is a resource");
+		return;
 	}
 	if($return){
 		return $info;

@@ -189,10 +189,10 @@ class Main extends Prt implements Listener{
 			return;
 		}
 		$f->setActiveNow();
-		$this->loggedIn[$evt->getPlayer()->CID] = true;
+		$this->loggedIn[$evt->getPlayer()->getID()] = true;
 	}
 	public function onQuit(PlayerQuitEvent $evt){
-		$cid = $evt->getPlayer()->CID;
+		$cid = $evt->getPlayer()->getID();
 		if(isset($this->loggedIn[$cid]) and $this->loggedIn[$cid] === true){
 			$this->loggedIn[$cid] = false;
 			unset($this->loggedIn[$cid]);

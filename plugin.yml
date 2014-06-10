@@ -6,5 +6,5 @@ load: POSTWORLD
 main: pocketfactions\Main
 prefix: PF
 website: https://github.com/LegendOfMCPE/PocketFactions
-depend: xEcon
+depend: [xEcon, StatsCore]
 softdepend: SimpleAuth

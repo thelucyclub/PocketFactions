@@ -7,8 +7,10 @@ use pocketmine\inventory\InventoryHolder;
 use pocketmine\Player;
 use pocketmine\Server;
 use xecon\account\DummyInventory;
+use xecon\entity\Entity;
 
 class Faction implements InventoryHolder{
+	use Entity;
 	/**
 	 * @var string $name
 	 */
@@ -106,7 +108,7 @@ class Faction implements InventoryHolder{
 		}
 	}
 	public function getEconomicEntity(){
-		return $this->entity;
+		return $this;
 	}
 	/**
 	 * @return string
@@ -227,6 +229,7 @@ class Faction implements InventoryHolder{
 	}
 	/**
 	 * @param Chunk $chunk
+	 * @return bool
 	 */
 	public function claim(Chunk $chunk){
 		if(count($this->chunks) + 1 > $this->powerClaimable()){
@@ -257,6 +260,16 @@ class Faction implements InventoryHolder{
 	}
 	public function __toString(){
 		return $this->getName();
+	}
+	public function sendMessage($message){
+
+		return null;
+	}
+	public function initDefaultAccounts(){
+		$this->addAccount("Cash", 500);
+	}
+	public function getAbsolutePrefix(){
+		return "PocketFactions>>";
 	}
 	/**
 	 * @return int The next unique faction ID
