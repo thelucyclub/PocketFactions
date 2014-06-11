@@ -4,7 +4,6 @@ namespace pocketfactions;
 
 use pocketfactions\faction\Faction;
 use pocketfactions\faction\Rank;
-use pocketfactions\requests\RequestList;
 use pocketfactions\utils\PluginCmd as PCmd;
 use pocketfactions\utils\FactionList;
 

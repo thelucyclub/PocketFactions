@@ -5,7 +5,6 @@ namespace pocketfactions;
 use pocketfactions\faction\Chunk;
 use pocketfactions\faction\Rank;
 use pocketfactions\faction\Faction;
-use pocketfactions\requests\Request;
 use pocketfactions\utils\PluginCmd as PCmd;
 
 use pocketmine\command\Command;
@@ -73,7 +72,7 @@ class CmdHandler implements CommandExecutor{
 						if($faction->getMemberRank($issuer->getName())->hasPerm(Rank::P_INVITE)){ // rank check. im not sure what ur going to do. edit this later.
 							return PCmd::NO_PERM;
 						}
-						$this->main->getReqList()->add(new Request($issuer, $targetp, "Invitation to join faction $faction", "f-inv-$faction"));
+//						$this->main->getReqList()->add(new Request($issuer, $targetp, "Invitation to join faction $faction", "f-inv-$faction")); // TODO StatsCore request list
 						break;
 					case "join":
 						$fname = array_shift($args);

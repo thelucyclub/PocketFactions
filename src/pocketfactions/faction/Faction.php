@@ -2,6 +2,7 @@
 
 namespace pocketfactions\faction;
 
+use legendofmcpe\statscore\Requestable;
 use pocketfactions\Main;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\Player;
@@ -9,7 +10,7 @@ use pocketmine\Server;
 use xecon\account\DummyInventory;
 use xecon\entity\Entity;
 
-class Faction implements InventoryHolder{
+class Faction implements InventoryHolder, Requestable{
 	use Entity;
 	/**
 	 * @var string $name
@@ -270,6 +271,9 @@ class Faction implements InventoryHolder{
 	}
 	public function getAbsolutePrefix(){
 		return "PocketFactions>>";
+	}
+	public function isAvailable(){
+		return true; // TODO
 	}
 	/**
 	 * @return int The next unique faction ID
