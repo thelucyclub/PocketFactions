@@ -1,6 +1,4 @@
 Plugin name: PocketFactions
-Description:
-Documentation:
 Version string:
 Dependency plugins: xEcon, StatsCore
 Optional plugins: SimpleAuth
@@ -10,8 +8,13 @@ Alternate categories: Database, Date saving, config
 Prefix: no prefix
 Tag line: Let players protect their bases from raids! You don't need any
 Additional Information URL:
-Alternative Support URL:
+Alternative Support URL: https://github.com/LegendOfMCPE/PocketFactions/issues
 FAQ:
 Q What do the things in the config mean?
 A The config comments/remarks already explained the keys. If you still don't understand, read the documentation.
+
+Description:
+See [this](Description.md)
+
 Documentation:
+See [this](Documentation.md)

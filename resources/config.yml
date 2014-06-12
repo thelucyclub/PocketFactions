@@ -62,7 +62,7 @@ promotion fee: 0
 demotion fee: 0
 
 ############
-## GAMING ##
+## GAMEPLAY ##
 ############
 ## When a faction's power drops too low that no more chunks can be claimed, and in fact its power would not allow it to claim so many chunks, "power overdraft" occurs.
 # When sieging is enabled, if a faction has power overdraft, other factions can siege any marginary chunks of the faction by walking in the chunk centre and claim the chunk like from wilderness.
