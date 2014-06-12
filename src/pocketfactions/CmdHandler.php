@@ -87,6 +87,12 @@ class CmdHandler implements CommandExecutor{
 							return "[PF] This faction is whitelisted.\n[PF] Please use /f accept <invitation id>\n[PF] if you had been invited."; //why cant you use /f instead? Same thing anyways.
 						}
 						$success = $faction->join($issuer);
+						if($success === true){
+							$issuer->sendMessage("You have successfully joined $faction!");
+						}
+						else{
+							$issuer->sendMessage("You cannot join $faction. Reason: $success");
+						}
 						return null;
 					case "claim":
 						break;

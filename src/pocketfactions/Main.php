@@ -67,13 +67,10 @@ class Main extends Prt implements Listener{
 	}
 	protected function initDatabase(){
 		$this->flist = new FactionList;
-		$this->reqList = new RequestList;
 		$this->cleanSave = new Config($this->getDataFolder()."database/data.json", Config::JSON, [
 			"next-fid" => 0
 		]);
-		$this->userConfig = new Config($this->getDataFolder()."config.yml", Config::YAML, [
-			"level generation default seed (leave as null for random)" => null,
-		]);
+		$this->saveDefaultConfig();
 	}
 	protected function registerPerms(){
 		$me = strtolower(self::NAME);
@@ -211,7 +208,7 @@ class Main extends Prt implements Listener{
 	 * @return Config
 	 */
 	public function getUserConfig(){
-		return $this->userConfig;
+		return parent::getConfig();
 	}
 	/**
 	 * @return FactionList

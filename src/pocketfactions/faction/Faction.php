@@ -3,6 +3,7 @@
 namespace pocketfactions\faction;
 
 use legendofmcpe\statscore\Requestable;
+use legendofmcpe\statscore\StatsCore;
 use pocketfactions\Main;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\Player;
@@ -216,7 +217,7 @@ class Faction implements InventoryHolder, Requestable{
 	}
 	/**
 	 * @param Player $newMember
-	 * @return bool $success
+	 * @return bool|string $success <code>true</code> or reason that cannot join
 	 */
 	public function join(Player $newMember){
 		$this->members[strtolower($newMember->getName())] = $this->getDefaultRank();
@@ -240,8 +241,8 @@ class Faction implements InventoryHolder, Requestable{
 		return true;
 	}
 	public function hasChunk(Chunk $chunk){
-		foreach($this->chunks as $chunk){
-			if($chunk->equals($chunk)){
+		foreach($this->chunks as $cchunk){
+			if($chunk->equals($cchunk)){
 				return true;
 			}
 		}
@@ -249,12 +250,16 @@ class Faction implements InventoryHolder, Requestable{
 	}
 	public function powerClaimable(){
 		$power = $this->getPower();
+		return (int) ($power / Main::get()->getUserConfig()->get("power required to claim a chunk"));
 	}
 	public function getPower(){
+		$power = 0;
 		foreach($this->members as $mbr){
-			$data = Main::get()->getPlayerDb();
-
+			$micro = StatsCore::getInstance()->getMLogger()->getTotalOnlineTime($mbr);
+			$power += (int) ($power / 60 / 60);
+			// TODO add kills and deaths factors
 		}
+		return $power;
 	}
 	public function getInventory(){
 		return new DummyInventory($this, "Faction Account"); // TODO replace the dummy placeholder

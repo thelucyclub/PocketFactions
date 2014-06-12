@@ -1,0 +1,4 @@
+---
+"level generation default seed (leave as null for random)": null
+power required to claim a chunk: 10
+"enable sieging (power overdraft punishment)": true
