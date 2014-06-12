@@ -275,6 +275,9 @@ class Faction implements InventoryHolder, Requestable{
 	public function isAvailable(){
 		return true; // TODO
 	}
+	public function getRequestableIdentifier(){
+		return "PocketFaction ".$this->getID();
+	}
 	/**
 	 * @return int The next unique faction ID
 	 */
