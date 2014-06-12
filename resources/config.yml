@@ -59,8 +59,19 @@ xecon max cash: 10000
 # How much money can the faction bank account deposit at most?
 xecon max bank: 50000
 # If the faction has too much money and cash and bank accounts are not enough to save them, they can purchase external inventories to inventories money.
-# Types of external inventors
-
+# Types of external inventories
+# "safe" and "locker" are names of inventories
+# Inventories of money, if supported by xEcon, can be saved physically by saving in chests.
+xecon inventory types:
+  locker:
+    maximum: 3000
+    purchase daily price: 50
+    physical state: chest
+  safe:
+    maximum: 10000
+    purchase price: 200
+    physical state: false
+    
 ## Bank fees, loan and interest
 # The percentage interest taken when withdrawing money
 # Bank usually gives interest to its customers. 
