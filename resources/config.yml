@@ -31,7 +31,9 @@ power gained per mob kill:
 power lost per death:
   - name: default
     value: 30
-  - name: killed
+  - name: killed by player
+    value: 50
+  - name: killed by monster
     value: 50
   - name: drowning
     value: 35
@@ -46,83 +48,6 @@ power lost per death:
   - name: falling
     value: 10
 
-###########
-## XECON ##
-###########
-## Default
-# How much money should the faction have in its cash account by default?
-xecon default cash: 3000
-# How much money should the faction have in its bank account by default?
-xecon default bank: 5000
-# How much money can the faction cash account store at most?
-xecon max cash: 10000
-# How much money can the faction bank account deposit at most?
-xecon max bank: 50000
-# If the faction has too much money and cash and bank accounts are not enough to save them, they can purchase external inventories to inventories money.
-# Types of external inventories
-# "safe" and "locker" are names of inventories
-# Inventories of money, if supported by xEcon, can be saved physically by saving in chests.
-xecon inventory types:
-  locker:
-    maximum: 3000
-    purchase daily price: 50
-    physical state: chest
-  safe:
-    maximum: 10000
-    purchase price: 200
-    physical state: false
-    
-## Bank fees, loan and interest
-# The percentage interest taken when withdrawing money
-# Bank usually gives interest to its customers. 
-# What should be the range of the hourly interest percentage (compound interest)?
-#All factions will receive the same percentage of interest in the same hour.
-# The percentage will be a random number (correct to two decimal places) inside the range.
-# Make sure minimum is smaller than maximum :P
-xecon bank interest range minimum: 0.75
-xecon bank interest range maximum: 1.05
-# Bank can give loan to factions. The debtor of the loan is the faction, not the faction founder or owner.
-# Usually, there can be different types of loans with different time horizons.
-# What types of loan should there be?
-# For the examples below, "small" and "large" are loan names.
-# Each loan type must consist of "amount", "horizon" (in real-life hours) and " maximum" number of that loan allowed to receive.
-loan types:
-  small:
-    amount: 2000
-    horizon: 12
-    maximum: 1
-  large:
-    amount: 8000
-    horizon: 48
-    maximum: 1
-# A faction sometimes forgot to deposit money into bank but they need money urgently. They probably can repay the outstanding balance in a short time.
-# To make it more convenient, bank overdraft can be allowed.
-# Set the maximum amount of overdraft allowed.
-xecon bank max overdraft: 500
-# The total amount of credit (loan + overdraft) allowed
-xecon max liability: 9000
-
-## Chunk claiming
-# How much money to take from a faction's account when it claims a chunk
-chunk claim fee:
-  account: bank
-  amount: 2000
-# How much money to give back when a faction unclaims a chunk
-chunk unclaim repay:
-  account: bank
-  amount: 1000
-
-## Faction internals
-# How much money to take from a faction's account when it renames itself
-faction rename fee:
-  account: cash
-  amount: 120
-# How much money to take from a faction's account when it promotes a player
-promotion fee:
-  account: bank0
-# How much money to take from a faction's account when it demotes a player
-demotion fee: 0
-
 ############
 ## GAMEPLAY ##
 ############
@@ -136,3 +61,4 @@ siege radius: 4
 
 # PocketFactions generates a world if the world of a faction's claimed chunk doesn't exist. If you want to specify the seed, put it below.
 level generation seed: null
+...
