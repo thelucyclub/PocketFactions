@@ -4,22 +4,33 @@ namespace pocketfactions\faction;
 
 use pocketfactions\Main;
 
+/**
+ * This class is about <b>internal</b> ranks. For ranks of other factions, it has not been added yet.
+ */
 class Rank{
-	const P_NONE = 0;
-	const P_CLAIM         = 0b01;
-	const P_UNCLAIM       = 0b10;
-	const P_UNCLAIM_ALL  = 0b0110;
-	const P_SET_WHITE     = 0b1000;
-	const P_ADD_PLAYER   = 0b010000;
-	const P_INVITE         = 0b110000;
-	const P_BUILD          = 0b01000000;
-	const P_BUILD_CENTRE  = 0b11000000;
-	const P_KICK_PLAYER   = 0b0100000000;
-	const P_ENTER         = 0b01000000000;
-	const P_ENTER_CENTRE = 0b10000000000;
-	const P_SET_MOTTO     = 0b100000000000;
-	const P_TP_HOME        = 0b1000000000000;
-	const P_ALL = 0xFFFF;
+	const P_NONE                        = 0b000000000000000000000000;
+	const P_CLAIM                       = 0b000000000000000000000001;
+	const P_UNCLAIM                     = 0b000000000000000000000010;
+	const P_UNCLAIM_ALL                 = 0b000000000000000000000110;
+	const P_BUILD                       = 0b000000000000000000001000;
+	const P_BUILD_CENTRE                = 0b000000000000000000011000;
+	const P_LAND_RELATED                = 0b000000000000000000011000;
+	const P_ENTER                       = 0b000000000000000000100000;
+	const P_ENTER_CENTRE                = 0b000000000000000001000000;
+	const P_SET_WHITE                   = 0b000000000000000010000000;
+	const P_ADD_PLAYER                  = 0b000000000000000100000000; // permission to accept/reject requests from wilderness players to join this faction
+	const P_INVITE                      = 0b000000000000001000000000; // permission to send requests to any players to join this faction
+	const P_EXT_REQUEST_RELATED         = 0b000000000000001100000000;
+	const P_KICK_PLAYER                 = 0b000000000000010000000000;
+	const P_MEMBERS_ADMIN               = 0b000000000000011110000000;
+	const P_SET_MOTTO                   = 0b000000000000100000000000;
+	const P_TP_HOME                     = 0b000000000001000000000000; // teleport to home
+	const P_XECON                       = 0b000000011110000000000000;
+	const P_SPEND_MONEY_CASH            = 0b000000000010000000000000;
+	const P_DEPOSIT_MONEY_CASH          = 0b000000000100000000000000;
+	const P_SPEND_MONEY_BANK            = 0b000000001000000000000000;
+	const P_DEPOSIT_MONEY_BANK          = 0b000000010000000000000000;
+	const P_ALL                         = 0b0000000000000000;
 	public function __construct($id, $name, $perms){
 		$this->id = $id;
 		$this->name = $name;
