@@ -62,6 +62,7 @@ class Main extends Prt implements Listener{
 	}
 	protected function initDatabase(){
 		$this->flist = new FactionList;
+		@mkdir($this->getDataFolder()."database/");
 		$this->cleanSave = new Config($this->getDataFolder()."database/data.json", Config::JSON, [
 			"next-fid" => 0
 		]);
@@ -178,7 +179,7 @@ class Main extends Prt implements Listener{
 	 * @return string
 	 */
 	public function getFactionsFilePath(){
-		return $this->getDataFolder()."factions.dat";
+		return $this->getDataFolder()."database/factions.dat";
 	}
 	public function onLogin(PlayerJoinEvent $evt){
 		$f = $this->getFList()->getFaction($evt->getPlayer());
