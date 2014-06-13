@@ -9,16 +9,17 @@ The following is a brief of the database format of PocketFactions.
 | Number | `byte` | A integer saved as one byte, unsigned | numbers from 0 to 255 | 1 |
 | Boolean + Number | `CompoundByte` | A boolean at the first bit + A number at the last seven bits | `true` or `false` + Any numbers from 0 to 127 | 1 |
 | Number | `short` | A integer saved as two bytes, unsigned | numbers from 0 to 65535 | 2 |
-| Number | `int` | A integer saved as four bytes, unsigned | number from 0 to 4294967295 | 4 |
-| Number | `SignedInt` | An `int` showing how much larger the integer is from -2147483648 | integers from -2147483648 to 2147483647 | 4
-| Number | `long` | A number saved as eight bytes, unsigned | number from 0 to 18446744073709551615 | 8 |
+| Number | `int` | A integer saved as four bytes, unsigned | number from 0 to 0xFFFFFFFF | 4 |
+| Number | `SignedInt` | An `int` showing how much larger the integer is from -0x80000000 | integers from -0x80000000 to 0x7FFFFFFF | 4
+| Number | `long` | A number saved as eight bytes, unsigned | number from 0 to 0xFFFFFFFFFFFFFFFF | 8 |
+| Number | `SignedLong` | An `Long` showing how much larger the integer is from -0x8000000000000000 | integers from -0x8000000000000000 to 0x7FFFFFFFFFFFFFFF | 8
 | Boolean | `ByteBool` | A group of 8 booleans | any matches of 8 booleans | 1 |
 | Boolean | `ShortBool` | A group of 16 booleans | any matches of 16 booleans | 2 |
 | Text | `RawString` | A string saved directly | any strings | The number of characters in the string |
 | Text | `ByteString` | A string saved prefixed with a `byte` of string length | any strings of not more than 255 characters long | 1 + The number of characters in the string |
 | Text | `ShortString` | A string saved prefixed with a `short` of string length | any strings of not more than 65535 characters long | 2 + The number of characters in the string |
 | Boolean + Text | `CompoundString` | A string prefixed with a `CompoundByte` of a boolean description of the string and string length | `true` or `false` + Any strings of not more than 127 characters long | 1 + The number of characters in the string |
-| Number + Text | `Position` | A position (x, y, z, level name) saved as two `int`s for x-coord and z-coord, one `short` for y-coord and one `ByteString` | any positions inside (-2147483648, 0, -2147483648):(2147483647, 65535, 2147483647) in any worlds of names not more than 255 characters long | 11 + The number of characters in the world name |
+| Number + Text | `Position` | A position (x, y, z, level name) saved as two `SignedInt`s for X and Z chunk indices, one `byte` with the first four bits for x-coord inside the chunk and last four bits z-coord inside the chunk, one `short` for y-coord and one `ByteString` | any walk-in-able valid positions in any worlds of names not more than 255 characters long | 12 + The number of characters in the world name |
 
 ## Format
 ```
@@ -43,8 +44,8 @@ int Count of saved factions
     long last active timestamp
     short Number of chunks claimed by the faction
     -> for each chunk: (the base chunk is the first chunk shifted)
-        short The X-index of the claimed chunk in the world
-        short The Z-index of the claimed chunk in the world
+        SignedInt The X-index of the claimed chunk in the world
+        SignedInt The Z-index of the claimed chunk in the world
         ByteString The world name of the chunk
     Position The home position
 long number of faction relationships

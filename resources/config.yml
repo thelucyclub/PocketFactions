@@ -135,4 +135,4 @@ enable sieging: false
 siege radius: 4
 
 # PocketFactions generates a world if the world of a faction's claimed chunk doesn't exist. If you want to specify the seed, put it below.
-level generation default seed (leave as null for random): null
+level generation seed: null

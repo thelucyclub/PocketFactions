@@ -4,6 +4,7 @@ namespace pocketfactions\tasks;
 
 use pocketfactions\utils\FactionList;
 use pocketfactions\Main;
+use pocketmine\level\Position;
 use pocketmine\scheduler\AsyncTask;
 
 class WriteDatabaseTask extends AsyncTask{
@@ -49,11 +50,12 @@ class WriteDatabaseTask extends AsyncTask{
 				fwrite($res, Bin::writeByte(strlen($c->getLevel())));
 				fwrite($res, $c->getLevel());
 			}
-			fwrite($res, Bin::writeInt($f->getHome()->getX() + 2147483648));
-			fwrite($res, Bin::writeShort($f->getHome()->getY()));
-			fwrite($res, Bin::writeInt($f->getHome()->getZ() + 2147483648));
-			fwrite($res, Bin::writeByte(strlen($f->getHome()->getLevel()->getName())));
-			fwrite($res, $f->getHome()->getLevel()->getName());
+//			fwrite($res, Bin::writeInt($f->getHome()->getX() + 2147483648));
+//			fwrite($res, Bin::writeShort($f->getHome()->getY()));
+//			fwrite($res, Bin::writeInt($f->getHome()->getZ() + 2147483648));
+//			fwrite($res, Bin::writeByte(strlen($f->getHome()->getLevel()->getName())));
+//			fwrite($res, $f->getHome()->getLevel()->getName());
+			$this->writePosition($f->getHome(), $res);
 		}
 		$states = Main::get()->getFList()->getFactionsStates();
 		fwrite($res, Bin::writeLong(count($states)));
@@ -64,5 +66,12 @@ class WriteDatabaseTask extends AsyncTask{
 		}
 		fwrite($res, FactionList::MAGIC_S);
 		fclose($res);
+	}
+	protected function writePosition(Position $pos, $res){
+		fwrite($res, Bin::writeInt($pos->getX() >> 4));
+		fwrite($res, Bin::writeInt($pos->getZ() >> 4));
+		fwrite($res, Bin::writeByte((($pos->getX() & 0x0F) << 4) & ($pos->getZ() & 0x0F)));
+		fwrite($res, Bin::writeByte(strlen($pos->getLevel()->getName())));
+		fwrite($res, $pos->getLevel()->getName());
 	}
 }

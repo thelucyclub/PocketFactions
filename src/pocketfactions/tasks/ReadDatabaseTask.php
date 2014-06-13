@@ -78,8 +78,8 @@ class ReadDatabaseTask extends AsyncTask{
 			$lastActive = Bin::readBin($this->read($res, 8));
 			$chunks = array();
 			for($i = 0; $i < Bin::readBin($this->read($res, 2)); $i++){
-				$X = Bin::readBin($this->read($res, 2));
-				$Z = Bin::readBin($this->read($res, 2));
+				$X = Bin::readBin($this->read($res, 4)) - 0x80000000;
+				$Z = Bin::readBin($this->read($res, 4)) - 0x80000000;
 				$world = Bin::readBin($this->read($res, 1));
 				$world = $this->read($res, $world);
 				$chunks[] = new Chunk($X, $Z, $world);
@@ -89,20 +89,7 @@ class ReadDatabaseTask extends AsyncTask{
 				return;
 			}
 			$baseChunk = array_shift($chunks);
-			$x = Bin::readBin($this->read($res, 4)) - 2147483648;
-			$y = Bin::readBin($this->read($res, 2));
-			$z = Bin::readBin($this->read($res, 4)) - 2147483648;
-			$level = Bin::readBin($this->read($res, 1));
-			$level = $this->read($res, $level);
-			$server = Server::getInstance();
-			if(!$server->isLevelLoaded($level)){
-				if(!$server->isLevelGenerated($level)){
-					$server->generateLevel($level, null);
-				}
-				$server->loadLevel($level);
-			}
-			$level = $server->getLevel($level);
-			$home = new Position($x, $y, $z, $level);
+			$home = $this->readPosition($res);
 			$factions[$id] = new Faction(array(
 				"name" => $name,
 				"motto" => $motto,
@@ -136,12 +123,40 @@ class ReadDatabaseTask extends AsyncTask{
 		call_user_func($this->statesSetter, $states);
 		call_user_func($this->onFinished, $factions, $this);
 	}
-	protected function read($res, $length){
+	protected function read($res, $length = 1){
 		$string = fread($res, $length);
 		if(!is_string($string) or strlen($string) !== $length){
 			$this->setResult(self::CORRUPTED);
 			trigger_error("Database corrupted!", E_USER_WARNING);
 		}
 		return $string;
+	}
+	protected function readPosition($res){
+		$X = Bin::readBin($this->read($res, 4)) - 0x80000000;
+		$Z = Bin::readBin($this->read($res, 4)) - 0x80000000;
+		$xz = Bin::readBin($this->read($res));
+		$z = $xz & 0x0F;
+		$x = $xz & 0xF0;
+		$x >>= 4;
+		$x += ($X * 16);
+		$z += ($Z * 16);
+		$y = Bin::readBin($this->read($res, 2));
+		$world = $this->readString($res);
+		$world = $this->forceGetLevel($world);
+		return new Position($x, $y, $z, $world);
+	}
+	protected function forceGetLevel($world){
+		$server = Server::getInstance();
+		if(!$server->isLevelLoaded($world)){
+			if(!$server->isLevelGenerated($world)){
+				$server->generateLevel($world, Main::get()->getUserConfig()->get("level generation seed"));
+			}
+			$server->loadLevel($world);
+		}
+		return $server->getLevel($world);
+	}
+	protected function readString($res, $lengthPointer = 1){
+		$length = Bin::readBin($this->read($res, $lengthPointer));
+		return $this->read($res, $length);
 	}
 }
