@@ -81,15 +81,17 @@ chunk unclaim repay:
 faction rename fee:
   account: cash
   amount: 120
-# How much money to take from a faction's account when it promotes a player
-promotion fee:
-  account: bank
+# How much money to take from a faction's account when it changes a player's rank
+rank changing charge:
+  account: cash
   amount: 0
-# How much money to take from a faction's account when it demotes a player
-demotion fee: 
-  account: bank
+# How much money to take from a faction's account when it adds/removes a rank
+rank adding charge:
+  account: cash
   amount: 0
-
+rank removing charge:
+  account: cash
+  amount: 0
 #################
 ## PERMISSIONS ##
 #################

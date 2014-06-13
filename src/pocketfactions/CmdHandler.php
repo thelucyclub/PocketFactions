@@ -2,11 +2,13 @@
 
 namespace pocketfactions;
 
+use legendofmcpe\statscore\PlayerRequestable;
+use legendofmcpe\statscore\StatsCore;
 use pocketfactions\faction\Chunk;
 use pocketfactions\faction\Rank;
 use pocketfactions\faction\Faction;
+use pocketfactions\utils\FactionInviteRequest;
 use pocketfactions\utils\PluginCmd as PCmd;
-
 use pocketmine\command\Command;
 use pocketmine\command\CommandExecutor;
 use pocketmine\command\CommandSender as Issuer;
@@ -54,12 +56,13 @@ class CmdHandler implements CommandExecutor{
 							"members" => array(strtolower($issuer->getName()) => Rank::defaults()[0]),
 							"chunks" => [],
 							"base-chunk" => new Chunk((int) $issuer->x / 16, (int) $issuer->z / 16, $issuer->getLevel()->getName()),
-							"whitelist" => false
+							"whitelist" => false,
+							"last-active" => time(),
 						], $id);
 						return "[PF] Faction $args[0] created.";
 					case "invite":
-						if(count($args)!=1){
-							return "Usage: /f invite <target-player>";
+						if(!isset($args[0])){
+							return "Usage: /f invite <target-player> [extra message ...]";
 						}
 						$targetp = $this->server->getOfflinePlayer(array_shift($args));
 						if(!($targetp instanceof Player)){
@@ -72,7 +75,9 @@ class CmdHandler implements CommandExecutor{
 						if($faction->getMemberRank($issuer->getName())->hasPerm(Rank::P_INVITE)){ // rank check. im not sure what ur going to do. edit this later.
 							return PCmd::NO_PERM;
 						}
-//						$this->main->getReqList()->add(new Request($issuer, $targetp, "Invitation to join faction $faction", "f-inv-$faction")); // TODO StatsCore request list
+						StatsCore::getInstance()->getRequestList()->add($req = new FactionInviteRequest($faction, new PlayerRequestable($targetp), implode(" ", $args)));
+						$issuer->sendMessage("The following message has been sent to ".$targetp->getDisplayName().":");
+						$issuer->sendMessage("[SENT REQUEST] ".$req->getContent());
 						break;
 					case "join":
 						$fname = array_shift($args);
@@ -84,7 +89,7 @@ class CmdHandler implements CommandExecutor{
 							return PCmd::INVALID_FACTION;
 						}
 						if(!$faction->isOpen()){
-							return "[PF] This faction is whitelisted.\n[PF] Please use /f accept <invitation id>\n[PF] if you had been invited."; //why cant you use /f instead? Same thing anyways.
+							return "[PF] This faction is whitelisted.\n[PF] Please use /req accept <id> if you had been invited."; //why cant you use /f instead? Same thing anyways.
 						}
 						$success = $faction->join($issuer);
 						if($success === true){
@@ -95,10 +100,44 @@ class CmdHandler implements CommandExecutor{
 						}
 						return null;
 					case "claim":
+						$f = $this->main->getFList()->getFaction($issuer);
+						if($f === null){
+							return PCmd::DB_LOADING;
+						}
+						if($f === false){
+							return PCmd::NO_FACTION;
+						}
+						if(!$f->getMemberRank($issuer->getName())->hasPerm(Rank::P_CLAIM)){
+							return PCmd::NO_PERM;
+						}
+//						$f->claim(Chunk::fromObject($issuer));
+						// TODO claim chunk
 						break;
 					case "unclaim":
+						$f = $this->main->getFList()->getFaction($issuer);
+						if($f === null){
+							return PCmd::DB_LOADING;
+						}
+						if($f === false){
+							return PCmd::NO_FACTION;
+						}
+						if(!$f->getMemberRank($issuer->getName())->hasPerm(Rank::P_UNCLAIM)){
+							return PCmd::NO_PERM;
+						}
+						// TODO unclaim chunk
 						break;
 					case "unclaimall":
+						$f = $this->main->getFList()->getFaction($issuer);
+						if($f === null){
+							return PCmd::DB_LOADING;
+						}
+						if($f === false){
+							return PCmd::NO_FACTION;
+						}
+						if(!$f->getMemberRank($issuer->getName())->hasPerm(Rank::P_UNCLAIM_ALL)){
+							return PCmd::NO_PERM;
+						}
+						// TODO unclaim all chunks except base chunk
 						break;
 					case "kick":
 						if(count($args) != 1){
@@ -118,14 +157,24 @@ class CmdHandler implements CommandExecutor{
 						if(!$faction->getMemberRank($issuer->getName())->hasPerm(Rank::P_KICK_PLAYER)){
 							return PCmd::NO_PERM;
 						}
+						$targetp->sendMessage("You have been kicked from $faction by ".$issuer->getDisplayName()."!");
 						// TODO
 						break;
 					case "perm":
 						$sub = array_shift($args);
 						switch($sub){
+							case "add":
+								break;
+							case "remove":
+								break;
+							case "setplayer":
+								break;
+							default:
+								break;
 						}
 						break;
 					case "sethome":
+
 						break;
 					case "setopen":
 						$bool = strtolower(array_shift($args));

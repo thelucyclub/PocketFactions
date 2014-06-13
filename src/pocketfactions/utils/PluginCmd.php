@@ -55,7 +55,7 @@ class PluginCmd extends ParentClass{
 		}
 		if(is_numeric($result)){
 			if($result & self::NO_PERM){
-				$isr->sendMessage("You don't have permission to use /".$this->getName()." ".implode(" ", $args).".");
+				$isr->sendMessage("You don't have permission to use /".$this->getName()." ".implode(" ", $args).". This can be due to your faction not giving you permission, or because you are using an op-only command.");
 			}
 			if($result & self::WRONG_USE){
 				$isr->sendMessage("Incorrect usage. Usage: ".$this->getUsage());
