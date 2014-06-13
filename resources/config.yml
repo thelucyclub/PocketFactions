@@ -14,39 +14,24 @@ power lost per offline FULL day: 40
 # The power of a player increases when he kills a player or a mob
 power gained per player kill: 60
 power gained per mob kill:
-  - name: default
-    value: 5
-  - name: zombie pigman
-    value: 40
-  - name: creeper
-    value: 40
-  - name: skeleton
-    value: 30
-  - name: zombie
-    value: 20
+  default: 5
+  zombie pigman: 40
+  creeper: 40
+  skeleton: 30
+  zombie: 20
 # This counts the number of TINY slimes killed.
-  - name: slime
-    value: 2
+  slime: 2
 # The power of a player decreases when he dies
 power lost per death:
-  - name: default
-    value: 30
-  - name: killed by player
-    value: 50
-  - name: killed by monster
-    value: 50
-  - name: drowning
-    value: 35
-  - name: monster
-    value: 45
-  - name: explosion
-    value: 35
-  - name: lava
-    value: 40
-  - name: burning
-    value: 30
-  - name: falling
-    value: 10
+  default: 30
+  killed by player: 50
+  killed by monster: 50
+  drowning: 35
+  monster: 45
+  explosion: 35
+  lava: 40
+  burning: 30
+  falling: 10
 
 ############
 ## GAMEPLAY ##
@@ -59,6 +44,11 @@ enable sieging: false
 # If the player is within this number of blocks from the chunk centre, allow them to siege the chunk.
 siege radius: 4
 
+## World loading
 # PocketFactions generates a world if the world of a faction's claimed chunk doesn't exist. If you want to specify the seed, put it below.
 level generation seed: null
+
+## Faction defaults
+# The following is a regular expression of the rule that limits faction names. If you don't understand regular expressions, leave this as it is.
+faction naming rule: '#[A-Za-z0-9\-_]{@min,@max}#i'
 ...

@@ -17,7 +17,7 @@ use pocketmine\Server;
 
 class CmdHandler implements CommandExecutor{
 	public function __construct(){
-		$this->config = Main::get()->getConfig();
+		$this->config = Main::get()->getCleanSaveConfig();
 		$this->main = Main::get();
 		$this->server = Server::getInstance();
 	}
@@ -40,7 +40,7 @@ class CmdHandler implements CommandExecutor{
 						}
 						$min = $this->config->get("min-faction-name-length");
 						$max = $this->config->get("max-faction-name-length");
-						if(preg_replace("#[A-Za-z0-9\\-_]{".$min.",".$max."}#i", "", $args[0]) !== ""){
+						if(preg_replace($this->main->getFactionNamingRule(), "", $args[0]) !== ""){
 							return "[PF] The faction name is too long!\n".
 								"[PF] The faction name must be alphanumeric\n    ".
 								"[PF] and optionally with hyphens and underscores\n    ".

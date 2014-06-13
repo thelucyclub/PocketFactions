@@ -63,9 +63,6 @@ class Faction implements InventoryHolder, Requestable{
 	 * @var bool
 	 */
 	protected $whitelist;
-	/**
-	 * @var FactionEntity
-	 */
 	protected $econEnt;
 	/**
 	 * @var Server
@@ -93,7 +90,6 @@ class Faction implements InventoryHolder, Requestable{
 //		}
 		$this->baseChunk = $args["base-chunk"];
 		$this->whitelist = $args["whitelist"];
-		$this->econEnt = new FactionEntity($this);
 		$this->server = Server::getInstance();
 		$levels = [];
 		foreach($this->chunks as $chunk){
@@ -102,7 +98,7 @@ class Faction implements InventoryHolder, Requestable{
 				$levels[] = $level;
 				if(!$this->server->isLevelLoaded($level)){
 					if(!$this->server->isLevelGenerated($this->server->loadLevel($level))){
-						$this->server->generateLevel($level, Main::get()->getUserConfig()->get("seed"));
+						$this->server->generateLevel($level, Main::get()->getLevelGenerationSeed());
 					}
 					$this->server->loadLevel($level);
 				}
@@ -250,13 +246,14 @@ class Faction implements InventoryHolder, Requestable{
 	}
 	public function powerClaimable(){
 		$power = $this->getPower();
-		return (int) ($power / Main::get()->getUserConfig()->get("power required to claim a chunk"));
+		return (int) ($power / Main::get()->getClaimSingleChunkPower());
 	}
 	public function getPower(){
 		$power = 0;
 		foreach($this->members as $mbr){
 			$micro = StatsCore::getInstance()->getMLogger()->getTotalOnlineTime($mbr);
-			$power += (int) ($power / 60 / 60);
+			$power += (((int) ($micro / 60 / 60)) * Main::get()->getPowerGainPerOnlineHour());
+			$power -= StatsCore::getInstance()->getMLogger()->getFullOfflineDays($mbr);
 			// TODO add kills and deaths factors
 		}
 		return $power;
@@ -287,9 +284,9 @@ class Faction implements InventoryHolder, Requestable{
 	 * @return int The next unique faction ID
 	 */
 	public static function nextID(){
-		$fid = Main::get()->getConfig()->get("next-fid");
-		Main::get()->getConfig()->set("next-fid", $fid + 1);
-		Main::get()->getConfig()->save();
+		$fid = Main::get()->getCleanSaveConfig()->get("next-fid");
+		Main::get()->getCleanSaveConfig()->set("next-fid", $fid + 1);
+		Main::get()->getCleanSaveConfig()->save();
 		return $fid;
     }
 }

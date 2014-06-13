@@ -6,7 +6,6 @@ use pocketfactions\faction\Faction;
 use pocketfactions\faction\Rank;
 use pocketfactions\utils\PluginCmd as PCmd;
 use pocketfactions\utils\FactionList;
-
 use pocketmine\Server;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
@@ -26,10 +25,6 @@ class Main extends Prt implements Listener{
 	const V_INIT = "\x00";
 	const V_CURRENT = "\x00";
 	/**
-	 * @var RequestList $reqList
-	 */
-	private $reqList;
-	/**
 	 * @var CmdHandler
 	 */
 	private $cmdExe;
@@ -38,9 +33,9 @@ class Main extends Prt implements Listener{
 	 */
 	public $cleanSave;
 	/**
-	 * @var
+	 * @var Config
 	 */
-	public $userConfig;
+	private $xeconConfig;
 	/**
 	 * @var string[][] Unread inbox messages indexed with lowercase player name
 	 */
@@ -71,6 +66,12 @@ class Main extends Prt implements Listener{
 			"next-fid" => 0
 		]);
 		$this->saveDefaultConfig();
+		$this->saveResource("xecon.yml");
+		$this->reloadConfig();
+		$this->xeconConfig = new Config($this->getDataFolder()."xecon.yml", Config::YAML);
+	}
+	public function getXEconConfig(){
+		return $this->xeconConfig;
 	}
 	protected function registerPerms(){
 		$me = strtolower(self::NAME);
@@ -201,14 +202,14 @@ class Main extends Prt implements Listener{
 	/**
 	 * @return Config
 	 */
-	public function getConfig(){
+	public function getCleanSaveConfig(){
 		return $this->cleanSave;
 	}
 	/**
 	 * @return Config
 	 */
 	public function getUserConfig(){
-		return parent::getConfig();
+		return $this->getConfig();
 	}
 	/**
 	 * @return FactionList
@@ -220,15 +221,103 @@ class Main extends Prt implements Listener{
 		return $this->playerDb;
 	}
 	/**
-	 * @return RequestList
-	 */
-	public function getReqList(){
-		return $this->reqList;
-	}
-	/**
 	 * @return static
 	 */
 	public static function get(){
 		return Server::getInstance()->getPluginManager()->getPlugin(self::NAME);
+	}
+	////////////
+	// CONFIG //
+	////////////
+	// to make it easier to debug
+	public function getClaimSingleChunkPower(){
+		return $this->getConfig()->get("power required to claim a chunk");
+	}
+	public function getPowerGainPerOnlineHour(){
+		return $this->getConfig()->get("power gained per online hour");
+	}
+	public function getPowerLossPerOfflineDay(){
+		return $this->getConfig()->get("power loss per offline FULL day");
+	}
+	public function getPowerGainPerKill($type = "default"){
+		if($type === "player"){
+			return $this->getConfig()->get("power gained per player kill");
+		}
+		$data = $this->getConfig()->get("power gained per mob kill");
+		if(isset($data[$type])){
+			return $data[$type];
+		}
+		return $data["default"];
+	}
+	public function getPowerLossPerDeath($type = "default"){
+		$data = $this->getConfig()->get("power loss per death");
+		return isset($data[$type]) ? $data[$type]:$data["default"];
+	}
+	public function isSiegingEnabled(){
+		return $this->getConfig()->get("enable sieging");
+	}
+	public function getSiegeRadius(){
+		return $this->isSiegingEnabled() ? $this->getConfig()->get("siege radius"):-1;
+	}
+	public function getLevelGenerationSeed(){
+		return $this->getConfig()->get("level generation seed");
+	}
+	public function getFactionNamingRule(){
+		return $this->getConfig()->get("faction naming rule");
+	}
+	/////////////////
+	// XECON STUFF //
+	/////////////////
+	// xEcon things
+	public function getDefaultCash(){
+		return $this->xeconConfig->get("default cash");
+	}
+	public function getDefaultBank(){
+		return $this->xeconConfig->get("default bank");
+	}
+	public function getMaxCash(){
+		return $this->xeconConfig->get("max cash");
+	}
+	public function getMaxBank(){
+		return $this->xeconConfig->get("max bank");
+	}
+	public function getExternalMoneyInventoryTypesRaw(){
+		return $this->xeconConfig->get("inventory types");
+	}
+	public function getRandomBankInterestPercentage(){
+		return mt_rand((int) ($this->xeconConfig->get("bank interest range minimum") * 100), (int) ($this->xeconConfig->get("bank interest range maximum") * 100)) / 100;
+	}
+	public function getBankLoanTypesRaw(){
+		return $this->xeconConfig->get("loan types");
+	}
+	public function getMaxBankOverdraft(){
+		return $this->xeconConfig->get("bank max overdraft");
+	}
+	public function isInterestTakenForOverdraft(){
+		return $this->xeconConfig->get("bank overdraft take interest");
+	}
+	public function getMaxLiability(){
+		return $this->xeconConfig->get("max liability");
+	}
+	public function getChunkClaimFee(){
+		return $this->xeconConfig->get("chunk claim fee");
+	}
+	public function getChunkUnclaimRepay(){
+		return $this->xeconConfig->get("chunk unclaim repay");
+	}
+	public function getFactionRenameFee(){
+		return $this->xeconConfig->get("faction rename charge");
+	}
+	public function getRankChangingCharge(){
+		return $this->xeconConfig->get("rank changing charge");
+	}
+	public function getAddRankCharge(){
+		return $this->xeconConfig->get("rank adding charge");
+	}
+	public function getRmRankCharge(){
+		return $this->xeconConfig->get("rank removing charge");
+	}
+	public function getFounderWithdrawableAccounts(){
+		return $this->xeconConfig->get("accounts withdrawable to founder");
 	}
 }

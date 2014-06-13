@@ -4,20 +4,20 @@
 #############
 ## Default accounts
 # How much money should the faction have in its cash account by default?
-xecon default cash: 3000
+default cash: 3000
 # How much money should the faction have in its bank account by default?
-xecon default bank: 5000
+default bank: 5000
 # How much money can the faction cash account store at most?
-xecon max cash: 10000
+max cash: 10000
 # How much money can the faction bank account deposit at most?
-xecon max bank: 50000
+max bank: 50000
 
 ## External accounts
 # If the faction has too much money and cash and bank accounts are not enough to save them, they can purchase external inventories to inventories money.
 # Types of external inventories
 # "safe" and "locker" are names of inventories
 # Inventories of money, if supported by xEcon, can be saved physically by saving in chests.
-xecon inventory types:
+inventory types:
   locker:
     maximum: 3000
     purchase daily price: 50
@@ -35,9 +35,10 @@ xecon inventory types:
 # What should be the range of the hourly interest percentage (compound interest)?
 # All factions will receive the same percentage of interest in the same hour.
 # The percentage will be a random number (correct to two decimal places) inside the range.
-# Make sure minimum is smaller than maximum :P
-xecon bank interest range minimum: 0.75
-xecon bank interest range maximum: 1.05
+# Make sure minimum is smaller than maximum :)
+#
+bank interest range minimum: 0.75
+bank interest range maximum: 1.05
 
 ## Liabilities from bank
 # Bank provides loan to factions. The debtor of the loan is the faction, not the faction founder or owner.
@@ -57,11 +58,11 @@ loan types:
 # A faction sometimes forgets to deposit money into bank but they need money urgently. They probably can repay the outstanding balance in a short time.
 # To make it more convenient, bank overdraft can be allowed. Bank overdraft is a negative amount of assets, so it is a liability.
 # Set the maximum amount of overdraft allowed.
-xecon bank max overdraft: 500
+bank max overdraft: 500
 # Negative times positive equals negative. If you don't want to take interest from the faction when there is bank overdraft, set this to false.
-xecon bank overdraft take interest: true
+bank overdraft take interest: true
 # The total amount of credit (loan + overdraft) allowed
-xecon max liability: 9000
+max liability: 9000
 
 ######################
 ## FEES AND CHARGES ##
@@ -78,7 +79,7 @@ chunk unclaim repay:
 
 ## Faction internals actions
 # How much money to take from a faction's account when it renames itself
-faction rename fee:
+faction rename charge:
   account: cash
   amount: 120
 # How much money to take from a faction's account when it changes a player's rank
@@ -97,6 +98,6 @@ rank removing charge:
 #################
 ## Factions earn money by donations from its members. Faction founders could abuse this money by withdrawing all money into his account and disbanding the faction if anything is added to the array below.
 # Allow the faction founder to withdraw money from the faction accounts?
-founder withdraw money: []
+accounts withdrawable to founder: []
 
 ...

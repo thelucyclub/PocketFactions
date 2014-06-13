@@ -149,7 +149,7 @@ class ReadDatabaseTask extends AsyncTask{
 		$server = Server::getInstance();
 		if(!$server->isLevelLoaded($world)){
 			if(!$server->isLevelGenerated($world)){
-				$server->generateLevel($world, Main::get()->getUserConfig()->get("level generation seed"));
+				$server->generateLevel($world, Main::get()->getLevelGenerationSeed());
 			}
 			$server->loadLevel($world);
 		}
