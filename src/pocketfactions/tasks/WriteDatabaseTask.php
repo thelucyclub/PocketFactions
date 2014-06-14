@@ -30,7 +30,7 @@ class WriteDatabaseTask extends AsyncTask{
 				fwrite($res, Bin::writeByte($rk->getID()));
 				fwrite($res, Bin::writeByte(strlen($rk->getName())));
 				fwrite($res, $rk->getName());
-				fwrite($res, Bin::writeShort($rk->getPerms()));
+				fwrite($res, Bin::writeInt($rk->getPerms()));
 			}
 			fwrite($res, Bin::writeByte($f->getDefaultRank()));
 			$mbrs = $f->getMembers();

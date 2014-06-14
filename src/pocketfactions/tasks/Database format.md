@@ -15,6 +15,7 @@ The following is a brief of the database format of PocketFactions.
 | Number | `SignedLong` | An `Long` showing how much larger the integer is from -0x8000000000000000 | integers from -0x8000000000000000 to 0x7FFFFFFFFFFFFFFF | 8
 | Boolean | `ByteBool` | A group of 8 booleans | any matches of 8 booleans | 1 |
 | Boolean | `ShortBool` | A group of 16 booleans | any matches of 16 booleans | 2 |
+| Boolean | `IntBool` | A group of 16 booleans | any matches of 32 booleans | 4 |
 | Text | `RawString` | A string saved directly | any strings | The number of characters in the string |
 | Text | `ByteString` | A string saved prefixed with a `byte` of string length | any strings of not more than 255 characters long | 1 + The number of characters in the string |
 | Text | `ShortString` | A string saved prefixed with a `short` of string length | any strings of not more than 65535 characters long | 2 + The number of characters in the string |

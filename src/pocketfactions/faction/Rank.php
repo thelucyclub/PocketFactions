@@ -30,7 +30,7 @@ class Rank{
 	const P_DEPOSIT_MONEY_CASH          = 0b000000000100000000000000;
 	const P_SPEND_MONEY_BANK            = 0b000000001000000000000000;
 	const P_DEPOSIT_MONEY_BANK          = 0b000000010000000000000000;
-	const P_ALL                         = 0b0000000000000000;
+	const P_ALL                         = 0b000000000000000000000000;
 	public function __construct($id, $name, $perms){
 		$this->id = $id;
 		$this->name = $name;
@@ -54,7 +54,7 @@ class Rank{
 	 * @return int the sum of all permissions. Check with the bitwise AND operator.
 	 */
 	public function getPerms(){
-		return $this->perm;
+		return $this->perms;
 	}
 	/**
 	 * Sets $perm to $bool
@@ -63,10 +63,10 @@ class Rank{
 	 */
 	public function setPerm($perm, $bool){
 		if(!$bool){
-			$this->perm &= ~$perm;
+			$this->perms &= ~$perm;
 		}
 		else{
-			$this->perm |= $perm;
+			$this->perms |= $perm;
 		}
 	}
 	/**
@@ -93,8 +93,5 @@ class Rank{
 	 */
 	public static function defaultRank(){
 		return 4;
-	}
-	public static function getFactionsInterrank(Faction $f0, Faction $f1){
-		$state = Main::get()->getFList()->getFactionsState($f0, $f1);
 	}
 }

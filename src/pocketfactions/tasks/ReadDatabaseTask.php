@@ -56,7 +56,7 @@ class ReadDatabaseTask extends AsyncTask{
 				$id = Bin::readBin($this->read($res, 1));
 				$rkName = Bin::readBin($this->read($res, 1));
 				$rkName = $this->read($res, $rkName);
-				$perms = Bin::readBin($this->read($res, 2));
+				$perms = Bin::readBin($this->read($res, 4));
 				$ranks[$id] = new Rank($id, $rkName, $perms);
 			}
 			$defaultRank = Bin::readBin($this->read($res, 1));
