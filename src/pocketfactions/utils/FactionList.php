@@ -28,9 +28,10 @@ class FactionList{
 	 * @var State[]
 	 */
 	private $states = [];
-	public function __construct(){
-		$this->path = Main::get()->getFactionsFilePath();
+	public function __construct($main){
+		$this->path = $main->getFactionsFilePath();
 		$this->server = Server::getInstance();
+		$this->main = $main;
 		$this->load();
 	}
 	protected function load(){

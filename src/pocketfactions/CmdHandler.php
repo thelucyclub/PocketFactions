@@ -16,9 +16,9 @@ use pocketmine\Player;
 use pocketmine\Server;
 
 class CmdHandler implements CommandExecutor{
-	public function __construct(){
-		$this->config = Main::get()->getCleanSaveConfig();
-		$this->main = Main::get();
+	public function __construct(Main $main){
+		$this->config = $main->getCleanSaveConfig();
+		$this->main = $main;
 		$this->server = Server::getInstance();
 	}
 	public function onCommand(Issuer $issuer, Command $cmd, $lbl, array $args){

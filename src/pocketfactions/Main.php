@@ -18,8 +18,6 @@ use pocketmine\plugin\PluginBase as Prt;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as Font;
 
-require_once dirname(__FILE__)."/functions.php";
-
 class Main extends Prt implements Listener{
 	const NAME = "PocketFactions";
 	const V_INIT = "\x00";
@@ -50,7 +48,7 @@ class Main extends Prt implements Listener{
 	 */
 	private $loggedIn = array();
 	public function onEnable(){
-		console(Font::AQUA."Initializing", false, 1);
+		$this->getLogger()->info(Font::AQUA."Initializing", false, 1);
 		$this->initDatabase();
 		echo ".";
 		$this->registerPerms();
@@ -61,7 +59,7 @@ class Main extends Prt implements Listener{
 		echo Font::GREEN." Done!".Font::RESET.PHP_EOL;
 	}
 	protected function initDatabase(){
-		$this->flist = new FactionList;
+		$this->flist = new FactionList($this); // used AsyncTask because the server could be running in the middle
 		@mkdir($this->getDataFolder()."database/");
 		$this->cleanSave = new Config($this->getDataFolder()."database/data.json", Config::JSON, [
 			"next-fid" => 0
@@ -114,7 +112,7 @@ class Main extends Prt implements Listener{
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
 	protected function registerCmds(){
-		$this->cmdExe = new CmdHandler;
+		$this->cmdExe = new CmdHandler($this);
 		//Faction Commands for Players
 		$main = new PCmd("faction", $this, $this->cmdExe);
 		$main->setUsage("/faction <help|cmd>");
@@ -129,29 +127,6 @@ class Main extends Prt implements Listener{
 		$main2->setPermission("pocketfactions.cmd.fmgr");
 		$main2->setAliases(array("fmgr"));
 		$main2->reg();
-	}
-	public function onPreCmd(PlayerCommandPreprocessEvent $evt){
-		$cmd = strstr($evt->getMessage(), " ", true);
-		if($cmd === "/poaccept"){
-			$evt->setCancelled(true);
-		}
-		if($cmd === "/podeny"){
-			$evt->setCancelled(true);
-		}
-		if($cmd === "/polist"){ // reminds me of politics or police
-			$evt->setCancelled(true);
-		}
-	}
-	/**
-	 * @param string $player
-	 * @param string $msg
-	 */
-	public function addOfflineMessage($player, $msg){
-		$player = strtolower($player);
-		if(!isset($this->inbox[$player])){
-			$this->inbox[$player] = [];
-		}
-		$this->inbox[$player][] = $msg;
 	}
 	public function onJoin(PlayerJoinEvent $evt){
 		$name = strtolower($evt->getPlayer()->getName());
@@ -220,12 +195,6 @@ class Main extends Prt implements Listener{
 	}
 	public function getPlayerDb(){
 		return $this->playerDb;
-	}
-	/**
-	 * @return static
-	 */
-	public static function get(){
-		return Server::getInstance()->getPluginManager()->getPlugin(self::NAME);
 	}
 	////////////
 	// CONFIG //
