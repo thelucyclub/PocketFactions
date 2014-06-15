@@ -13,6 +13,8 @@ use xecon\entity\Entity;
 
 class Faction implements InventoryHolder, Requestable{
 	use Entity;
+	/** @var Main */
+	protected $main;
 	/**
 	 * @var string $name
 	 */
@@ -68,7 +70,7 @@ class Faction implements InventoryHolder, Requestable{
 	 * @var Server
 	 */
 	public $server;
-	public function __construct(array $args){
+	public function __construct(array $args, Main $main){
 		$this->name = $args["name"];
 		$this->motto = $args["motto"];
 		$this->id = $args["id"];
@@ -79,6 +81,7 @@ class Faction implements InventoryHolder, Requestable{
 		$this->lastActive = $args["last-active"];
 		$this->chunks = $args["chunks"];
 		$this->home = $args["home"];
+		$this->main = $main;
 //		$this->chunks = [];
 //		/** @var Chunk[] $chunks */
 //		$chunks = $args["chunks"];
@@ -98,7 +101,7 @@ class Faction implements InventoryHolder, Requestable{
 				$levels[] = $level;
 				if(!$this->server->isLevelLoaded($level)){
 					if(!$this->server->isLevelGenerated($this->server->loadLevel($level))){
-						$this->server->generateLevel($level, Main::get()->getLevelGenerationSeed());
+						$this->server->generateLevel($level, $this->main->getLevelGenerationSeed());
 					}
 					$this->server->loadLevel($level);
 				}
@@ -246,13 +249,13 @@ class Faction implements InventoryHolder, Requestable{
 	}
 	public function powerClaimable(){
 		$power = $this->getPower();
-		return (int) ($power / Main::get()->getClaimSingleChunkPower());
+		return (int) ($power / $this->main->getClaimSingleChunkPower());
 	}
 	public function getPower(){
 		$power = 0;
 		foreach($this->members as $mbr){
 			$micro = StatsCore::getInstance()->getMLogger()->getTotalOnlineTime($mbr);
-			$power += (((int) ($micro / 60 / 60)) * Main::get()->getPowerGainPerOnlineHour());
+			$power += (((int) ($micro / 60 / 60)) * $this->main->getPowerGainPerOnlineHour());
 			$power -= StatsCore::getInstance()->getMLogger()->getFullOfflineDays($mbr);
 			// TODO add kills and deaths factors
 		}
@@ -281,12 +284,13 @@ class Faction implements InventoryHolder, Requestable{
 		return "PocketFaction ".$this->getID();
 	}
 	/**
+	 * @param Main $main
 	 * @return int The next unique faction ID
 	 */
-	public static function nextID(){
-		$fid = Main::get()->getCleanSaveConfig()->get("next-fid");
-		Main::get()->getCleanSaveConfig()->set("next-fid", $fid + 1);
-		Main::get()->getCleanSaveConfig()->save();
+	public static function nextID(Main $main){
+		$fid = $main->getCleanSaveConfig()->get("next-fid");
+		$main->getCleanSaveConfig()->set("next-fid", $fid + 1);
+		$main->getCleanSaveConfig()->save();
 		return $fid;
     }
 }

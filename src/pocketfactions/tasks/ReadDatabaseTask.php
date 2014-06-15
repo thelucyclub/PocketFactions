@@ -13,13 +13,14 @@ use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 
 class ReadDatabaseTask extends AsyncTask{
-	const CORRUPTED	= 1;
-	const COMPLETED	= null;
-	const WIP		= null;
-	public function __construct($res, callable $onFinished, callable $statesSetter){
+	const CORRUPTED = 1;
+	const COMPLETED = null;
+	const WIP       = null;
+	public function __construct($res, callable $onFinished, callable $statesSetter, Main $main){
 		$this->res = $res;
 		$this->onFinished = $onFinished;
 		$this->statesSetter = $statesSetter;
+		$this->main = $main;
 	}
 	public function onRun(){
 		$res = $this->res;
@@ -103,7 +104,7 @@ class ReadDatabaseTask extends AsyncTask{
 				"base-chunk" => $baseChunk,
 				"whitelist" => $whitelist,
 				"home" => $home,
-			));
+			), $this->main);
 		}
 		$states = [];
 		for($i = 0; $i < Bin::readBin($this->read($res, 8)); $i++){
@@ -149,7 +150,7 @@ class ReadDatabaseTask extends AsyncTask{
 		$server = Server::getInstance();
 		if(!$server->isLevelLoaded($world)){
 			if(!$server->isLevelGenerated($world)){
-				$server->generateLevel($world, Main::get()->getLevelGenerationSeed());
+				$server->generateLevel($world, $this->main->getLevelGenerationSeed());
 			}
 			$server->loadLevel($world);
 		}

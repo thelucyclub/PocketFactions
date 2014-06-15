@@ -5,7 +5,6 @@ namespace pocketfactions\utils;
 use pocketmine\Server;
 use pocketmine\command\CommandExecutor as CmdExe;
 use pocketmine\command\CommandExecutor; // it is ok, ignore this line
-use pocketmine\command\CommandMap;
 use pocketmine\command\CommandSender as Issuer;
 use pocketmine\command\PluginCommand as ParentClass;
 use pocketmine\plugin\Plugin;
@@ -42,7 +41,7 @@ class PluginCmd extends ParentClass{
 			$result = call_user_func($this->exe, $this, $isr, $lbl, $args);
 		}
 		else{
-			$result = $this->exe->onCommand($this, $isr, $lbl, $args);
+			$result = $this->exe->onCommand($isr, $this, $lbl, $args);
 		}
 		if(is_bool($result) or is_null($result)){
 			if($result === false)
@@ -83,6 +82,7 @@ class PluginCmd extends ParentClass{
 			}
 			return true;
 		}
+		return true;
 	}
 	/**
 	 * Registers the command to the server command map

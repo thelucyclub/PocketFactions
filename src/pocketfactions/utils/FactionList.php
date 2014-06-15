@@ -3,9 +3,9 @@
 namespace pocketfactions\utils;
 
 use pocketfactions\faction\State;
-use pocketfactions\Main;
 use pocketfactions\faction\Chunk;
 use pocketfactions\faction\Faction;
+use pocketfactions\Main;
 use pocketfactions\tasks\ReadDatabaseTask;
 use pocketfactions\tasks\WriteDatabaseTask;
 
@@ -28,7 +28,7 @@ class FactionList{
 	 * @var State[]
 	 */
 	private $states = [];
-	public function __construct($main){
+	public function __construct(Main $main){
 		$this->path = $main->getFactionsFilePath();
 		$this->server = Server::getInstance();
 		$this->main = $main;
@@ -41,7 +41,7 @@ class FactionList{
 	 * @param resource $res
 	 */
 	public function loadFrom($res){
-		$this->scheduleAsyncTask(new ReadDatabaseTask($res, array($this, "setAll"), array($this, "setFactionsStates")));
+		$this->scheduleAsyncTask(new ReadDatabaseTask($res, array($this, "setAll"), array($this, "setFactionsStates"), $this->main));
 	}
 	public function save(){
 		$this->saveTo(fopen($this->path, "wb"));
@@ -50,7 +50,7 @@ class FactionList{
 	 * @param resource $res
 	 */
 	public function saveTo($res){
-		$this->scheduleAsyncTask(new WriteDatabaseTask($res));
+		$this->scheduleAsyncTask(new WriteDatabaseTask($res, $this->main));
 	}
 	/**
 	 * @param AsyncTask $asyncTask
@@ -113,7 +113,7 @@ class FactionList{
 		}
 	}
 	public function addFaction(array $args, $id){
-		$this->factions[$id] = new Faction($args);
+		$this->factions[$id] = new Faction($args, $this->main);
 	}
 	public function getFactionsState(Faction $f0, Faction $f1){
 		return $this->states[$f0->getID()."-".$f1->getID()];

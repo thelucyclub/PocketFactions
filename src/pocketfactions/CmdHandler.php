@@ -46,7 +46,7 @@ class CmdHandler implements CommandExecutor{
 								"[PF] and optionally with hyphens and underscores\n    ".
 								"[PF] in not less than $min characters and not more than $max characters.";
 						}
-						$id = Faction::nextID();
+						$id = Faction::nextID($this->main);
 						$this->main->getFList()->addFaction([
 							"name" => $args[0],
 							"motto" => "Your Faction Motto. /f motto",

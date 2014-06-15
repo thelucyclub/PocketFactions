@@ -2,8 +2,6 @@
 
 namespace pocketfactions\faction;
 
-use pocketfactions\Main;
-
 /**
  * This class is about <b>internal</b> ranks. For ranks of other factions, it has not been added yet.
  */

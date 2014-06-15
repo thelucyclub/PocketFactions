@@ -8,15 +8,16 @@ use pocketmine\level\Position;
 use pocketmine\scheduler\AsyncTask;
 
 class WriteDatabaseTask extends AsyncTask{
-	public function __construct($res){
+	public function __construct($res, Main $main){
 		$this->res = $res;
+		$this->main = $main;
 	}
 	public function onRun(){
 		$res = $this->res;
 		fwrite($res, FactionList::MAGIC_P);
 		fwrite($res, Main::V_CURRENT);
-		fwrite($res, Bin::writeInt(count(Main::get()->getFList()->getAll())));
-		foreach(Main::get()->getFList()->getAll() as $f){
+		fwrite($res, Bin::writeInt(count($this->main->getFList()->getAll())));
+		foreach($this->main->getFList()->getAll() as $f){
 			fwrite($res, Bin::writeInt($f->getID()));
 			fwrite($res, Bin::writeByte(strlen($f->getName()) | ($f->isWhitelisted() ? 0b10000000:0)));
 			fwrite($res, $f->getName());
@@ -57,7 +58,7 @@ class WriteDatabaseTask extends AsyncTask{
 //			fwrite($res, $f->getHome()->getLevel()->getName());
 			$this->writePosition($f->getHome(), $res);
 		}
-		$states = Main::get()->getFList()->getFactionsStates();
+		$states = $this->main->getFList()->getFactionsStates();
 		fwrite($res, Bin::writeLong(count($states)));
 		foreach($states as $state){
 			fwrite($res, Bin::writeInt($state->getF0()->getID()));
