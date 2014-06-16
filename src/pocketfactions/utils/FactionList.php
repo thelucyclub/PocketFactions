@@ -9,7 +9,6 @@ use pocketfactions\faction\Faction;
 use pocketfactions\Main;
 use pocketfactions\tasks\ReadDatabaseTask;
 use pocketfactions\tasks\WriteDatabaseTask;
-
 use pocketmine\IPlayer;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
@@ -17,6 +16,9 @@ use pocketmine\Server;
 class FactionList{
 	const MAGIC_P = "\x00\x00\xff\xffFACTION-LIST";
 	const MAGIC_S = "END-OF-LIST-\xff\xff\x00\x00";
+	const WILDERNESS = 0;
+	const PVP = 1;
+	const SAFE = 2;
 	/**
 	 * @var bool|IFaction[]
 	 */
@@ -38,8 +40,10 @@ class FactionList{
 	protected function load(){
 		if(!is_file($this->path)){
 			$this->factions = [];
-			$server = Faction::newInstance("Server", "console", [new Rank(0, "staff", 0)], 0, $this->main, $this->server->getDefaultLevel()->getSafeSpawn(), $this->server->getServerName() . " server-owned areas"); // console is a banned name in PocketMine-MP
-			$this->factions[$server->getID()] = $server;
+			$pvp = Faction::newInstance("PvP-Zone", "console", [new Rank(0, "staff", 0)], 0, $this->main, $this->server->getDefaultLevel()->getSafeSpawn(), $this->server->getServerName() . " server-owned PvP areas", true, self::PVP); // console is a banned name in PocketMine-MP
+			$this->factions[$pvp->getID()] = $pvp;
+			$safe = Faction::newInstance("Safe-Zone", "console", [new Rank(0, "staff", 0)], 0, $this->main, $this->server->getDefaultLevel()->getSafeSpawn(), $this->server->getServerName() . " server-owned PvP-free areas", true, self::SAFE);
+			$this->factions[$safe->getID()] = $safe;
 		}else{
 			$this->loadFrom(fopen($this->path, "rb"));
 		}
@@ -128,10 +132,10 @@ class FactionList{
 		$this->factions[$id] = new Faction($args, $this->main);
 	}
 	public function getFactionsState(IFaction $f0, IFaction $f1){
-		return $this->states[$f0->getID()."-".$f1->getID()];
+		return $this->states[$f0->getID() . "-" . $f1->getID()];
 	}
 	public function setFactionsState(State $state){
-		$this->states[$state->getF0()->getID()."-".$state->getF1()->getID()] = $state;
+		$this->states[$state->getF0()->getID() . "-" . $state->getF1()->getID()] = $state;
 	}
 	/**
 	 * @param State[] $states

@@ -16,6 +16,7 @@ use xecon\entity\Entity;
 
 class Faction implements InventoryHolder, Requestable, IFaction{
 	use Entity;
+
 	/** @var Main */
 	protected $main;
 	/** @var string $name */
@@ -61,10 +62,14 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 * @param Position $home the home position of the faction
 	 * @param string $motto
 	 * @param bool $whitelist
+	 * @param int|bool $id
 	 * @return Faction
 	 */
-	public static function newInstance($name, $founder, array $ranks, $defaultRankIndex, Main $main, Position $home, $motto = "", $whitelist = true){
-		$data = ["name" => $name, "motto" => $motto, "id" => self::nextID($main), "founder" => strtolower($founder), "ranks" => $ranks, "default-rank" => $ranks[$defaultRankIndex], "members" => [], "last-active" => time(), "chunks" => [], "home" => $home, "base-chunk" => Chunk::fromObject($home), "whitelist" => $whitelist];
+	public static function newInstance($name, $founder, array $ranks, $defaultRankIndex, Main $main, Position $home, $motto = "", $whitelist = true, $id = false){
+		if(!is_int($id)){
+			$id = self::nextID($main);
+		}
+		$data = ["name" => $name, "motto" => $motto, "id" => $id, "founder" => strtolower($founder), "ranks" => $ranks, "default-rank" => $ranks[$defaultRankIndex], "members" => [], "last-active" => time(), "chunks" => [], "home" => $home, "base-chunk" => Chunk::fromObject($home), "whitelist" => $whitelist];
 		return new Faction($data, $main);
 	}
 	public function __construct(array $args, Main $main){
@@ -79,15 +84,15 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		$this->chunks = $args["chunks"];
 		$this->home = $args["home"];
 		$this->main = $main;
-//		$this->chunks = [];
-//		/** @var Chunk[] $chunks */
-//		$chunks = $args["chunks"];
-//		foreach($chunks as $c){
-//			if(!isset($this->chunks[$c->getLevel()])){
-//				$this->chunks[$c->getLevel()] = [];
-//			}
-//			$this->chunks[$c->getLevel()][$c->getX().",".$c->getZ()] = $c;
-//		}
+		//		$this->chunks = [];
+		//		/** @var Chunk[] $chunks */
+		//		$chunks = $args["chunks"];
+		//		foreach($chunks as $c){
+		//			if(!isset($this->chunks[$c->getLevel()])){
+		//				$this->chunks[$c->getLevel()] = [];
+		//			}
+		//			$this->chunks[$c->getLevel()][$c->getX().",".$c->getZ()] = $c;
+		//		}
 		$this->baseChunk = $args["base-chunk"];
 		$this->whitelist = $args["whitelist"];
 		$this->server = Server::getInstance();
@@ -223,7 +228,6 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 * @param string $memberName
 	 */
 	public function kick($memberName){
-
 	}
 	/**
 	 * @param Chunk $chunk
@@ -272,7 +276,6 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		return $this->getName();
 	}
 	public function sendMessage($message){
-
 		return null;
 	}
 	public function initDefaultAccounts(){
@@ -285,10 +288,13 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		return true; // TODO
 	}
 	public function getRequestableIdentifier(){
-		return "PocketFaction ".$this->getID();
+		return "PocketFaction " . $this->getID();
 	}
 	public function canFight(MCEntity $attacker, MCEntity $victim){
 		return true;
+	}
+	public function getMain(){
+		return $this->main;
 	}
 	/**
 	 * @param Main $main
@@ -299,5 +305,5 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		$main->getCleanSaveConfig()->set("next-fid", $fid + 1);
 		$main->getCleanSaveConfig()->save();
 		return $fid;
-    }
+	}
 }

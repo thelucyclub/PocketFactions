@@ -2,6 +2,7 @@
 
 namespace pocketfactions\tasks;
 
+use pocketfactions\faction\Faction;
 use pocketfactions\utils\FactionList;
 use pocketfactions\Main;
 use pocketmine\level\Position;
@@ -18,6 +19,8 @@ class WriteDatabaseTask extends AsyncTask{
 		fwrite($res, Main::V_CURRENT);
 		fwrite($res, Bin::writeInt(count($this->main->getFList()->getAll())));
 		foreach($this->main->getFList()->getAll() as $f){
+			if(!($f instanceof Faction))
+				continue;
 			fwrite($res, Bin::writeInt($f->getID()));
 			fwrite($res, Bin::writeByte(strlen($f->getName()) | ($f->isWhitelisted() ? 0b10000000:0)));
 			fwrite($res, $f->getName());
@@ -36,7 +39,7 @@ class WriteDatabaseTask extends AsyncTask{
 			fwrite($res, Bin::writeByte($f->getDefaultRank()));
 			$mbrs = $f->getMembers();
 			fwrite($res, Bin::writeInt(count($mbrs)));
-			foreach($mbrs as $name=>$rank){
+			foreach($mbrs as $name => $rank){
 				fwrite($res, Bin::writeByte(strlen($name)));
 				fwrite($res, $name);
 				fwrite($res, Bin::writeByte($rank));
@@ -51,11 +54,11 @@ class WriteDatabaseTask extends AsyncTask{
 				fwrite($res, Bin::writeByte(strlen($c->getLevel())));
 				fwrite($res, $c->getLevel());
 			}
-//			fwrite($res, Bin::writeInt($f->getHome()->getX() + 2147483648));
-//			fwrite($res, Bin::writeShort($f->getHome()->getY()));
-//			fwrite($res, Bin::writeInt($f->getHome()->getZ() + 2147483648));
-//			fwrite($res, Bin::writeByte(strlen($f->getHome()->getLevel()->getName())));
-//			fwrite($res, $f->getHome()->getLevel()->getName());
+			//			fwrite($res, Bin::writeInt($f->getHome()->getX() + 2147483648));
+			//			fwrite($res, Bin::writeShort($f->getHome()->getY()));
+			//			fwrite($res, Bin::writeInt($f->getHome()->getZ() + 2147483648));
+			//			fwrite($res, Bin::writeByte(strlen($f->getHome()->getLevel()->getName())));
+			//			fwrite($res, $f->getHome()->getLevel()->getName());
 			$this->writePosition($f->getHome(), $res);
 		}
 		$states = $this->main->getFList()->getFactionsStates();

@@ -6,6 +6,7 @@ use pocketfactions\faction\Faction;
 use pocketfactions\faction\Rank;
 use pocketfactions\utils\PluginCmd as PCmd;
 use pocketfactions\utils\FactionList;
+use pocketfactions\utils\WildernessFaction;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
@@ -40,13 +41,14 @@ class Main extends Prt implements Listener{
 	 * @var FactionList
 	 */
 	private $flist;
-	private $playerDb;
+	/** @var WildernessFaction */
+	private $wilderness;
 	/**
 	 * @var bool[] (all elements should be true)
 	 */
 	private $loggedIn = array();
 	public function onEnable(){
-		$this->getLogger()->info(Font::AQUA."Initializing", false, 1);
+		$this->getLogger()->info(Font::AQUA . "Initializing", false, 1);
 		$this->initDatabase();
 		echo ".";
 		$this->registerPerms();
@@ -54,18 +56,18 @@ class Main extends Prt implements Listener{
 		$this->registerEvents();
 		echo ".";
 		$this->registerCmds();
-		echo Font::GREEN." Done!".Font::RESET.PHP_EOL;
+		echo Font::GREEN . " Done!" . Font::RESET . PHP_EOL;
 	}
 	protected function initDatabase(){
 		$this->flist = new FactionList($this); // used AsyncTask because the server could be running in the middle
-		@mkdir($this->getDataFolder()."database/");
-		$this->cleanSave = new Config($this->getDataFolder()."database/data.json", Config::JSON, [
-			"next-fid" => 0
+		$this->wilderness = new WildernessFaction($this);
+		@mkdir($this->getDataFolder() . "database/");
+		$this->cleanSave = new Config($this->getDataFolder() . "database/data.json", Config::JSON, ["next-fid" => 10, // 10 IDs left for defaults
 		]);
 		$this->saveDefaultConfig();
 		$this->saveResource("xecon.yml");
 		$this->reloadConfig();
-		$this->xeconConfig = new Config($this->getDataFolder()."xecon.yml", Config::YAML);
+		$this->xeconConfig = new Config($this->getDataFolder() . "xecon.yml", Config::YAML);
 	}
 	public function getXEconConfig(){
 		return $this->xeconConfig;
@@ -97,11 +99,9 @@ class Main extends Prt implements Listener{
 	public function regPerm($name, $desc, $default = null, $parent = null){
 		if($default === null){
 			$default = Permission::DEFAULT_TRUE;
-		}
-		elseif(is_bool($default)){
+		}elseif(is_bool($default)){
 			$default = $default ? Permission::DEFAULT_TRUE:Permission::DEFAULT_FALSE;
-		}
-		elseif($default === 2){
+		}elseif($default === 2){
 			$default = Permission::DEFAULT_OP;
 		}
 		return DefaultPermissions::registerPermission(new Permission($name, $desc, $default), $parent);
@@ -129,7 +129,7 @@ class Main extends Prt implements Listener{
 	public function onJoin(PlayerJoinEvent $evt){
 		$name = strtolower($evt->getPlayer()->getName());
 		if(isset($this->inbox[$name])){
-			$evt->getPlayer()->sendMessage("You have ".count($this->inbox[$name])." messages in your offline inbox:");
+			$evt->getPlayer()->sendMessage("You have " . count($this->inbox[$name]) . " messages in your offline inbox:");
 			while(count($this->inbox[$name]) > 0){
 				$evt->getPlayer()->sendMessage(array_shift($this->inbox[$name]));
 			}
@@ -152,7 +152,7 @@ class Main extends Prt implements Listener{
 	 * @return string
 	 */
 	public function getFactionsFilePath(){
-		return $this->getDataFolder()."database/factions.dat";
+		return $this->getDataFolder() . "database/factions.dat";
 	}
 	public function onLogin(PlayerJoinEvent $evt){
 		$f = $this->getFList()->getFaction($evt->getPlayer());
@@ -190,9 +190,6 @@ class Main extends Prt implements Listener{
 	 */
 	public function getFList(){
 		return $this->flist;
-	}
-	public function getPlayerDb(){
-		return $this->playerDb;
 	}
 	////////////
 	// CONFIG //
