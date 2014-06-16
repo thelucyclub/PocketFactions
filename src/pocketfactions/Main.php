@@ -4,8 +4,8 @@ namespace pocketfactions;
 
 use pocketfactions\faction\Faction;
 use pocketfactions\faction\Rank;
-use pocketfactions\utils\PluginCmd as PCmd;
 use pocketfactions\utils\FactionList;
+use pocketfactions\utils\subcommand\SubcommandMap;
 use pocketfactions\utils\WildernessFaction;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
@@ -112,19 +112,9 @@ class Main extends Prt implements Listener{
 	private function registerCmds(){
 		$this->cmdExe = new CmdHandler($this);
 		//Faction Commands for Players
-		$main = new PCmd("faction", $this, $this->cmdExe);
-		$main->setUsage("/faction <help|cmd>");
-		$main->setDescription("PocketFactions commands");
-		$main->setPermission("pocketfactions.cmd.f");
-		$main->setAliases(array("f"));
-		$main->reg();
-		//Faction Commands for Server Admins
-		$main2 = new PCmd("fmanager", $this, $this->cmdExe);
-		$main2->setUsage("/fmanager <wclaim|smoney|gmoney|fdelete>");
-		$main2->setDescription("PocketFactions Admin commands");
-		$main2->setPermission("pocketfactions.cmd.fmgr");
-		$main2->setAliases(array("fmgr"));
-		$main2->reg();
+		$f = new SubcommandMap("factions", $this, "Factions main command", "pocketfactions.cmd.factions", ["f"]);
+		$fm = new SubcommandMap("factions-manager", $this, "Factions manager command", "pocketfactions.cmd.factionsmanager", ["fadm", "fmgr"]);
+		$this->getServer()->getCommandMap()->registerAll("pocketfactions", [$f, $fm]);
 	}
 	public function onJoin(PlayerJoinEvent $evt){
 		$name = strtolower($evt->getPlayer()->getName());
