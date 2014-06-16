@@ -2,6 +2,7 @@
 
 namespace pocketfactions\utils;
 
+use pocketfactions\faction\Rank;
 use pocketfactions\faction\State;
 use pocketfactions\faction\Chunk;
 use pocketfactions\faction\Faction;
@@ -17,7 +18,7 @@ class FactionList{
 	const MAGIC_P = "\x00\x00\xff\xffFACTION-LIST";
 	const MAGIC_S = "END-OF-LIST-\xff\xff\x00\x00";
 	/**
-	 * @var bool|Faction[]
+	 * @var bool|IFaction[]
 	 */
 	private $factions = false;
 	/**
@@ -35,7 +36,13 @@ class FactionList{
 		$this->load();
 	}
 	protected function load(){
-		$this->loadFrom(fopen($this->path, "rb"));
+		if(!is_file($this->path)){
+			$this->factions = [];
+			$server = Faction::newInstance("Server", "console", [new Rank(0, "staff", 0)], 0, $this->main, $this->server->getDefaultLevel()->getSafeSpawn(), $this->server->getServerName() . " server-owned areas"); // console is a banned name in PocketMine-MP
+			$this->factions[$server->getID()] = $server;
+		}else{
+			$this->loadFrom(fopen($this->path, "rb"));
+		}
 	}
 	/**
 	 * @param resource $res
@@ -62,16 +69,19 @@ class FactionList{
 		$this->server->getScheduler()->scheduleAsyncTask($asyncTask);
 	}
 	/**
-	 * @param Faction[] $factions
+	 * @param IFaction[] $factions
 	 */
 	public function setAll(array $factions){
-		$this->factions = $factions;
+		$this->factions = [];
+		foreach($factions as $f){
+			$this->factions[$f->getID()] = $f;
+		}
 	}
 	public function __destruct(){
 		$this->save();
 	}
 	/**
-	 * @return bool|Faction[]
+	 * @return bool|IFaction[]
 	 */
 	public function getAll(){
 		return $this->factions;
@@ -96,6 +106,8 @@ class FactionList{
 				return isset($this->factions[$identifier]) ? $this->factions[$identifier]:false;
 			case $identifier instanceof IPlayer:
 				foreach($this->factions as $faction){
+					if(!($faction instanceof Faction))
+						continue;
 					if(in_array(strtolower($identifier->getName()), $faction->getMembers())){
 						return $faction;
 					}
@@ -115,7 +127,7 @@ class FactionList{
 	public function addFaction(array $args, $id){
 		$this->factions[$id] = new Faction($args, $this->main);
 	}
-	public function getFactionsState(Faction $f0, Faction $f1){
+	public function getFactionsState(IFaction $f0, IFaction $f1){
 		return $this->states[$f0->getID()."-".$f1->getID()];
 	}
 	public function setFactionsState(State $state){

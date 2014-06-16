@@ -72,9 +72,17 @@ class CmdHandler implements CommandExecutor{
 							return PCmd::NO_FACTION;
 						}
 						$faction = $this->main->getFList()->getFaction($issuer);
+						if($faction === null){
+							return PCmd::DB_LOADING;
+						}
+						if($faction === false){
+							return PCMd::NO_FACTION;
+						}
+						/** @var Faction $faction */
 						if($faction->getMemberRank($issuer->getName())->hasPerm(Rank::P_INVITE)){ // rank check. im not sure what ur going to do. edit this later.
 							return PCmd::NO_PERM;
 						}
+						$statsCore = null;
 						StatsCore::getInstance()->getRequestList()->add($req = new FactionInviteRequest($faction, new PlayerRequestable($targetp), implode(" ", $args)));
 						$issuer->sendMessage("The following message has been sent to ".$targetp->getDisplayName().":");
 						$issuer->sendMessage("[SENT REQUEST] ".$req->getContent());
@@ -110,7 +118,7 @@ class CmdHandler implements CommandExecutor{
 						if(!$f->getMemberRank($issuer->getName())->hasPerm(Rank::P_CLAIM)){
 							return PCmd::NO_PERM;
 						}
-//						$f->claim(Chunk::fromObject($issuer));
+						$f->claim(Chunk::fromObject($issuer));
 						// TODO claim chunk
 						break;
 					case "unclaim":

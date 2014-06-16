@@ -4,40 +4,31 @@ namespace pocketfactions\faction;
 
 use legendofmcpe\statscore\Requestable;
 use legendofmcpe\statscore\StatsCore;
+use pocketfactions\utils\IFaction;
 use pocketfactions\Main;
+use pocketmine\entity\Entity as MCEntity;
 use pocketmine\inventory\InventoryHolder;
+use pocketmine\level\Position;
 use pocketmine\Player;
 use pocketmine\Server;
 use xecon\account\DummyInventory;
 use xecon\entity\Entity;
 
-class Faction implements InventoryHolder, Requestable{
+class Faction implements InventoryHolder, Requestable, IFaction{
 	use Entity;
 	/** @var Main */
 	protected $main;
-	/**
-	 * @var string $name
-	 */
+	/** @var string $name */
 	protected $name;
-	/**
-	 * @var string $motto
-	 */
+	/** @var string $motto */
 	protected $motto;
-	/**
-	 * @var int $id
-	 */
+	/** @var int $id */
 	protected $id;
-	/**
-	 * @var string $founder
-	 */
+	/** @var string $founder */
 	protected $founder;
-	/**
-	 * @var Rank[] $ranks indexed by internal rank IDs
-	 */
+	/** @var Rank[] $ranks indexed by internal rank IDs */
 	protected $ranks;
-	/**
-	 * @var int $defaultRank internal rank ID of the default rank
-	 */
+	/** @var int $defaultRank internal rank ID of the default rank */
 	protected $defaultRank;
 	/**
 	 * This array is a list keyed with lowercase member names and filled with Rank object references to $Faction->ranks.
@@ -45,31 +36,37 @@ class Faction implements InventoryHolder, Requestable{
 	 * @var Rank[] $members
 	 */
 	protected $members;
-	/**
-	 * @var  int $lastActive
-	 */
+	/** @var  int $lastActive */
 	protected $lastActive;
-	/**
-	 * @var Chunk[] $chunks numerically keyed chunks with undefined order (possibly sequence of claiming)
-	 */
+	/** @var Chunk[] $chunks numerically keyed chunks with undefined order (possibly, but not sure, sequence of claiming) */
 	protected $chunks;
-	/**
-	 * @var Chunk $baseChunk The base chunk o a faction. TODO should we remove it? Possibly yes.
-	 */
+	/** @var Chunk $baseChunk The base chunk o a faction. TODO should we remove it? Possibly yes. */
 	protected $baseChunk;
-	/**
-	 * @var \pocketmine\level\Position $home
-	 */
+	/** @var \pocketmine\level\Position $home */
 	protected $home;
-	/**
-	 * @var bool
-	 */
+	/** @var bool */
 	protected $whitelist;
+	/** @var */
 	protected $econEnt;
 	/**
 	 * @var Server
 	 */
 	public $server;
+	/**
+	 * @param string $name
+	 * @param string $founder name of the faction founder
+	 * @param Rank[] $ranks
+	 * @param int $defaultRankIndex the default rank's key in $ranks
+	 * @param Main $main
+	 * @param Position $home the home position of the faction
+	 * @param string $motto
+	 * @param bool $whitelist
+	 * @return Faction
+	 */
+	public static function newInstance($name, $founder, array $ranks, $defaultRankIndex, Main $main, Position $home, $motto = "", $whitelist = true){
+		$data = ["name" => $name, "motto" => $motto, "id" => self::nextID($main), "founder" => strtolower($founder), "ranks" => $ranks, "default-rank" => $ranks[$defaultRankIndex], "members" => [], "last-active" => time(), "chunks" => [], "home" => $home, "base-chunk" => Chunk::fromObject($home), "whitelist" => $whitelist];
+		return new Faction($data, $main);
+	}
 	public function __construct(array $args, Main $main){
 		$this->name = $args["name"];
 		$this->motto = $args["motto"];
@@ -254,15 +251,22 @@ class Faction implements InventoryHolder, Requestable{
 	public function getPower(){
 		$power = 0;
 		foreach($this->members as $mbr){
-			$micro = StatsCore::getInstance()->getMLogger()->getTotalOnlineTime($mbr);
+			$statsCore = StatsCore::getInstance();
+			if(!($statsCore instanceof StatsCore) or $statsCore->isDisabled()){
+				$this->main->getLogger()->error("StatsCore is not found or is disabled.");
+			}
+			$micro = $statsCore->getMLogger()->getTotalOnlineTime($mbr);
 			$power += (((int) ($micro / 60 / 60)) * $this->main->getPowerGainPerOnlineHour());
-			$power -= StatsCore::getInstance()->getMLogger()->getFullOfflineDays($mbr);
+			$power -= $statsCore->getInstance()->getMLogger()->getFullOfflineDays($mbr);
 			// TODO add kills and deaths factors
 		}
 		return $power;
 	}
 	public function getInventory(){
 		return new DummyInventory($this, "Faction Account"); // TODO replace the dummy placeholder
+	}
+	public function hasMember($name){
+		return in_array(strtolower($name), $this->members);
 	}
 	public function __toString(){
 		return $this->getName();
@@ -282,6 +286,9 @@ class Faction implements InventoryHolder, Requestable{
 	}
 	public function getRequestableIdentifier(){
 		return "PocketFaction ".$this->getID();
+	}
+	public function canFight(MCEntity $attacker, MCEntity $victim){
+		return true;
 	}
 	/**
 	 * @param Main $main
