@@ -12,7 +12,6 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\permission\Permission;
-use pocketmine\permission\DefaultPermissions;
 use pocketmine\plugin\PluginBase as Prt;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as Font;
@@ -21,10 +20,6 @@ class Main extends Prt implements Listener{
 	const NAME = "PocketFactions";
 	const V_INIT = "\x00";
 	const V_CURRENT = "\x00";
-	/**
-	 * @var CmdHandler
-	 */
-	private $cmdExe;
 	/**
 	 * @var Config
 	 */
@@ -106,7 +101,16 @@ class Main extends Prt implements Listener{
 		}elseif($default === 2){
 			$default = Permission::DEFAULT_OP;
 		}
-		return DefaultPermissions::registerPermission(new Permission($name, $desc, $default), $parent);
+		$perm = new Permission($name, $desc, $default);
+		return $this->regPermWithObject($perm, $parent);
+	}
+	private function regPermWithObject(Permission $perm, Permission $parent = null){
+		if($parent instanceof Permission){
+			$parent->getChildren()[$perm->getName()] = true;
+			return $this->regPermWithObject($perm);
+		}
+		$this->getServer()->getPluginManager()->addPermission($perm);
+		return $this->getServer()->getPluginManager()->getPermission($perm->getName());
 	}
 	private function registerEvents(){
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);

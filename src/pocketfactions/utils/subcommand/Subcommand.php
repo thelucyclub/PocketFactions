@@ -27,6 +27,7 @@ abstract class Subcommand{
 	 * @param Main $main
 	 * @param $name
 	 * @param string $callable
+	 * @param string $permCheck
 	 */
 	public function __construct(Main $main, $name, $callable = "onRun", $permCheck = "checkPermission"){
 		$this->main = $main;
@@ -58,7 +59,7 @@ abstract class Subcommand{
 			return;
 		}
 	}
-	public function run(array $args, CommandSender $sender){
+	public final function run(array $args, CommandSender $sender){
 		if($this->issuer === self::CONSOLE and !($sender instanceof ConsoleCommandSender)){
 			$sender->sendMessage("Please run this command in-game.");
 			return;
@@ -119,7 +120,7 @@ abstract class Subcommand{
 	 * @param CommandSender $sender
 	 * @return bool
 	 */
-	public function hasPermission(CommandSender $sender){
+	public final function hasPermission(CommandSender $sender){
 		$callable = array($this, $this->permCheck);
 		if($this->issuer === self::CONSOLE and !($sender instanceof ConsoleCommandSender) or $this->issuer === self::PLAYER and !($sender instanceof Player)){
 			return false;

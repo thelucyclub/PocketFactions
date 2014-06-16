@@ -16,15 +16,17 @@ class Motto extends Subcommand{
 		if(!isset($args[0])){
 			return false;
 		}
-		$faction->setMotto($args[0]);
+		$faction->setMotto($motto = implode(" ", $args));
+		$faction->sendMessage("Your faction's motto has been set to $motto by {$player->getName()}.");
+		return "";
+	}
+	public function checkPermission(Faction $faction, Player $player){
+		return $faction->getMemberRank($player->getName())->hasPerm(Rank::P_SET_MOTTO);
 	}
 	public function getDescription(){
 		return "Set your faction's motto";
 	}
 	public function getUsage(){
 		return "<motto>";
-	}
-	public function hasPermission(Faction $faction, Player $player){
-		return $faction->getMemberRank($player->getName())->hasPerm(Rank::P_SET_MOTTO);
 	}
 }
