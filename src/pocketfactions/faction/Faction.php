@@ -17,6 +17,7 @@ use xecon\entity\Entity;
 class Faction implements InventoryHolder, Requestable, IFaction{
 	use Entity;
 
+	// vars
 	/** @var Main */
 	protected $main;
 	/** @var string $name */
@@ -53,6 +54,9 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 * @var Server
 	 */
 	public $server;
+	//////////////////
+	// constructors //
+	//////////////////
 	/**
 	 * @param string $name
 	 * @param string $founder name of the faction founder
@@ -110,9 +114,10 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 			}
 		}
 	}
-	public function getEconomicEntity(){
-		return $this;
-	}
+	///////////////////
+	// API functions //
+	////////////////////
+	//// Getters and Setters
 	/**
 	 * @return string
 	 */
@@ -216,30 +221,6 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	public function setActiveNow(){
 		$this->lastActive = time();
 	}
-	/**
-	 * @param Player $newMember
-	 * @return bool|string $success <code>true</code> or reason that cannot join
-	 */
-	public function join(Player $newMember){
-		$this->members[strtolower($newMember->getName())] = $this->getDefaultRank();
-		return true;
-	}
-	/**
-	 * @param string $memberName
-	 */
-	public function kick($memberName){
-	}
-	/**
-	 * @param Chunk $chunk
-	 * @return bool
-	 */
-	public function claim(Chunk $chunk){
-		if(count($this->chunks) + 1 > $this->powerClaimable()){
-			return false;
-		}
-		$this->chunks[] = $chunk;
-		return true;
-	}
 	public function hasChunk(Chunk $chunk){
 		foreach($this->chunks as $cchunk){
 			if($chunk->equals($cchunk)){
@@ -266,20 +247,66 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		}
 		return $power;
 	}
-	public function getInventory(){
-		return new DummyInventory($this, "Faction Account"); // TODO replace the dummy placeholder
-	}
 	public function hasMember($name){
 		return in_array(strtolower($name), $this->members);
+	}
+	//// Runnable API functions; Command-redirected functions
+	/**
+	 * @param Player $newMember
+	 * @return bool|string $success <code>true</code> or reason that cannot join
+	 */
+	public function join(Player $newMember){
+		$this->members[strtolower($newMember->getName())] = $this->getDefaultRank();
+		return true;
+	}
+	/**
+	 * @param string $memberName
+	 */
+	public function kick($memberName){
+	}
+	/**
+	 * @param Chunk $chunk
+	 * @return bool
+	 */
+	public function claim(Chunk $chunk){
+		if(count($this->chunks) + 1 > $this->powerClaimable()){
+			return false;
+		}
+		$this->chunks[] = $chunk;
+		return true;
+	}
+	public function addLoan($name, $amount){
+		if(isset($this->liabilities[$name])){
+			// TODO decide where to save expire date
+			// TODO idea: save number of loans, then each loan is an account instead of each loan type is an account
+			$this->liabilities[$name]->add($amount);
+			return true;
+		}else{
+			return false;
+		}
 	}
 	public function __toString(){
 		return $this->getName();
 	}
+	/////////////////////////
+	// Inherited functions //
+	/////////////////////////
 	public function sendMessage($message){
 		return null;
 	}
+	// xEcon-related
+	public function getInventory(){
+		return new DummyInventory($this, "Faction Account"); // TODO replace the dummy placeholder
+	}
+	public function getEconomicEntity(){
+		return $this;
+	}
 	public function initDefaultAccounts(){
-		$this->addAccount("Cash", 500);
+		$this->addAccount("Cash", $this->main->getDefaultCash(), $this->main->getMaxCash());
+		$this->addAccount("Bank", $this->main->getDefaultBank(), $this->main->getMaxBank());
+		foreach($this->main->getBankLoanTypesRaw() as $name => $data){
+			$this->addLiability($name, $data["maximum"] * $data["amount"]);
+		}
 	}
 	public function getAbsolutePrefix(){
 		return "PocketFactions>>";

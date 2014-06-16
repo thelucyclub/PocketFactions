@@ -72,7 +72,7 @@ class Main extends Prt implements Listener{
 	public function getXEconConfig(){
 		return $this->xeconConfig;
 	}
-	protected function registerPerms(){
+	private function registerPerms(){
 		$me = strtolower(self::NAME);
 		$root = $this->regPerm("$me", "Allow using everything of PocketFactions");
 		$this->regPerm("$me.cmd.f", "Allow using main command /f", null, $root);
@@ -106,10 +106,10 @@ class Main extends Prt implements Listener{
 		}
 		return DefaultPermissions::registerPermission(new Permission($name, $desc, $default), $parent);
 	}
-	protected function registerEvents(){
+	private function registerEvents(){
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
-	protected function registerCmds(){
+	private function registerCmds(){
 		$this->cmdExe = new CmdHandler($this);
 		//Faction Commands for Players
 		$main = new PCmd("faction", $this, $this->cmdExe);
@@ -190,6 +190,9 @@ class Main extends Prt implements Listener{
 	 */
 	public function getFList(){
 		return $this->flist;
+	}
+	public function getWilderness(){
+		return $this->wilderness;
 	}
 	////////////
 	// CONFIG //
