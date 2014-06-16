@@ -37,7 +37,11 @@ class SubcommandMap extends Command implements PluginIdentifiableCommand{
 		}
 		$cmd = array_shift($args);
 		if(isset($this->subcmds[$cmd = strtolower(trim($cmd))]) and $cmd !== "help"){
-			$this->subcmds[$cmd]->run($args, $issuer);
+			if($this->subcmds[$cmd]->hasPermission($issuer)){
+				$this->subcmds[$cmd]->run($args, $issuer);
+			}else{
+				$issuer->sendMessage("You don't have permission to do this!");
+			}
 		}else{
 			$help = $this->getFullHelp($issuer);
 			$page = 1;
@@ -61,7 +65,7 @@ class SubcommandMap extends Command implements PluginIdentifiableCommand{
 	public function getFullHelp(CommandSender $sender){
 		$out = [];
 		foreach($this->subcmds as $cmd){
-			if(!$cmd->hasPermission($sender))
+			if(!$cmd->hasPermission($sender, $this->main->getFList()->getFaction($sender)))
 				continue;
 			$output = "";
 			$output .= "/{$this->getName()} ";
@@ -71,5 +75,13 @@ class SubcommandMap extends Command implements PluginIdentifiableCommand{
 			$out[] = $output;
 		}
 		return $out;
+	}
+	/**
+	 * @param Subcommand[] $subcmds
+	 */
+	public function registerAll(array $subcmds){
+		foreach($subcmds as $subcmd){
+			$this->register($subcmd);
+		}
 	}
 }

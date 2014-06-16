@@ -35,30 +35,16 @@ class CmdHandler implements CommandExecutor{
 					case "help":
 						return $this->help((int) $args[0]);
 					case "create":
-						if(count($args)!=1){
-							return("Usage: /f create <faction-name>");
+						if(count($args) != 1){
+							return ("Usage: /f create <faction-name>");
 						}
 						$min = $this->config->get("min-faction-name-length");
 						$max = $this->config->get("max-faction-name-length");
 						if(preg_replace($this->main->getFactionNamingRule(), "", $args[0]) !== ""){
-							return "[PF] The faction name is too long!\n".
-								"[PF] The faction name must be alphanumeric\n    ".
-								"[PF] and optionally with hyphens and underscores\n    ".
-								"[PF] in not less than $min characters and not more than $max characters.";
+							return "[PF] The faction name is too long!\n" . "[PF] The faction name must be alphanumeric\n    " . "[PF] and optionally with hyphens and underscores\n    " . "[PF] in not less than $min characters and not more than $max characters.";
 						}
 						$id = Faction::nextID($this->main);
-						$this->main->getFList()->addFaction([
-							"name" => $args[0],
-							"motto" => "Your Faction Motto. /f motto",
-							"id" => $id,
-							"founder" => strtolower($issuer->getName()),
-							"ranks" => Rank::defaults(),
-							"members" => array(strtolower($issuer->getName()) => Rank::defaults()[0]),
-							"chunks" => [],
-							"base-chunk" => new Chunk((int) $issuer->x / 16, (int) $issuer->z / 16, $issuer->getLevel()->getName()),
-							"whitelist" => false,
-							"last-active" => time(),
-						], $id);
+						$this->main->getFList()->addFaction(["name" => $args[0], "motto" => "Your Faction Motto. /f motto", "id" => $id, "founder" => strtolower($issuer->getName()), "ranks" => Rank::defaults(), "members" => array(strtolower($issuer->getName()) => Rank::defaults()[0]), "chunks" => [], "base-chunk" => new Chunk((int) $issuer->x / 16, (int) $issuer->z / 16, $issuer->getLevel()->getName()), "whitelist" => false, "last-active" => time(),], $id);
 						return "[PF] Faction $args[0] created.";
 					case "invite":
 						if(!isset($args[0])){
@@ -84,8 +70,8 @@ class CmdHandler implements CommandExecutor{
 						}
 						$statsCore = null;
 						StatsCore::getInstance()->getRequestList()->add($req = new FactionInviteRequest($faction, new PlayerRequestable($targetp), implode(" ", $args)));
-						$issuer->sendMessage("The following message has been sent to ".$targetp->getDisplayName().":");
-						$issuer->sendMessage("[SENT REQUEST] ".$req->getContent());
+						$issuer->sendMessage("The following message has been sent to " . $targetp->getDisplayName() . ":");
+						$issuer->sendMessage("[SENT REQUEST] " . $req->getContent());
 						break;
 					case "join":
 						$fname = array_shift($args);
@@ -102,8 +88,7 @@ class CmdHandler implements CommandExecutor{
 						$success = $faction->join($issuer);
 						if($success === true){
 							$issuer->sendMessage("You have successfully joined $faction!");
-						}
-						else{
+						}else{
 							$issuer->sendMessage("You cannot join $faction. Reason: $success");
 						}
 						return null;
@@ -165,7 +150,7 @@ class CmdHandler implements CommandExecutor{
 						if(!$faction->getMemberRank($issuer->getName())->hasPerm(Rank::P_KICK_PLAYER)){
 							return PCmd::NO_PERM;
 						}
-						$targetp->sendMessage("You have been kicked from $faction by ".$issuer->getDisplayName()."!");
+						$targetp->sendMessage("You have been kicked from $faction by " . $issuer->getDisplayName() . "!");
 						// TODO
 						break;
 					case "perm":
@@ -182,7 +167,6 @@ class CmdHandler implements CommandExecutor{
 						}
 						break;
 					case "sethome":
-
 						break;
 					case "setopen":
 						$bool = strtolower(array_shift($args));
@@ -206,10 +190,10 @@ class CmdHandler implements CommandExecutor{
 							return PCmd::NO_PERM;
 						}
 						if($faction->isOpen() === $bool){
-							return "[PF] Your faction is already ".($bool ? "opened":"closed")."!";
+							return "[PF] Your faction is already " . ($bool ? "opened":"closed") . "!";
 						}
 						$faction->setOpen($bool);
-						return "[PF] Your faction's open status has been set to ".($bool ? "opened":"closed").".";
+						return "[PF] Your faction's open status has been set to " . ($bool ? "opened":"closed") . ".";
 					case "home":
 						break;
 					case "money":
@@ -236,9 +220,8 @@ class CmdHandler implements CommandExecutor{
 		}
 		return true;
 	}
-	// Server::getOfflinePlayer() returns an online player if possible.
 	public function help($page){
-		$page = (1 <= $page and $page <= 3) ? $page : 1;
+		$page = (1 <= $page and $page <= 3) ? $page:1;
 		$output = "";
 		switch($page){
 			case 1:

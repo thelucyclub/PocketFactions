@@ -116,7 +116,7 @@ class FactionList{
 						return $faction;
 					}
 				}
-				return false;
+				return false; // should we change this to wilderness?
 			case $identifier instanceof Chunk:
 				foreach($this->factions as $faction){
 					if($faction->hasChunk($identifier)){

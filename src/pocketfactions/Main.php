@@ -47,6 +47,8 @@ class Main extends Prt implements Listener{
 	 * @var bool[] (all elements should be true)
 	 */
 	private $loggedIn = array();
+	private $fCmd;
+	private $fmCmd;
 	public function onEnable(){
 		$this->getLogger()->info(Font::AQUA . "Initializing", false, 1);
 		$this->initDatabase();
@@ -110,11 +112,10 @@ class Main extends Prt implements Listener{
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
 	private function registerCmds(){
-		$this->cmdExe = new CmdHandler($this);
 		//Faction Commands for Players
-		$f = new SubcommandMap("factions", $this, "Factions main command", "pocketfactions.cmd.factions", ["f"]);
-		$fm = new SubcommandMap("factions-manager", $this, "Factions manager command", "pocketfactions.cmd.factionsmanager", ["fadm", "fmgr"]);
-		$this->getServer()->getCommandMap()->registerAll("pocketfactions", [$f, $fm]);
+		$this->fCmd = new SubcommandMap("factions", $this, "Factions main command", "pocketfactions.cmd.factions", ["f"]);
+		$this->fmCmd = new SubcommandMap("factions-manager", $this, "Factions manager command", "pocketfactions.cmd.factionsmanager", ["fadm", "fmgr"]);
+		$this->getServer()->getCommandMap()->registerAll("pocketfactions", [$this->fCmd, $this->fmCmd]);
 	}
 	public function onJoin(PlayerJoinEvent $evt){
 		$name = strtolower($evt->getPlayer()->getName());

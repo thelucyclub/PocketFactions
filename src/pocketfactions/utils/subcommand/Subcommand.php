@@ -2,6 +2,7 @@
 
 namespace pocketfactions\utils\subcommand;
 
+use pocketfactions\faction\Faction;
 use pocketfactions\Main;
 use pocketmine\command\CommandSender;
 use pocketmine\command\ConsoleCommandSender;
@@ -19,22 +20,20 @@ abstract class Subcommand{
 	const NO_PERM = 5;
 	const WRONG_FACTION = 6;
 	/** @var string */
-	private $name, $description, $usage;
+	protected $name;
+	private $callable, $permCheck;
 	private $issuer = self::ALL;
 	/**
 	 * @param Main $main
 	 * @param $name
-	 * @param $description
-	 * @param $usage
 	 * @param string $callable
 	 */
-	public function __construct(Main $main, $name, $description, $usage, $callable = "onRun"){
+	public function __construct(Main $main, $name, $callable = "onRun", $permCheck = "checkPermission"){
 		$this->main = $main;
 		$this->name = $name;
-		$this->description = $description;
-		$this->usage = $usage;
 		$rc = new \ReflectionClass($this);
 		$this->callable = $callable;
+		$this->permCheck = $permCheck;
 		try{
 			$method = $rc->getMethod($callable);
 			$args = $method->getParameters();
@@ -89,7 +88,7 @@ abstract class Subcommand{
 			return;
 		}
 		if($result === self::WRONG_USE){
-			$sender->sendMessage("Usage: {$this->usage}");
+			$sender->sendMessage("Usage: {$this->getUsage()}");
 			return;
 		}
 		switch($result){
@@ -111,11 +110,26 @@ abstract class Subcommand{
 	public function getName(){
 		return $this->name;
 	}
-	public function getDescription(){
-		return $this->description;
+	public function getMain(){
+		return $this->main;
 	}
-	public function getUsage(){
-		return $this->usage;
+	public abstract function getDescription();
+	public abstract function getUsage();
+	/**
+	 * @param CommandSender $sender
+	 * @return bool
+	 */
+	public function hasPermission(CommandSender $sender){
+		$callable = array($this, $this->permCheck);
+		if($this->issuer === self::CONSOLE and !($sender instanceof ConsoleCommandSender) or $this->issuer === self::PLAYER and !($sender instanceof Player)){
+			return false;
+		}
+		if($this->issuer === self::FACTION_MEMBER){
+			if(!($sender instanceof Player) or !(($f = $this->main->getFList()->getFaction($sender)) instanceof Faction)){
+				return false;
+			}
+			return call_user_func($callable, $f, $sender);
+		}
+		return call_user_func($callable, $sender);
 	}
-	public abstract function hasPermission(CommandSender $sender);
 }
