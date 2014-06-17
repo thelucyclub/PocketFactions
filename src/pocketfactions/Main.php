@@ -113,6 +113,7 @@ class Main extends Prt implements Listener{
 //			new Unclaim($this),
 //			new Unclaimall($this),
 		];
+		$this->fCmd->registerAll($subcmds);
 		$this->getServer()->getCommandMap()->registerAll("pocketfactions", [$this->fCmd, $this->fmCmd]);
 	}
 	/**
