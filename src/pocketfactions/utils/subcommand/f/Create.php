@@ -19,6 +19,9 @@ class Create extends Subcommand{
 			return false;
 		}
 		$name = $args[0];
+		if(preg_replace($this->main->getFactionNamingRule(), "", $name) !== ""){
+			return $this->getMain()->getFactionNameErrorMsg();
+		}
 		Faction::newInstance($name, $player->getName(), Rank::defaults(), Rank::defaultRank(), $this->main, Position::fromObject($player, $player->getLevel()));
 		$this->main->getServer()->broadcast("A new faction called $name has been created!", Server::BROADCAST_CHANNEL_USERS);
 		$this->main->getServer()->broadcast("Faction $name is created by " . $player->getDisplayName() . " based at " . $player->getX() . ", " . $player->getY() . ", " . $player->getZ() . " in world " . $player->getLevel()->getName(), Server::BROADCAST_CHANNEL_ADMINISTRATIVE);

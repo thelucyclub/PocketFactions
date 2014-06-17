@@ -24,74 +24,7 @@ class CmdHandler implements CommandExecutor{
 	public function onCommand(Issuer $issuer, Command $cmd, $lbl, array $args){
 		switch(strtolower($cmd->getName())){
 			case "faction":
-				if(!($issuer instanceof Player)){
-					return PCmd::RUN_IN_GAME;
-				}
-				if(count($args) === 0){
-					$args = array("help");
-				}
-				$subcmd = array_shift($args);
 				switch(strtolower($subcmd)){ // manage subcommand
-					case "help":
-						return $this->help((int) $args[0]);
-					case "create":
-						if(count($args) != 1){
-							return ("Usage: /f create <faction-name>");
-						}
-						$min = $this->config->get("min-faction-name-length");
-						$max = $this->config->get("max-faction-name-length");
-						if(preg_replace($this->main->getFactionNamingRule(), "", $args[0]) !== ""){
-							return "[PF] The faction name is too long!\n" . "[PF] The faction name must be alphanumeric\n    " . "[PF] and optionally with hyphens and underscores\n    " . "[PF] in not less than $min characters and not more than $max characters.";
-						}
-						$id = Faction::nextID($this->main);
-						$this->main->getFList()->addFaction(["name" => $args[0], "motto" => "Your Faction Motto. /f motto", "id" => $id, "founder" => strtolower($issuer->getName()), "ranks" => Rank::defaults(), "members" => array(strtolower($issuer->getName()) => Rank::defaults()[0]), "chunks" => [], "base-chunk" => new Chunk((int) $issuer->x / 16, (int) $issuer->z / 16, $issuer->getLevel()->getName()), "whitelist" => false, "last-active" => time(),], $id);
-						return "[PF] Faction $args[0] created.";
-					case "invite":
-						if(!isset($args[0])){
-							return "Usage: /f invite <target-player> [extra message ...]";
-						}
-						$targetp = $this->server->getOfflinePlayer(array_shift($args));
-						if(!($targetp instanceof Player)){
-							return PCmd::INVALID_PLAYER;
-						}
-						if($this->main->getFList()->getFaction($targetp) === false){
-							return PCmd::NO_FACTION;
-						}
-						$faction = $this->main->getFList()->getFaction($issuer);
-						if($faction === null){
-							return PCmd::DB_LOADING;
-						}
-						if($faction === false){
-							return PCMd::NO_FACTION;
-						}
-						/** @var Faction $faction */
-						if($faction->getMemberRank($issuer->getName())->hasPerm(Rank::P_INVITE)){ // rank check. im not sure what ur going to do. edit this later.
-							return PCmd::NO_PERM;
-						}
-						$statsCore = null;
-						StatsCore::getInstance()->getRequestList()->add($req = new FactionInviteRequest($faction, new PlayerRequestable($targetp), implode(" ", $args)));
-						$issuer->sendMessage("The following message has been sent to " . $targetp->getDisplayName() . ":");
-						$issuer->sendMessage("[SENT REQUEST] " . $req->getContent());
-						break;
-					case "join":
-						$fname = array_shift($args);
-						$faction = $this->main->getFList()->getFaction($fname);
-						if($faction === null){
-							return PCmd::DB_LOADING;
-						}
-						if($faction === false){
-							return PCmd::INVALID_FACTION;
-						}
-						if(!$faction->isOpen()){
-							return "[PF] This faction is whitelisted.\n[PF] Please use /req accept <id> if you had been invited."; //why cant you use /f instead? Same thing anyways.
-						}
-						$success = $faction->join($issuer);
-						if($success === true){
-							$issuer->sendMessage("You have successfully joined $faction!");
-						}else{
-							$issuer->sendMessage("You cannot join $faction. Reason: $success");
-						}
-						return null;
 					case "claim":
 						$f = $this->main->getFList()->getFaction($issuer);
 						if($f === null){

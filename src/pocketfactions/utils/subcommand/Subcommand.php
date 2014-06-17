@@ -36,10 +36,10 @@ abstract class Subcommand{
 		$this->callable = $callable;
 		$this->permCheck = $permCheck;
 		try{
-			$method = $rc->getMethod($callable);
+			$method = $rc->getMethod($permCheck); // I think @shoghicp will say that there would be undefined behaviour again...
 			$args = $method->getParameters();
-			if(isset($args[1])){
-				$class = $args[1]->getClass();
+			if(isset($args[0])){
+				$class = $args[0]->getClass();
 				if($class instanceof \ReflectionClass){
 					switch($class->getName()){
 						case "pocketmine\\Player":
@@ -107,11 +107,11 @@ abstract class Subcommand{
 				break;
 		}
 		return;
-	}
-	public function getName(){
+	} // I made these functions final to avoid accidental override
+	public final function getName(){
 		return $this->name;
 	}
-	public function getMain(){
+	public final function getMain(){
 		return $this->main;
 	}
 	public abstract function getDescription();

@@ -1,12 +1,12 @@
 <?php
 
-namespace pocketfactions\utils;
+namespace pocketfactions\utils\request;
 
 use legendofmcpe\statscore\PlayerRequestable;
 use pocketfactions\faction\Faction;
 use pocketmine\Server;
 
-class FactionInviteRequest extends FactionRequest{
+class FactionInviteRequest extends FromFactionRequest{
 	protected $extra;
 	public function __construct(Faction $from, PlayerRequestable $to, $extra = ""){
 		parent::__construct($from, $to);
@@ -16,7 +16,7 @@ class FactionInviteRequest extends FactionRequest{
 		return $this->extra;
 	}
 	public function getContent(){
-		return "You have received an invitation to join faction ".$this->getFaction()->getName().". {$this->getExtraMessage()}";
+		return "You have received an invitation to join faction " . $this->getFaction()->getName() . ". {$this->getExtraMessage()}";
 	}
 	public function onAccepted(){
 		$this->getFaction()->sendMessage("The invitation to {$this->getTo()->getName()} to join this faction has been accepted!");

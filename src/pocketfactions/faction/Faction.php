@@ -176,10 +176,13 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		return $this->baseChunk;
 	}
 	/**
-	 * @param string $member
+	 * @param Player|string $member
 	 * @return Rank
 	 */
 	public function getMemberRank($member){
+		if($member instanceof Player){
+			$member = $member->getName();
+		}
 		return isset($this->members[strtolower($member)]) ? $this->members[strtolower($member)]:null;
 	}
 	/**
@@ -250,6 +253,9 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	public function hasMember($name){
 		return in_array(strtolower($name), $this->members);
 	}
+	public function canClaimMore(){
+		return count($this->chunks) + 1 <= $this->powerClaimable();
+	}
 	//// Runnable API functions; Command-redirected functions
 	/**
 	 * @param Player $newMember
@@ -269,9 +275,10 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 * @return bool
 	 */
 	public function claim(Chunk $chunk){
-		if(count($this->chunks) + 1 > $this->powerClaimable()){
+		if(!$this->canClaimMore()){
 			return false;
 		}
+		// TODO xEcon things
 		$this->chunks[] = $chunk;
 		return true;
 	}

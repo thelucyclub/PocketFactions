@@ -5,6 +5,21 @@ namespace pocketfactions;
 use pocketfactions\faction\Faction;
 use pocketfactions\faction\Rank;
 use pocketfactions\utils\FactionList;
+use pocketfactions\utils\subcommand\f\Claim;
+use pocketfactions\utils\subcommand\f\Create;
+use pocketfactions\utils\subcommand\f\Disband;
+use pocketfactions\utils\subcommand\f\Home;
+use pocketfactions\utils\subcommand\f\Invite;
+use pocketfactions\utils\subcommand\f\Join;
+use pocketfactions\utils\subcommand\f\Kick;
+use pocketfactions\utils\subcommand\f\Money;
+use pocketfactions\utils\subcommand\f\Motto;
+use pocketfactions\utils\subcommand\f\Perm;
+use pocketfactions\utils\subcommand\f\Quit;
+use pocketfactions\utils\subcommand\f\Sethome;
+use pocketfactions\utils\subcommand\f\Setopen;
+use pocketfactions\utils\subcommand\f\Unclaim;
+use pocketfactions\utils\subcommand\f\Unclaimall;
 use pocketfactions\utils\subcommand\SubcommandMap;
 use pocketfactions\utils\WildernessFaction;
 use pocketmine\event\Listener;
@@ -15,6 +30,7 @@ use pocketmine\permission\Permission;
 use pocketmine\plugin\PluginBase as Prt;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as Font;
+use pocketmine\utils\TextFormat;
 
 class Main extends Prt implements Listener{
 	const NAME = "PocketFactions";
@@ -31,7 +47,6 @@ class Main extends Prt implements Listener{
 	/**
 	 * @var string[][] Unread inbox messages indexed with lowercase player name
 	 */
-	private $inbox = [];
 	/**
 	 * @var FactionList
 	 */
@@ -48,17 +63,16 @@ class Main extends Prt implements Listener{
 		$this->getLogger()->info(Font::AQUA . "Initializing", false, 1);
 		$this->initDatabase();
 		echo ".";
-		$this->registerPerms();
-		echo ".";
 		$this->registerEvents();
 		echo ".";
 		$this->registerCmds();
-		echo Font::GREEN . " Done!" . Font::RESET . PHP_EOL;
+		echo TextFormat::toANSI(Font::GREEN . " Done!" . Font::RESET . PHP_EOL);
 	}
 	protected function initDatabase(){
 		$this->flist = new FactionList($this); // used AsyncTask because the server could be running in the middle
 		$this->wilderness = new WildernessFaction($this);
 		@mkdir($this->getDataFolder() . "database/");
+		echo ".";
 		$this->cleanSave = new Config($this->getDataFolder() . "database/data.json", Config::JSON, ["next-fid" => 10, // 10 IDs left for defaults
 		]);
 		$this->saveDefaultConfig();
@@ -68,41 +82,6 @@ class Main extends Prt implements Listener{
 	}
 	public function getXEconConfig(){
 		return $this->xeconConfig;
-	}
-	private function registerPerms(){
-		$me = strtolower(self::NAME);
-		$root = $this->regPerm("$me", "Allow using everything of PocketFactions");
-		$this->regPerm("$me.cmd.f", "Allow using main command /f", null, $root);
-		$this->regPerm("$me.cmd.fmgr", "Allow using main command /fmgr", Permission::DEFAULT_OP, $root);
-		$this->regPerm("$me.create", "Allow creating a faction", null, $root);
-		$this->regPerm("$me.invite", "Allow inviting players in a faction", null, $root);
-		$this->regPerm("$me.accept", "Allow to accept faction request", null, $root);
-		$this->regPerm("$me.decline", "Allow to decline faction request", null, $root);
-		$this->regPerm("$me.join", "Allow join a faction", null, $root);
-		$this->regPerm("$me.claim", "Allow claiming a chunk", null, $root);
-		$unclaim = $this->regPerm("$me.unclaim", "Allow unclaiming a chunk", null, $root);
-		$this->regPerm("$me.unclaimall", "Allow unclaiming all chunk", null, $root);
-		$this->regPerm("$me.kick", "Allow to kick members in faction", null, $root);
-		$this->regPerm("$me.setperm", "Allow to set permissions in faction", null, $root);
-		$this->regPerm("$me.sethome", "Allow to set home of faction", null, $root);
-		$this->regPerm("$me.setopen", "Allow to set faction available to public", null, $root);
-		$this->regPerm("$me.home", "Allow to tp to faction home", null, $root);
-		$this->regPerm("$me.money", "Allow to view faction money", null, $root); //requires xEcon plugin installed
-		$this->regPerm("$me.quit", "Allow to quit a faction", null, $root);
-		$this->regPerm("$me.disband", "Allow to disband a faction", null, $root);
-		$this->regPerm("$me.motto", "Allow to set motto of faction", null, $root);
-		$this->regPerm("$me.unclaimall", "Allow unclaiming all chunks in once", null, $unclaim);
-	}
-	public function regPerm($name, $desc, $default = null, $parent = null){
-		if($default === null){
-			$default = Permission::DEFAULT_TRUE;
-		}elseif(is_bool($default)){
-			$default = $default ? Permission::DEFAULT_TRUE:Permission::DEFAULT_FALSE;
-		}elseif($default === 2){
-			$default = Permission::DEFAULT_OP;
-		}
-		$perm = new Permission($name, $desc, $default);
-		return $this->regPermWithObject($perm, $parent);
 	}
 	private function regPermWithObject(Permission $perm, Permission $parent = null){
 		if($parent instanceof Permission){
@@ -116,19 +95,20 @@ class Main extends Prt implements Listener{
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
 	private function registerCmds(){
-		//Faction Commands for Players
 		$this->fCmd = new SubcommandMap("factions", $this, "Factions main command", "pocketfactions.cmd.factions", ["f"]);
 		$this->fmCmd = new SubcommandMap("factions-manager", $this, "Factions manager command", "pocketfactions.cmd.factionsmanager", ["fadm", "fmgr"]);
+		$subcmds = [new Claim($this), new Create($this), //			new Disband($this),
+			//			new Home($this),
+			new Invite($this), new Join($this), //			new Kick($this),
+			//			new Money($this),
+			new Motto($this), //			new Perm($this),
+			//			new Quit($this),
+			//			new Sethome($this),
+			//			new Setopen($this),
+			//			new Unclaim($this),
+			//			new Unclaimall($this),
+		];
 		$this->getServer()->getCommandMap()->registerAll("pocketfactions", [$this->fCmd, $this->fmCmd]);
-	}
-	public function onJoin(PlayerJoinEvent $evt){
-		$name = strtolower($evt->getPlayer()->getName());
-		if(isset($this->inbox[$name])){
-			$evt->getPlayer()->sendMessage("You have " . count($this->inbox[$name]) . " messages in your offline inbox:");
-			while(count($this->inbox[$name]) > 0){
-				$evt->getPlayer()->sendMessage(array_shift($this->inbox[$name]));
-			}
-		}
 	}
 	/**
 	 * @priority HIGH
@@ -225,8 +205,20 @@ class Main extends Prt implements Listener{
 	public function getLevelGenerationSeed(){
 		return $this->getConfig()->get("level generation seed");
 	}
-	public function getFactionNamingRule(){
+	public function getFactionNamingRuleRaw(){
 		return $this->getConfig()->get("faction naming rule");
+	}
+	public function getFactionNameMinLength(){
+		return $this->getConfig()->get("faction name min length");
+	}
+	public function getFactionNameMaxLength(){
+		return $this->getConfig()->get("faction name max length");
+	}
+	public function getFactionNamingRule(){
+		return str_replace(["@min", "@max"], [(string) $this->getFactionNameMinLength(), (string) $this->getFactionNameMaxLength()], $this->getFactionNamingRuleRaw());
+	}
+	public function getFactionNameErrorMsg(){
+		return $this->getConfig()->get("faction name reject message");
 	}
 	/////////////////
 	// XECON STUFF //
@@ -283,4 +275,10 @@ class Main extends Prt implements Listener{
 	public function getFounderWithdrawableAccounts(){
 		return $this->xeconConfig->get("accounts withdrawable to founder");
 	}
+	//	/**
+	//	 * LOL
+	//	 */
+	//	public function suicide(){
+	//		$this->setEnabled(false);
+	//	}
 }

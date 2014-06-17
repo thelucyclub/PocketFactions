@@ -1,4 +1,8 @@
 ---
+
+# README: In this config file, if you are required to fill in a fee/charge with account and amount,
+# please put a POSITIVE value for amount and either "bank" or "cash" (in lower case) for account.
+
 #############
 ## ACCOUNTS ##
 #############
