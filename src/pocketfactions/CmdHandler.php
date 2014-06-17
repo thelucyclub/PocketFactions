@@ -24,21 +24,7 @@ class CmdHandler implements CommandExecutor{
 	public function onCommand(Issuer $issuer, Command $cmd, $lbl, array $args){
 		switch(strtolower($cmd->getName())){
 			case "faction":
-				switch(strtolower($subcmd)){ // manage subcommand
-					case "claim":
-						$f = $this->main->getFList()->getFaction($issuer);
-						if($f === null){
-							return PCmd::DB_LOADING;
-						}
-						if($f === false){
-							return PCmd::NO_FACTION;
-						}
-						if(!$f->getMemberRank($issuer->getName())->hasPerm(Rank::P_CLAIM)){
-							return PCmd::NO_PERM;
-						}
-						$f->claim(Chunk::fromObject($issuer));
-						// TODO claim chunk
-						break;
+				switch(""){ // manage subcommand
 					case "unclaim":
 						$f = $this->main->getFList()->getFaction($issuer);
 						if($f === null){
@@ -135,19 +121,6 @@ class CmdHandler implements CommandExecutor{
 						break;
 					case "disband":
 						break;
-					case "motto":
-						$faction = $this->main->getFList()->getFaction($issuer);
-						if($faction === null){
-							return PCmd::DB_LOADING;
-						}
-						if($faction === false){
-							return PCmd::NO_FACTION;
-						}
-						if(!$faction->getMemberRank($issuer->getName())->hasPerm(Rank::P_SET_MOTTO)){
-							return PCmd::NO_PERM;
-						}
-						$this->main->getFList()->getFaction($issuer)->setMotto(implode(" ", $args));
-						return "[PF] Motto set."; // first completed command! :)
 				}
 				break;
 		}
