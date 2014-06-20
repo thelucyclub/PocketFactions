@@ -158,10 +158,17 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		return $this->defaultRank;
 	}
 	/**
+	 * @param bool $raw
 	 * @return string[] an array of names of members
 	 */
-	public function getMembers(){
-		return array_keys($this->members);
+	public function getMembers($raw = false){
+		return $raw === false ? array_keys($this->members):$this->members;
+	}
+	/**
+	 * @param int[] $members An array of rank IDs indexed by player names
+	 */
+	public function setMembers(array $members){
+		$this->members = $members;
 	}
 	/**
 	 * @return Chunk[]

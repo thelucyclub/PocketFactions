@@ -13,7 +13,7 @@ class Perm extends Subcommand{
 		parent::__construct($main, "perm");
 	}
 	public function onRun(array $args, Faction $faction, Player $player){
-
+		// another subcommand map? no please...
 	}
 	public function checkPermission(Faction $faction, Player $player){
 		return $faction->getMemberRank($player)->hasPerm(Rank::P_PERM);
