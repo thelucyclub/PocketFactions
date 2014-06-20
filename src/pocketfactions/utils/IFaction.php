@@ -4,6 +4,8 @@ namespace pocketfactions\utils;
 
 use pocketfactions\faction\Chunk;
 use pocketmine\entity\Entity;
+use pocketmine\level\Position;
+use pocketmine\Player;
 
 interface IFaction{
 	/**
@@ -35,4 +37,5 @@ interface IFaction{
 	public function getMemberRank($member);
 	public function canFight(Entity $entity, Entity $entity);
 	public function getMain();
+	public function canBuild(Player $player, Position $pos);
 }

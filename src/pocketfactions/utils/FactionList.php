@@ -118,7 +118,7 @@ class FactionList{
 				}
 				return false; // should we change this to wilderness?
 			case $identifier instanceof Chunk:
-				foreach($this->factions as $faction){
+				foreach($this->factions as $faction){ // TODO replace the foreach() with a keyed chunks data array to increase optimize performace
 					if($faction->hasChunk($identifier)){
 						return $faction;
 					}
@@ -128,8 +128,16 @@ class FactionList{
 				return false;
 		}
 	}
+	public function getValidFaction($identifier){
+		$f = $this->getFaction($identifier);
+		return ($f === false ? $this->main->getWilderness():$f);
+	}
 	public function addFaction(array $args, $id){
 		$this->factions[$id] = new Faction($args, $this->main);
+	}
+	public function disband(Faction $faction){
+		// TODO remove from list
+		// TODO unclaim chunks (required?) (yes if getFaction(Chunk)'s performace is improved)
 	}
 	public function getFactionsState(IFaction $f0, IFaction $f1){
 		return $this->states[$f0->getID() . "-" . $f1->getID()];

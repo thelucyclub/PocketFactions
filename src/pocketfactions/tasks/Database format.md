@@ -36,7 +36,7 @@ int Count of saved factions
     -> for each rank:
         byte Internal ID of the internal rank
         ByteString Name of the rank
-        ShortBool Permissions of the faction, with reference to [rank.php](../Rank.php)
+        IntBool Permissions of the faction, with reference to [rank.php](../Rank.php)
     byte Internal ID of the default internal rank
     int Number of members in the faction
     -> for each member:

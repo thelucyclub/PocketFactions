@@ -29,7 +29,9 @@ class Rank{
 	const P_SPEND_MONEY_BANK            = 0b000000001000000000000000;
 	const P_DEPOSIT_MONEY_BANK          = 0b000000010000000000000000;
 	const P_PERM                        = 0b001111100000000000000000;
-	const P_ALL                         = 0b000000000000000000000000;
+	const P_DISBAND = 0b010000000000000000000000;
+	const P_CORE = 0b011111100000000000000000;
+	const P_ALL = 0b111111111111111111111111; // oops...
 	public function __construct($id, $name, $perms){
 		$this->id = $id;
 		$this->name = $name;

@@ -1,15 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: 15INCH
- * Date: 14年6月16日
- * Time: 下午4:21
- */
+
 namespace pocketfactions\utils;
 
 use pocketfactions\faction\Chunk;
 use pocketfactions\Main;
 use pocketmine\entity\Entity;
+use pocketmine\level\Position;
+use pocketmine\Player;
 
 class WildernessFaction implements IFaction{
 	public function __construct(Main $main){
@@ -38,5 +35,8 @@ class WildernessFaction implements IFaction{
 	}
 	public function getMain(){
 		return $this->main;
+	}
+	public function canBuild(Player $player, Position $pos){
+		return true;
 	}
 }

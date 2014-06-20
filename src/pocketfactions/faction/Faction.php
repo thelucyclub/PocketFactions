@@ -256,12 +256,17 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	public function canClaimMore(){
 		return count($this->chunks) + 1 <= $this->powerClaimable();
 	}
+	public function isCentreLocation(Position $pos){
+		// TODO
+		return true;
+	}
 	//// Runnable API functions; Command-redirected functions
 	/**
 	 * @param Player $newMember
-	 * @return bool|string $success <code>true</code> or reason that cannot join
+	 * @param string $method
+	 * @return bool|string
 	 */
-	public function join(Player $newMember){
+	public function join(Player $newMember, $method){
 		$this->members[strtolower($newMember->getName())] = $this->getDefaultRank();
 		return true;
 	}
@@ -326,6 +331,9 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	}
 	public function canFight(MCEntity $attacker, MCEntity $victim){
 		return true;
+	}
+	public function canBuild(Player $player, Position $pos){
+		return $this->getMemberRank($player)->hasPerm(Rank::P_BUILD) and (!$this->isCentreLocation($pos) or $this->getMemberRank($player)->hasPerm(Rank::P_BUILD_CENTRE));
 	}
 	public function getMain(){
 		return $this->main;
