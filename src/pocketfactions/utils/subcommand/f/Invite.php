@@ -31,6 +31,7 @@ class Invite extends Subcommand{
 		$request = new FactionInviteRequest($faction, new PlayerRequestable($target), implode(" ", $args));
 		$statsCore->getRequestList()->add($request);
 		$faction->sendMessage("A request has been sent to $name (" . $target->getName() . ") by {$player->getName()}. Preview:\n" . $request->getContent());
+		return "";
 	}
 	public function checkPermission(Faction $faction, Player $player){
 		return $faction->getMemberRank($player->getName())->hasPerm(Rank::P_INVITE);

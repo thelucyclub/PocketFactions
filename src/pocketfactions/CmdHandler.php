@@ -113,13 +113,7 @@ class CmdHandler implements CommandExecutor{
 						}
 						$faction->setOpen($bool);
 						return "[PF] Your faction's open status has been set to " . ($bool ? "opened":"closed") . ".";
-					case "home":
-						break;
 					case "money":
-						break;
-					case "quit":
-						break;
-					case "disband":
 						break;
 				}
 				break;
