@@ -20,7 +20,7 @@ max bank: 50000
 # If the faction has too much money and cash and bank accounts are not enough to save them, they can purchase external inventories to inventories money.
 # Types of external inventories
 # "safe" and "locker" are names of inventories
-# Inventories of money, if supported by xEcon, can be saved physically by saving in chests.
+# Inventories of money, if supported by xEcon, can be saved physically by saving in chests. //please refer to my comment at Create.php
 inventory types:
   locker:
     maximum: 3000

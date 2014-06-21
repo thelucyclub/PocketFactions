@@ -17,7 +17,7 @@ class Motto extends Subcommand{
 			return false;
 		}
 		$faction->setMotto($motto = implode(" ", $args));
-		$faction->sendMessage("Your faction's motto has been set to $motto by {$player->getName()}.");
+		$faction->sendMessage("[PF] Your faction's motto has been set to:\n[PF] ''$motto'' by {$player->getName()}.");
 		return "";
 	}
 	public function checkPermission(Faction $faction, Player $player){
