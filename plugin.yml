@@ -20,58 +20,63 @@ permissions:
           pocketfactions.cmd.f:
             description: Allow using PocketFactions main command /factions (alias /f)
             default: true
-            children:
-              pocketfactions.cmd.f.create:
-                description: Allow using subcommand /f create
-                default: true
-              pocketfactions.cmd.f.disband:
-                description: Allow using subcommand /f disband
-                default: true
-              pocketfactions.cmd.f.sethome:
-                description: Allow using subcommand /f sethome
-                default: true
-              pocketfactions.cmd.f.home:
-                description: Allow using subcommand /f home
-                default: true
-              pocketfactions.cmd.f.invite:
-                description: Allow using subcommand /f invite
-                default: true
-              pocketfactions.cmd.f.accept:
-                description: Allow using subcommand /f accept
-                default: true
-              pocketfactions.cmd.f.decline:
-                description: Allow using subcommand /f decline
-                default: true
-              pocketfactions.cmd.f.join:
-                description: Allow using subcommand /f join
-                default: true
-              pocketfactions.cmd.f.claim:
-                description: Allow using subcommand /f claim
-                default: true
-              pocketfactions.cmd.f.unclaim:
-                description: Allow using subcommand /f unclaim
-                default: true
-              pocketfactions.cmd.f.unclaimall:
-                description: Allow using subcommand /f unclaimall
-                default: true
-              pocketfactions.cmd.f.quit:
-                description: Allow using subcommand /f quit
-                default: true
-              pocketfactions.cmd.f.money:
-                description: Allow using subcommand /f money
-                default: true
-              pocketfactions.cmd.f.setopen:
-                description: Allow using subcommand /f setopen
-                default: true
-              pocketfactions.cmd.f.motto:
-                description: Allow using subcommand /f motto
-                default: true
-              pocketfactions.cmd.f.kick:
-                description: Allow using subcommand /f kick
-                default: true
-              pocketfactions.cmd.f.perm:
-                description: Allow using subcommand /f perm
-                default: true
+          pocketfactions.cmd.f.create:
+            description: Allow using subcommand /f create
+            default: true
+          pocketfactions.cmd.f.disband:
+            description: Allow using subcommand /f disband
+            default: true
+          pocketfactions.cmd.f.sethome:
+            description: Allow using subcommand /f sethome
+            default: true
+          pocketfactions.cmd.f.home:
+            description: Allow using subcommand /f home
+            default: true
+          pocketfactions.cmd.f.invite:
+            description: Allow using subcommand /f invite
+            default: true
+          pocketfactions.cmd.f.accept:
+            description: Allow using subcommand /f accept
+            default: true
+          pocketfactions.cmd.f.decline:
+            description: Allow using subcommand /f decline
+            default: true
+          pocketfactions.cmd.f.join:
+            description: Allow using subcommand /f join
+            default: true
+          pocketfactions.cmd.f.claim:
+            description: Allow using subcommand /f claim
+            default: true
+          pocketfactions.cmd.f.unclaim:
+            description: Allow using subcommand /f unclaim
+            default: true
+          pocketfactions.cmd.f.unclaimall:
+            description: Allow using subcommand /f unclaimall
+            default: true
+          pocketfactions.cmd.f.quit:
+            description: Allow using subcommand /f quit
+            default: true
+          pocketfactions.cmd.f.money:
+            description: Allow using subcommand /f money
+            default: true
+          pocketfactions.cmd.f.setopen:
+            description: Allow using subcommand /f setopen
+            default: true
+          pocketfactions.cmd.f.motto:
+            description: Allow using subcommand /f motto
+            default: true
+          pocketfactions.cmd.f.kick:
+            description: Allow using subcommand /f kick
+            default: true
+          pocketfactions.cmd.f.perm:
+            description: Allow using subcommand /f perm
+            default: true
           pocketfactions.cmd.fmgr:
             description: Allow using PocketFactions admin command /factions-manager (aliases /fmgr, /fadm)
             default: op
+          pocketfactions.cmd.fmgr.on:
+            default: op
+            description: Allow using subcommand /fmgr on
+          pocketfactions.cmd.fmgr.off:
+            default: op
+            description: Allow using subcommand /fmgr off

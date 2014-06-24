@@ -96,16 +96,7 @@ class Main extends Prt implements Listener{
 	private function registerCmds(){
 		$this->fCmd = new SubcommandMap("factions", $this, "Factions main command", "pocketfactions.cmd.factions", ["f"]);
 		$this->fmCmd = new SubcommandMap("factions-manager", $this, "Factions manager command", "pocketfactions.cmd.factionsmanager", ["fadm", "fmgr"]);
-		$subcmds = [new Claim($this), new Create($this), //			new Disband($this),
-			//			new Home($this),
-			new Invite($this), new Join($this), //			new Kick($this),
-			//			new Money($this),
-			new Motto($this), new Perm($this), //			new Quit($this),
-			//			new Sethome($this),
-			//			new Setopen($this),
-			//			new Unclaim($this),
-			//			new Unclaimall($this),
-		];
+		$subcmds = [new Claim($this), new Create($this), new Disband($this), new Home($this), new Invite($this), new Join($this), new Kick($this), new Money($this), new Motto($this), new Perm($this), new Quit($this), new Sethome($this), new Setopen($this), new Unclaim($this), new Unclaimall($this),];
 		$this->fCmd->registerAll($subcmds);
 		$this->getServer()->getCommandMap()->registerAll("pocketfactions", [$this->fCmd, $this->fmCmd]);
 	}

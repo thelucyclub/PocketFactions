@@ -25,7 +25,7 @@ class SubcommandMap extends Command implements PluginIdentifiableCommand{
 		parent::__construct($name, $desc, null, $aliases);
 		$this->setPermission($mainPerm);
 	}
-	public function register(Subcommand $subcmd){
+	public function registerSubcommand(Subcommand $subcmd){
 		$this->subcmds[strtolower(trim($subcmd->getName()))] = $subcmd;
 	}
 	public function getPlugin(){
@@ -84,7 +84,7 @@ class SubcommandMap extends Command implements PluginIdentifiableCommand{
 	 */
 	public function registerAll(array $subcmds){
 		foreach($subcmds as $subcmd){
-			$this->register($subcmd);
+			$this->registerSubcommand($subcmd);
 		}
 	}
 }
