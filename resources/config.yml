@@ -9,7 +9,7 @@
 power required to claim a chunk: 1000
 # The power of a player increases every hour he is online (not necessarily a continuous hour)
 power gained per online hour: 50
-# The power of a player decreases if he has not been online that day ("day" calculated in the server's timezone)
+# The power of a player decreases if he has not been online that day ("day" calculated in the server's time zone)
 power lost per offline FULL day: 40
 # The power of a player increases when he kills a player or a mob
 power gained per player kill: 60
@@ -37,10 +37,10 @@ power lost per death:
 ## GAMEPLAY ##
 ############
 ## When a faction's power drops too low that no more chunks can be claimed, and in fact its power would not allow it to claim so many chunks, "power overdraft" occurs.
-# When sieging is enabled, if a faction has power overdraft, other factions can siege any marginary chunks of the faction by walking in the chunk centre and claim the chunk like from wilderness.
+# When sieging is enabled, if a faction has power overdraft, other factions can siege any marginal chunks of the faction by walking in the chunk centre and claim the chunk like from wilderness.
 enable sieging: false
 
-## Members of other factions can only siege the marginary chunk if they walk inside enough. Define "inside enough" here.
+## Members of other factions can only siege the marginal chunk if they walk inside enough. Define "inside enough" here.
 # If the player is within this number of blocks from the chunk centre, allow them to siege the chunk.
 siege radius: 4
 

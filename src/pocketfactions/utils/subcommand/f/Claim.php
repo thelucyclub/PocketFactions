@@ -16,11 +16,11 @@ class Claim extends Subcommand{
 	public function onRun(array $args, Faction $faction, Player $player){
 		$sub = isset($args[0]) ? $args[0]:"";
 		if(!$faction->canClaimMore()){
-			return "Your faction does not have power to claim any more chunks!";
+			return "[PF] Your faction does not have power to\n[PF] claim any more chunks!";
 		}
 		// TODO check if this chunk has already been claimed
 		$success = $faction->claim(Chunk::fromObject($player));
-		return $success ? "You have claimed this 16x16 chunk!":"Your faction does not have enough money to claim this chunk!";
+		return $success ? "[PF] You have claimed this 16x16 chunk!":"[PF] Your faction does not have enough\n[PF] money to claim this chunk!";
 	}
 	public function checkPermission(Faction $faction, Player $player){
 		$rank = $faction->getMemberRank($player);

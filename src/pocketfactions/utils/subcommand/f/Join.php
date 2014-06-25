@@ -22,7 +22,7 @@ class Join extends Subcommand{
 		}
 		$request = new FactionJoinRequest($player, $f, implode(" ", $args));
 		StatsCore::getInstance()->getRequestList()->add($request);
-		return "Join faction request sent to $f. Preview:\n" . $request->getContent();
+		return "[PF] Join faction request sent to $f.\n[PF] Preview:\n============\n" . $request->getContent();
 	}
 	public function checkPermission(Player $player){
 		if($this->getMain()->getFList()->getFaction($player) instanceof Faction){

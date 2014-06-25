@@ -18,8 +18,8 @@ class Quit extends Subcommand{
 		$members = $faction->getMembers();
 		unset($members[strtolower($player->getName())]);
 		$faction->setMembers($members);
-		$faction->sendMessage($player->getName() . " left the faction!");
-		return "You have successfully left $faction.";
+		$faction->sendMessage("[PF] " . $player->getName() . " left the faction!");
+		return "[PF] You have successfully left $faction.";
 	}
 	public function getDescription(){
 		return "Leave your current faction";

@@ -30,7 +30,7 @@ class Invite extends Subcommand{
 		}
 		$request = new FactionInviteRequest($faction, new PlayerRequestable($target), implode(" ", $args));
 		$statsCore->getRequestList()->add($request);
-		$faction->sendMessage("A request has been sent to $name (" . $target->getName() . ") by {$player->getName()}. Preview:\n" . $request->getContent());
+		$faction->sendMessage("[PF] A request has been sent to $name (" . $target->getName() . ")\n[PF] by {$player->getName()}.\n[PF] Preview:\n============\n" . $request->getContent());
 		return "";
 	}
 	public function checkPermission(Faction $faction, Player $player){
