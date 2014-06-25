@@ -1,5 +1,5 @@
 <?php
-
+/*
 namespace pocketfactions;
 
 use legendofmcpe\statscore\PlayerRequestable;
@@ -154,3 +154,4 @@ class CmdHandler implements CommandExecutor{
 		return $output;
 	}
 }
+*/
