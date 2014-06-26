@@ -14,7 +14,6 @@ class Claim extends Subcommand{
 		parent::__construct($main, "claim");
 	}
 	public function onRun(array $args, Faction $faction, Player $player){
-		$sub = isset($args[0]) ? $args[0]:"";
 		if(!$faction->canClaimMore()){
 			return "[PF] Your faction does not have power to\n[PF] claim any more chunks!";
 		}

@@ -16,6 +16,8 @@ class ReadDatabaseTask extends AsyncTask{
 	const CORRUPTED = 1;
 	const COMPLETED = null;
 	const WIP       = null;
+	protected $buffer = "";
+	protected $offset = 0;
 	public function __construct($res, callable $onFinished, callable $statesSetter, Main $main){
 		$this->res = $res;
 		$this->onFinished = $onFinished;
@@ -23,7 +25,13 @@ class ReadDatabaseTask extends AsyncTask{
 		$this->main = $main;
 	}
 	public function onRun(){
-		$res = $this->res;
+		while(!feof($this->res)){
+			$this->buffer .= fread($this->res, 1);
+		}
+		fclose($this->res);
+	}
+	public function onCompletion(Server $server){
+		$res = 0;
 		$this->setResult(self::WIP);
 		$prefix = $this->read($res, strlen(FactionList::MAGIC_P));
 		if($prefix !== FactionList::MAGIC_P){
@@ -120,15 +128,15 @@ class ReadDatabaseTask extends AsyncTask{
 		if($this->getResult() === self::WIP){
 			$this->setResult(self::COMPLETED);
 		}
-		fclose($res);
 		call_user_func($this->statesSetter, $states);
 		call_user_func($this->onFinished, $factions, $this);
+		$this->main->getLogger()->info("PocketFactions database parsing completed.");
 	}
 	protected function read($res, $length = 1){
-		$string = fread($res, $length);
-		if(!is_string($string) or strlen($string) !== $length){
-			$this->setResult(self::CORRUPTED);
-			trigger_error("Database corrupted!", E_USER_WARNING);
+		$string = substr($this->buffer, $this->offset, $length);
+		$this->offset += $length;
+		if(strlen($string) < $length){
+			trigger_error("PocketFactions database corrupted: Unexpected end of file", E_USER_WARNING);
 		}
 		return $string;
 	}

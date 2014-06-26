@@ -15,7 +15,7 @@ class Disband extends Subcommand{
 	public function checkPermission(Faction $faction, Player $player){
 		return $faction->getMemberRank($player)->hasPerm(Rank::P_DISBAND);
 	}
-	public function onRun(array $args, Faction $faction, Player $player){
+	public function onRun(array $args, Faction $faction){
 		$this->main->getFList()->disband($faction);
 	}
 	public function getDescription(){

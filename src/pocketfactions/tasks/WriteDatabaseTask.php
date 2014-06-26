@@ -7,75 +7,87 @@ use pocketfactions\utils\FactionList;
 use pocketfactions\Main;
 use pocketmine\level\Position;
 use pocketmine\scheduler\AsyncTask;
+use pocketmine\Server;
 
 class WriteDatabaseTask extends AsyncTask{
+	protected $buffer = "";
 	public function __construct($res, Main $main){
 		$this->res = $res;
 		$this->main = $main;
+		$this->onPreRun();
 	}
-	public function onRun(){
+	public function onPreRun(){
 		$res = $this->res;
-		fwrite($res, FactionList::MAGIC_P);
-		fwrite($res, Main::V_CURRENT);
-		fwrite($res, Bin::writeInt(count($this->main->getFList()->getAll())));
+		$this->writeBuffer($res, FactionList::MAGIC_P);
+		$this->writeBuffer($res, Main::V_CURRENT);
+		$this->writeBuffer($res, Bin::writeInt(count($this->main->getFList()->getAll())));
 		foreach($this->main->getFList()->getAll() as $f){
 			if(!($f instanceof Faction))
 				continue;
-			fwrite($res, Bin::writeInt($f->getID()));
-			fwrite($res, Bin::writeByte(strlen($f->getName()) | ($f->isWhitelisted() ? 0b10000000:0)));
-			fwrite($res, $f->getName());
-			fwrite($res, Bin::writeShort(strlen($f->getMotto())));
-			fwrite($res, $f->getMotto());
-			fwrite($res, Bin::writeByte(strlen($f->getFounder())));
-			fwrite($res, $f->getFounder());
+			$this->writeBuffer($res, Bin::writeInt($f->getID()));
+			$this->writeBuffer($res, Bin::writeByte(strlen($f->getName()) | ($f->isWhitelisted() ? 0b10000000:0)));
+			$this->writeBuffer($res, $f->getName());
+			$this->writeBuffer($res, Bin::writeShort(strlen($f->getMotto())));
+			$this->writeBuffer($res, $f->getMotto());
+			$this->writeBuffer($res, Bin::writeByte(strlen($f->getFounder())));
+			$this->writeBuffer($res, $f->getFounder());
 			$ranks = $f->getRanks();
-			fwrite($res, Bin::writeByte(count($ranks)));
+			$this->writeBuffer($res, Bin::writeByte(count($ranks)));
 			foreach($ranks as $rk){
-				fwrite($res, Bin::writeByte($rk->getID()));
-				fwrite($res, Bin::writeByte(strlen($rk->getName())));
-				fwrite($res, $rk->getName());
-				fwrite($res, Bin::writeInt($rk->getPerms()));
+				$this->writeBuffer($res, Bin::writeByte($rk->getID()));
+				$this->writeBuffer($res, Bin::writeByte(strlen($rk->getName())));
+				$this->writeBuffer($res, $rk->getName());
+				$this->writeBuffer($res, Bin::writeInt($rk->getPerms()));
 			}
-			fwrite($res, Bin::writeByte($f->getDefaultRank()));
+			$this->writeBuffer($res, Bin::writeByte($f->getDefaultRank()));
 			$mbrs = $f->getMembers();
-			fwrite($res, Bin::writeInt(count($mbrs)));
+			$this->writeBuffer($res, Bin::writeInt(count($mbrs)));
 			foreach($mbrs as $name => $rank){
-				fwrite($res, Bin::writeByte(strlen($name)));
-				fwrite($res, $name);
-				fwrite($res, Bin::writeByte($rank));
+				$this->writeBuffer($res, Bin::writeByte(strlen($name)));
+				$this->writeBuffer($res, $name);
+				$this->writeBuffer($res, Bin::writeByte($rank));
 			}
-			fwrite($res, Bin::writeLong($f->getLastActive()));
+			$this->writeBuffer($res, Bin::writeLong($f->getLastActive()));
 			$chunks = $f->getChunks();
 			array_unshift($chunks, $f->getBaseChunk());
-			fwrite($res, Bin::writeShort(count($chunks)));
+			$this->writeBuffer($res, Bin::writeShort(count($chunks)));
 			foreach($chunks as $c){
-				fwrite($res, Bin::writeShort($c->getX()));
-				fwrite($res, Bin::writeShort($c->getZ()));
-				fwrite($res, Bin::writeByte(strlen($c->getLevel())));
-				fwrite($res, $c->getLevel());
+				$this->writeBuffer($res, Bin::writeShort($c->getX()));
+				$this->writeBuffer($res, Bin::writeShort($c->getZ()));
+				$this->writeBuffer($res, Bin::writeByte(strlen($c->getLevel())));
+				$this->writeBuffer($res, $c->getLevel());
 			}
-			//			fwrite($res, Bin::writeInt($f->getHome()->getX() + 2147483648));
-			//			fwrite($res, Bin::writeShort($f->getHome()->getY()));
-			//			fwrite($res, Bin::writeInt($f->getHome()->getZ() + 2147483648));
-			//			fwrite($res, Bin::writeByte(strlen($f->getHome()->getLevel()->getName())));
-			//			fwrite($res, $f->getHome()->getLevel()->getName());
+			//			$this->writeBuffer($res, Bin::writeInt($f->getHome()->getX() + 2147483648));
+			//			$this->writeBuffer($res, Bin::writeShort($f->getHome()->getY()));
+			//			$this->writeBuffer($res, Bin::writeInt($f->getHome()->getZ() + 2147483648));
+			//			$this->writeBuffer($res, Bin::writeByte(strlen($f->getHome()->getLevel()->getName())));
+			//			$this->writeBuffer($res, $f->getHome()->getLevel()->getName());
 			$this->writePosition($f->getHome(), $res);
 		}
 		$states = $this->main->getFList()->getFactionsStates();
-		fwrite($res, Bin::writeLong(count($states)));
+		$this->writeBuffer($res, Bin::writeLong(count($states)));
 		foreach($states as $state){
-			fwrite($res, Bin::writeInt($state->getF0()->getID()));
-			fwrite($res, Bin::writeInt($state->getF1()->getID()));
-			fwrite($res, Bin::writeByte($state->getState()));
+			$this->writeBuffer($res, Bin::writeInt($state->getF0()->getID()));
+			$this->writeBuffer($res, Bin::writeInt($state->getF1()->getID()));
+			$this->writeBuffer($res, Bin::writeByte($state->getState()));
 		}
-		fwrite($res, FactionList::MAGIC_S);
-		fclose($res);
+		$this->writeBuffer($res, FactionList::MAGIC_S);
 	}
 	protected function writePosition(Position $pos, $res){
-		fwrite($res, Bin::writeInt($pos->getX() >> 4));
-		fwrite($res, Bin::writeInt($pos->getZ() >> 4));
-		fwrite($res, Bin::writeByte((($pos->getX() & 0x0F) << 4) & ($pos->getZ() & 0x0F)));
-		fwrite($res, Bin::writeByte(strlen($pos->getLevel()->getName())));
-		fwrite($res, $pos->getLevel()->getName());
+		$this->writeBuffer($res, Bin::writeInt($pos->getX() >> 4));
+		$this->writeBuffer($res, Bin::writeInt($pos->getZ() >> 4));
+		$this->writeBuffer($res, Bin::writeByte((($pos->getX() & 0x0F) << 4) & ($pos->getZ() & 0x0F)));
+		$this->writeBuffer($res, Bin::writeByte(strlen($pos->getLevel()->getName())));
+		$this->writeBuffer($res, $pos->getLevel()->getName());
+	}
+	protected function writeBuffer($res, $string){
+		$this->buffer .= $string;
+	}
+	public function onRun(){
+		fwrite($this->res, $this->buffer);
+		fclose($this->res);
+	}
+	public function onCompletion(Server $server){
+		$this->main->getLogger()->info("PocketFactions database output completed.");
 	}
 }
