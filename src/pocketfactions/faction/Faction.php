@@ -17,6 +17,9 @@ use xecon\entity\Entity;
 class Faction implements InventoryHolder, Requestable, IFaction{
 	use Entity;
 
+	const CHAT_ADMIN = 0;
+	const CHAT_ANNOUNCEMENT = 1;
+	const CHAT_ALL = 2;
 	// vars
 	/** @var Main */
 	protected $main;
@@ -123,6 +126,12 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 */
 	public function getName(){
 		return $this->name;
+	}
+	/**
+	 * @param string $name
+	 */
+	public function setName($name){
+		$this->name = $name;
 	}
 	/**
 	 * @return string
@@ -269,12 +278,16 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	}
 	//// Runnable API functions; Command-redirected functions
 	/**
-	 * @param Player $newMember
+	 * @param Player|string $newMember
 	 * @param string $method
 	 * @return bool|string
 	 */
-	public function join(Player $newMember, $method){
+	public function join($newMember, $method){
+		if($newMember instanceof Player){
+			$newMember = $newMember->getName();
+		}
 		$this->members[strtolower($newMember->getName())] = $this->getDefaultRank();
+		$this->sendMessage("$newMember has joined the faction. Method: $method");
 		return true;
 	}
 	/**
@@ -310,7 +323,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	/////////////////////////
 	// Inherited functions //
 	/////////////////////////
-	public function sendMessage($message){
+	public function sendMessage($message, $level = self::CHAT_ADMIN){
 		return null;
 	}
 	// xEcon-related

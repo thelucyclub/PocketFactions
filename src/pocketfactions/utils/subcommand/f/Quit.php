@@ -15,7 +15,7 @@ class Quit extends Subcommand{
 		return true;
 	}
 	public function onRun(array $args, Faction $faction, Player $player){
-		$members = $faction->getMembers();
+		$members = $faction->getMembers(true);
 		unset($members[strtolower($player->getName())]);
 		$faction->setMembers($members);
 		$faction->sendMessage("[PF] " . $player->getName() . " left the faction!");
