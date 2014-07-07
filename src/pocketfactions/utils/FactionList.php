@@ -90,6 +90,18 @@ class FactionList{
 	public function getAll(){
 		return $this->factions;
 	}
+	public function getFactionBySimilarName($name){
+		$curDelta = PHP_INT_MAX; // with reference to PocketMine-MP, although I can write it myself and I am not even looking at that code now
+		$curFact = false;
+		foreach($this->factions as $faction){
+			if(strpos($faction->getName(), $name) !== false){
+				if(strlen($faction->getName()) - strlen($name) < $curDelta){
+					$curFact = $faction;
+				}
+			}
+		}
+		return $curFact;
+	}
 	/**
 	 * @param string|int|IPlayer|Chunk $identifier
 	 * @return bool|null|Faction
@@ -101,7 +113,7 @@ class FactionList{
 		switch(true){
 			case is_string($identifier): // faction name
 				foreach($this->factions as $faction){
-					if($faction->getName() === $identifier){
+					if(strtolower($faction->getName()) === strtolower($identifier)){
 						return $faction;
 					}
 				}

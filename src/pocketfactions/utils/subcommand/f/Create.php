@@ -21,16 +21,11 @@ class Create extends Subcommand{
 		$name = $args[0];
 		if(preg_replace($this->main->getFactionNamingRule(), "", $name) !== ""){
 			return $this->getMain()->getFactionNameErrorMsg();
+		}elseif($this->getMain()->getFList()->getFaction($name) instanceof Faction){
+			return "A faction with name \"$name\" already exists!";
 		}
-		Faction::newInstance($name, $player->getName(), Rank::defaults(), Rank::defaultRank(), $this->main, Position::fromObject($player, $player->getLevel()));
+		Faction::newInstance($name, $player->getName(), Rank::defaults(), Rank::defaultRank(), $this->main, Position::fromObject($player, $player->getLevel())); // I'll get rid of the base chunk thing soon. I just don't understand why a faction needs to exist with zero chunk, since it will be a bit of truoble.
 		$this->main->getServer()->broadcast("[PF] A new faction called $name has been created!", Server::BROADCAST_CHANNEL_USERS);
-		/*
-		* Why does it have a faction base? Making a faction base point is quite hassle to be honest.
-		* Didn't we talked about this already? Storing money in a chest would cause trouble later on.
-		* For instance, we could just use the imaginary bank to store the faction deposit money in
-		* the bank. What if the player creates his faction at the spawn point?
-		*/
-		$this->main->getServer()->broadcast("Faction $name is created by " . $player->getDisplayName() . " based at " . $player->getX() . ", " . $player->getY() . ", " . $player->getZ() . " in world " . $player->getLevel()->getName(), Server::BROADCAST_CHANNEL_ADMINISTRATIVE);
 		return "";
 	}
 	public function checkPermission(Player $player){
