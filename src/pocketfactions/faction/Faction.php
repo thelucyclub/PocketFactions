@@ -341,7 +341,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		}
 	}
 	public function getAbsolutePrefix(){
-		return "PocketFactions>>";
+		return "PocketFactions^^";
 	}
 	public function isAvailable(){
 		return true; // TODO

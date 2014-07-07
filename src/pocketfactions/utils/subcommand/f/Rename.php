@@ -23,14 +23,14 @@ class Rename extends Subcommand{
 			return self::WRONG_USE;
 		}
 		$faction->setName($args[0]);
-		$faction->sendMessage("Your faction name has been changed to $args[0]!");
 		$fee = $this->getMain()->getFactionRenameFee();
 		$account = $faction->getAccount($fee["account"]);
 		$amount = $account->getAmount();
 		if($amount < 0 - $this->getMain()->getMaxBankOverdraft() and $fee["account"] === "bank" or $amount < 0){
 			return "Your faction doesn't have enough money to rename :( consider taking loans?";
 		}
-		// TODO
+		$faction->setName(implode(" ", $args));
+		return "Your faction name has been changed to $args[0]!";
 	}
 	public function checkPermission(Faction $faction, Player $player){
 		return $faction->getMemberRank($player)->hasPerm(Rank::P_RENAME);
