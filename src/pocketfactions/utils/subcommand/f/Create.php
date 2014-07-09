@@ -16,7 +16,7 @@ class Create extends Subcommand{
 	}
 	public function onRun(array $args, Player $player){
 		if(!isset($args[0])){
-			return false;
+			return self::WRONG_USE;
 		}
 		$name = $args[0];
 		if(preg_replace($this->main->getFactionNamingRule(), "", $name) !== ""){
