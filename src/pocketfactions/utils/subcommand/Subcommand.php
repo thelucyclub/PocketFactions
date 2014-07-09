@@ -81,29 +81,32 @@ abstract class Subcommand{
 			$result = call_user_func(array($this, $this->callable), $args, $sender);
 		}
 		if(is_string($result)){
+			if(substr($result, 0, 4) !== "[PF]"){
+				$result = "[PF] $result";
+			}
 			$sender->sendMessage($result);
 			return;
 		}
 		if($result === self::DB_LOADING){
-			$sender->sendMessage("The database is still loading!");
+			$sender->sendMessage("[PF] The database is still loading! Please wait for a while.");
 			return;
 		}
 		if($result === self::WRONG_USE){
-			$sender->sendMessage("Usage: {$this->getUsage()}");
+			$sender->sendMessage("[PF] Usage: {$this->getUsage()}");
 			return;
 		}
 		switch($result){
 			case self::NO_PLAYER:
-				$sender->sendMessage("Player not found!");
+				$sender->sendMessage("[PF] Player not found!");
 				break;
 			case self::NO_FACTION:
-				$sender->sendMessage("You must be in a faction!");
+				$sender->sendMessage("[PF] You must be in a faction!");
 				break;
 			case self::NO_PERM:
-				$sender->sendMessage("You don't have permission to do this!");
+				$sender->sendMessage("[PF] You don't have permission to do this!");
 				break;
 			case self::WRONG_FACTION:
-				$sender->sendMessage("Faction not found!");
+				$sender->sendMessage("[PF] Faction not found!");
 				break;
 		}
 		return;

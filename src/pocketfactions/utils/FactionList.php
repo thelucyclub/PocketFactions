@@ -144,9 +144,6 @@ class FactionList{
 		$f = $this->getFaction($identifier);
 		return ($f === false ? $this->main->getWilderness():$f);
 	}
-	public function addFaction(array $args, $id){
-		$this->factions[$id] = new Faction($args, $this->main);
-	}
 	public function disband(Faction $faction){
 		// TODO remove from list
 		// TODO unclaim chunks (required?) (yes if getFaction(Chunk)'s performace is improved)

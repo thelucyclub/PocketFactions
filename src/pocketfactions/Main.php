@@ -33,6 +33,7 @@ use pocketmine\utils\TextFormat;
 
 class Main extends Prt implements Listener{
 	const NAME = "PocketFactions";
+	const XECON_SERV_NAME = "PocketFactionsCharger"; // any better names?
 	const V_INIT = "\x00";
 	const V_CURRENT = "\x00";
 	/**
@@ -61,6 +62,10 @@ class Main extends Prt implements Listener{
 	public function onEnable(){
 		$this->getLogger()->info(Font::AQUA . "Initializing", false, 1);
 		$this->initDatabase();
+		/** @var \xecon\Main $xEcon */
+		$xEcon = $this->getServer()->getPluginManager()->getPlugin("xEcon");
+		$service = $xEcon->getService();
+		$service->registerService(self::XECON_SERV_NAME);
 		echo ".";
 		$this->registerEvents();
 		echo ".";
@@ -96,20 +101,7 @@ class Main extends Prt implements Listener{
 	private function registerCmds(){
 		$this->fCmd = new SubcommandMap("factions", $this, "Factions main command", "pocketfactions.cmd.factions", ["f"]);
 		$this->fmCmd = new SubcommandMap("factions-manager", $this, "Factions manager command", "pocketfactions.cmd.factionsmanager", ["fadm", "fmgr"]);
-		$subcmds = [new Claim($this), new Create($this),
-			new Disband($this),
-			new Home($this),
-			new Invite($this), new Join($this),
-			new Kick($this),
-			new Money($this),
-			new Motto($this),
-			new Perm($this),
-			new Quit($this),
-			new Sethome($this),
-			new Setopen($this),
-			new Unclaim($this),
-			new Unclaimall($this),
-		];
+		$subcmds = [new Claim($this), new Create($this), new Disband($this), new Home($this), new Invite($this), new Join($this), new Kick($this), new Money($this), new Motto($this), new Perm($this), new Quit($this), new Sethome($this), new Setopen($this), new Unclaim($this), new Unclaimall($this),];
 		$this->fCmd->registerAll($subcmds);
 		$this->getServer()->getCommandMap()->registerAll("pocketfactions", [$this->fCmd, $this->fmCmd]);
 	}
@@ -215,6 +207,9 @@ class Main extends Prt implements Listener{
 	public function getFactionNameErrorMsg(){
 		return $this->getConfig()->get("faction name reject message");
 	}
+	public function getMaxHomes(){
+		return $this->getConfig()->get("max homes");
+	}
 	/////////////////
 	// XECON STUFF //
 	/////////////////
@@ -269,6 +264,11 @@ class Main extends Prt implements Listener{
 	}
 	public function getFounderWithdrawableAccounts(){
 		return $this->xeconConfig->get("accounts withdrawable to founder");
+	}
+	public function getXEconService(){
+		/** @var \xecon\Main $xEcon */
+		$xEcon = $this->getServer()->getPluginManager()->getPlugin("xEcon");
+		return $xEcon->getService()->getService(self::XECON_SERV_NAME);
 	}
 	//	/**
 	//	 * LOL

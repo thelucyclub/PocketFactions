@@ -48,7 +48,10 @@ int Count of saved factions
         SignedInt The X-index of the claimed chunk in the world
         SignedInt The Z-index of the claimed chunk in the world
         ByteString The world name of the chunk
-    Position The home position
+    byte Number of homes claimed by the faction
+    -> for each home:
+        ByteString The home name
+        Position The home position
 long number of faction relationships
     -> for each faction relationship:
         int ID of faction 0 in the relationship

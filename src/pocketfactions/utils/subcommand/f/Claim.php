@@ -17,8 +17,10 @@ class Claim extends Subcommand{
 		if(!$faction->canClaimMore()){
 			return "[PF] Your faction does not have power to\n[PF] claim any more chunks!";
 		}
-		// TODO check if this chunk has already been claimed
-		$success = $faction->claim(Chunk::fromObject($player));
+		if($this->getMain()->getFList()->getFaction(Chunk::fromObject($player)) instanceof Faction){
+			return "[PF] This chunk has already been claimed!";
+		}
+		$success = $faction->claim(Chunk::fromObject($player), $player);
 		return $success ? "[PF] You have claimed this 16x16 chunk!":"[PF] Your faction does not have enough\n[PF] money to claim this chunk!";
 	}
 	public function checkPermission(Faction $faction, Player $player){

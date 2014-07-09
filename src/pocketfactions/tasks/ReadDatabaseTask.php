@@ -15,7 +15,7 @@ use pocketmine\Server;
 class ReadDatabaseTask extends AsyncTask{
 	const CORRUPTED = 1;
 	const COMPLETED = null;
-	const WIP       = null;
+	const WIP = null;
 	protected $buffer = "";
 	protected $offset = 0;
 	public function __construct($res, callable $onFinished, callable $statesSetter, Main $main){
@@ -98,21 +98,12 @@ class ReadDatabaseTask extends AsyncTask{
 				return;
 			}
 			$baseChunk = array_shift($chunks);
-			$home = $this->readPosition($res);
-			$factions[$id] = new Faction(array(
-				"name" => $name,
-				"motto" => $motto,
-				"id" => $id,
-				"founder" => $founder,
-				"ranks" => $ranks,
-				"default-rank" => $defaultRank,
-				"members" => $members,
-				"last-active" => $lastActive,
-				"chunks" => $chunks,
-				"base-chunk" => $baseChunk,
-				"whitelist" => $whitelist,
-				"home" => $home,
-			), $this->main);
+			$homes = [];
+			for($i = 0; $i < $this->read($res, 1); $i++){
+				$homeName = $this->readString($res);
+				$homes[$homeName] = $this->readPosition($res);
+			}
+			$factions[$id] = new Faction(array("name" => $name, "motto" => $motto, "id" => $id, "founder" => $founder, "ranks" => $ranks, "default-rank" => $defaultRank, "members" => $members, "last-active" => $lastActive, "chunks" => $chunks, "base-chunk" => $baseChunk, "whitelist" => $whitelist, "homes" => $homes,), $this->main);
 		}
 		$states = [];
 		for($i = 0; $i < Bin::readBin($this->read($res, 8)); $i++){

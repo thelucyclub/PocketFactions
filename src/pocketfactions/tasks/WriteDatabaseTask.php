@@ -22,8 +22,9 @@ class WriteDatabaseTask extends AsyncTask{
 		$this->writeBuffer($res, Main::V_CURRENT);
 		$this->writeBuffer($res, Bin::writeInt(count($this->main->getFList()->getAll())));
 		foreach($this->main->getFList()->getAll() as $f){
-			if(!($f instanceof Faction))
+			if(!($f instanceof Faction)){
 				continue;
+			}
 			$this->writeBuffer($res, Bin::writeInt($f->getID()));
 			$this->writeBuffer($res, Bin::writeByte(strlen($f->getName()) | ($f->isWhitelisted() ? 0b10000000:0)));
 			$this->writeBuffer($res, $f->getName());
@@ -57,12 +58,12 @@ class WriteDatabaseTask extends AsyncTask{
 				$this->writeBuffer($res, Bin::writeByte(strlen($c->getLevel())));
 				$this->writeBuffer($res, $c->getLevel());
 			}
-			//			$this->writeBuffer($res, Bin::writeInt($f->getHome()->getX() + 2147483648));
-			//			$this->writeBuffer($res, Bin::writeShort($f->getHome()->getY()));
-			//			$this->writeBuffer($res, Bin::writeInt($f->getHome()->getZ() + 2147483648));
-			//			$this->writeBuffer($res, Bin::writeByte(strlen($f->getHome()->getLevel()->getName())));
-			//			$this->writeBuffer($res, $f->getHome()->getLevel()->getName());
-			$this->writePosition($f->getHome(), $res);
+			$homes = $f->getHomes();
+			$this->writeBuffer($res, Bin::writeByte(count($homes)));
+			foreach($homes as $name => $home){
+				$this->writeBuffer($res, Bin::writeByte(strlen($name)));
+				$this->writePosition($home, $res);
+			}
 		}
 		$states = $this->main->getFList()->getFactionsStates();
 		$this->writeBuffer($res, Bin::writeLong(count($states)));

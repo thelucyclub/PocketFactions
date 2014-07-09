@@ -44,6 +44,12 @@ enable sieging: false
 # If the player is within this number of blocks from the chunk centre, allow them to siege the chunk.
 siege radius: 4
 
+## Players can set homes to teleport to their faction homes.
+# This plugin allows multiple homes. What is the maximum number of homes allowed?
+# Note: strange bugs may occur if players already started setting homes but then you decreased this value.
+# This value must not exceed 255.
+max homes: 1
+
 ## World loading
 # PocketFactions generates a world if the world of a faction's claimed chunk doesn't exist. If you want to specify the seed, put it below.
 level generation seed: null

@@ -6,6 +6,7 @@ use legendofmcpe\statscore\Requestable;
 use legendofmcpe\statscore\StatsCore;
 use pocketfactions\utils\IFaction;
 use pocketfactions\Main;
+use pocketfactions\utils\subcommand\Subcommand;
 use pocketmine\entity\Entity as MCEntity;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\level\Position;
@@ -47,8 +48,8 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	protected $chunks;
 	/** @var Chunk $baseChunk The base chunk o a faction. TODO should we remove it? Possibly yes. */
 	protected $baseChunk;
-	/** @var \pocketmine\level\Position $home */
-	protected $home;
+	/** @var \pocketmine\level\Position[] $homes */
+	protected $homes = [];
 	/** @var bool */
 	protected $whitelist;
 	/** @var */
@@ -66,17 +67,17 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 * @param Rank[] $ranks
 	 * @param int $defaultRankIndex the default rank's key in $ranks
 	 * @param Main $main
-	 * @param Position $home the home position of the faction
+	 * @param Position|Position[] $home the home position of the faction
 	 * @param string $motto
 	 * @param bool $whitelist
 	 * @param int|bool $id
 	 * @return Faction
 	 */
-	public static function newInstance($name, $founder, array $ranks, $defaultRankIndex, Main $main, Position $home, $motto = "", $whitelist = true, $id = false){
+	public static function newInstance($name, $founder, array $ranks, $defaultRankIndex, Main $main, $home, $motto = "", $whitelist = true, $id = false){
 		if(!is_int($id)){
 			$id = self::nextID($main);
 		}
-		$data = ["name" => $name, "motto" => $motto, "id" => $id, "founder" => strtolower($founder), "ranks" => $ranks, "default-rank" => $ranks[$defaultRankIndex], "members" => [], "last-active" => time(), "chunks" => [], "home" => $home, "base-chunk" => Chunk::fromObject($home), "whitelist" => $whitelist];
+		$data = ["name" => $name, "motto" => $motto, "id" => $id, "founder" => strtolower($founder), "ranks" => $ranks, "default-rank" => $ranks[$defaultRankIndex], "members" => [], "last-active" => time(), "chunks" => [], "homes" => (array) $home, "base-chunk" => Chunk::fromObject($home), "whitelist" => $whitelist];
 		return new Faction($data, $main);
 	}
 	public function __construct(array $args, Main $main){
@@ -89,7 +90,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		$this->members = $args["members"];
 		$this->lastActive = $args["last-active"];
 		$this->chunks = $args["chunks"];
-		$this->home = $args["home"];
+		$this->homes = $args["homes"];
 		$this->main = $main;
 		//		$this->chunks = [];
 		//		/** @var Chunk[] $chunks */
@@ -226,10 +227,28 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		$this->whitelist = !$open;
 	}
 	/**
-	 * @return \pocketmine\level\Position
+	 * @param string|bool $name name of the home
+	 * @return \pocketmine\level\Position|bool
 	 */
-	public function getHome(){
-		return $this->home;
+	public function getHome($name = false){
+		if($this->getMain()->getMaxHomes() === 1){
+			return array_values($this->homes)[0]; // force order the array in ascending integers and get the first one
+		}
+		return isset($this->homes[$name]) ? $this->homes[$name]:false;
+	}
+	/**
+	 * @return Position[]
+	 */
+	public function getHomes(){
+		return $this->homes;
+	}
+	/**
+	 * @param string $name
+	 * @param Position $pos
+	 * @return bool whether the home already exists
+	 */
+	public function setHome($name = "default", Position $pos){
+		$this->homes[$name] = Position::fromObject($pos, $pos->getLevel());
 	}
 	/**
 	 * @return int
@@ -272,9 +291,17 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	public function canClaimMore(){
 		return count($this->chunks) + 1 <= $this->powerClaimable();
 	}
-	public function isCentreLocation(Position $pos){
-		// TODO
-		return true;
+	/**
+	 * @param Position $pos
+	 * @return bool
+	 */
+	public function isCentreLocation(Position $pos){ // true if a home is here
+		foreach($this->getHomes() as $home){
+			if($pos->getX() >> 4 === $home->getX() >> 4 and $pos->getX() >> 4 === $home->getX() >> 4){
+				return true;
+			}
+		}
+		return false;
 	}
 	//// Runnable API functions; Command-redirected functions
 	/**
@@ -297,13 +324,28 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	}
 	/**
 	 * @param Chunk $chunk
-	 * @return bool
+	 * @param Player $player
+	 * @return bool|string true on success, or message string on failure
 	 */
-	public function claim(Chunk $chunk){
+	public function claim(Chunk $chunk, Player $player){
 		if(!$this->canClaimMore()){
-			return false;
+			return "Your faction doesn't have enough power to claim more chunks!";
 		}
-		// TODO xEcon things
+		$charge = $this->main->getChunkClaimFee();
+		$account = $this->getAccount($charge["account"]);
+		$balance = $account->getAmount() - $charge["amount"];
+		if($account->getName() === "Bank"){
+			$balance += $this->main->getMaxBankOverdraft();
+		}
+		if($balance < 0){
+			return "Your faction doesn't have money to claim more chunks. Consider donating money to your faction using \"/f donate\".";
+		}
+		if($balance < $this->main->getMaxBankOverdraft()){
+			if(!$this->getMemberRank($player)->hasPerm(Rank::P_SPEND_MONEY_BANK_OVERDRAFT)){
+				return Subcommand::NO_PERM;
+			}
+			$this->sendMessage("[WARNING] The faction's bank account is now overdraf", self::CHAT_ANNOUNCEMENT);
+		}
 		$this->chunks[] = $chunk;
 		return true;
 	}
