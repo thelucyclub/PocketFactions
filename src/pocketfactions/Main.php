@@ -2,12 +2,16 @@
 
 namespace pocketfactions;
 
+use pocketfactions\faction\Chunk;
 use pocketfactions\faction\Faction;
+use pocketfactions\faction\Rank;
+use pocketfactions\faction\State;
 use pocketfactions\utils\FactionList;
 use pocketfactions\utils\subcommand\f\Claim;
 use pocketfactions\utils\subcommand\f\Create;
 use pocketfactions\utils\subcommand\f\Disband;
 use pocketfactions\utils\subcommand\f\Home;
+use pocketfactions\utils\subcommand\f\Homes;
 use pocketfactions\utils\subcommand\f\Invite;
 use pocketfactions\utils\subcommand\f\Join;
 use pocketfactions\utils\subcommand\f\Kick;
@@ -101,7 +105,25 @@ class Main extends Prt implements Listener{
 	private function registerCmds(){
 		$this->fCmd = new SubcommandMap("factions", $this, "Factions main command", "pocketfactions.cmd.factions", ["f"]);
 		$this->fmCmd = new SubcommandMap("factions-manager", $this, "Factions manager command", "pocketfactions.cmd.factionsmanager", ["fadm", "fmgr"]);
-		$subcmds = [new Claim($this), new Create($this), new Disband($this), new Home($this), new Invite($this), new Join($this), new Kick($this), new Money($this), new Motto($this), new Perm($this), new Quit($this), new Sethome($this), new Setopen($this), new Unclaim($this), new Unclaimall($this),];
+		$subcmds = [ // a list of all /f subcommands. /f help no need to register here.
+			new Claim($this), // claim a chunk
+			new Create($this), // create a faction
+			new Disband($this), // disband own faction
+			new Home($this), // teleport to faction home(s)
+			new Homes($this), // view faction home list
+			new Invite($this), // send request to other to join own faction
+			new Join($this), // send requeset to faction to join it
+			new Kick($this), // kick one from own faction
+			new Money($this), // manage own faction's money
+			new Motto($this), // change own faction's motto
+			new Perm($this), // manage own faction's permissions
+			// new Rel($this), // manage own faction's relations with another
+			new Quit($this), // quit current faction, and pass ownership to somebody if is owner
+			new Sethome($this), // set current faction's home(s)
+			new Setopen($this), // view/set whitelist on/off of own faction
+			new Unclaim($this), // unclaim chunk
+			new Unclaimall($this) // unclaim all claimed chunks
+		];
 		$this->fCmd->registerAll($subcmds);
 		$this->getServer()->getCommandMap()->registerAll("pocketfactions", [$this->fCmd, $this->fmCmd]);
 	}
@@ -109,6 +131,30 @@ class Main extends Prt implements Listener{
 	 * @priority HIGH
 	 */
 	public function onBlockTouch(PlayerInteractEvent $evt){
+		$p = $evt->getPlayer();
+		$cf = $this->getFList()->getFaction(Chunk::fromObject($evt->getBlock()));
+		if($cf === false){
+			$cf = $this->getWilderness();
+		}
+		$pf = $this->getFList()->getFaction($p);
+		if($pf === false){ // doesn't join any factions
+			if($cf instanceof WildernessFaction){
+				return;
+			}
+			$evt->setCancelled();
+			return;
+		}
+		$rel = $this->getFList()->getFactionsState($cf, $pf);
+		if($rel === State::REL_ALLY){
+			if($pf->getMemberRank($p)->hasPerm($cf->isCentreLocation($evt->getBlock()) ? Rank::P_BUILD_CENTRE:Rank::P_BUILD)){
+				return;
+			}
+			$evt->setCancelled();
+			return;
+		}
+		$evt->setCancelled();
+		$p->sendMessage("You cannot build at the claimed chunk of faction $cf!");
+		return;
 	}
 	/**
 	 * @return string
@@ -155,6 +201,11 @@ class Main extends Prt implements Listener{
 	}
 	public function getWilderness(){
 		return $this->wilderness;
+	}
+	public function getXEconService(){
+		/** @var \xecon\Main $xEcon */
+		$xEcon = $this->getServer()->getPluginManager()->getPlugin("xEcon");
+		return $xEcon->getService()->getService(self::XECON_SERV_NAME);
 	}
 	////////////
 	// CONFIG //
@@ -264,11 +315,6 @@ class Main extends Prt implements Listener{
 	}
 	public function getFounderWithdrawableAccounts(){
 		return $this->xeconConfig->get("accounts withdrawable to founder");
-	}
-	public function getXEconService(){
-		/** @var \xecon\Main $xEcon */
-		$xEcon = $this->getServer()->getPluginManager()->getPlugin("xEcon");
-		return $xEcon->getService()->getService(self::XECON_SERV_NAME);
 	}
 	//	/**
 	//	 * LOL

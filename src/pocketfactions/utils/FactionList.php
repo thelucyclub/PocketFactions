@@ -148,8 +148,22 @@ class FactionList{
 		// TODO remove from list
 		// TODO unclaim chunks (required?) (yes if getFaction(Chunk)'s performace is improved)
 	}
+	/**
+	 * @param IFaction $f0
+	 * @param IFaction $f1
+	 * @return int
+	 */
 	public function getFactionsState(IFaction $f0, IFaction $f1){
-		return $this->states[$f0->getID() . "-" . $f1->getID()];
+		if($f0 === $f1){
+			return State::REL_ALLY;
+		}
+		if(isset($this->states[$f0->getID() . "-" . $f1->getID()])){
+			$this->states[$f0->getID() . "-" . $f1->getID()]->getState();
+		}
+		if(!($f0 instanceof Faction) or !($f1 instanceof Faction)){ // wilderness
+			return State::REL_ALLY;
+		}
+		return State::REL_NEUTRAL;
 	}
 	public function setFactionsState(State $state){
 		$this->states[$state->getF0()->getID() . "-" . $state->getF1()->getID()] = $state;
