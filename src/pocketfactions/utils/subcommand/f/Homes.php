@@ -17,7 +17,7 @@ class Homes extends Subcommand{
 	public function getUsage(){
 		return "";
 	}
-	public function checkPermission(Faction $faction, Player $player){
+	public function checkPermission(Faction $faction){
 		return count($faction->getHomes()) > 0 and $this->getMain()->getMaxHomes() > 0;
 	}
 	public function onRun(array $args, Faction $faction){
