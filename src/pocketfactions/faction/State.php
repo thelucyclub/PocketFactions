@@ -25,4 +25,10 @@ class State{
 	public function getF1(){
 		return $this->f1;
 	}
+	public function getSmall(){
+		return min($this->f0->getID(), $this->f1->getID());
+	}
+	public function getLarge(){
+		return max($this->f0->getID(), $this->f1->getID());
+	}
 }

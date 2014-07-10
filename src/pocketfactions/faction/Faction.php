@@ -71,14 +71,14 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 * @param string $motto
 	 * @param bool $whitelist
 	 * @param int|bool $id
-	 * @return Faction
 	 */
 	public static function newInstance($name, $founder, array $ranks, $defaultRankIndex, Main $main, $home, $motto = "", $whitelist = true, $id = false){
 		if(!is_int($id)){
 			$id = self::nextID($main);
 		}
 		$data = ["name" => $name, "motto" => $motto, "id" => $id, "founder" => strtolower($founder), "ranks" => $ranks, "default-rank" => $ranks[$defaultRankIndex], "members" => [], "last-active" => time(), "chunks" => [], "homes" => (array) $home, "base-chunk" => Chunk::fromObject($home), "whitelist" => $whitelist];
-		return new Faction($data, $main);
+		$faction = new Faction($data, $main);
+		$main->getFList()->add($faction);
 	}
 	public function __construct(array $args, Main $main){
 		$this->name = $args["name"];
@@ -313,14 +313,17 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		if($newMember instanceof Player){
 			$newMember = $newMember->getName();
 		}
-		$this->members[strtolower($newMember->getName())] = $this->getDefaultRank();
+		$this->members[strtolower($newMember)] = $this->getDefaultRank();
 		$this->sendMessage("$newMember has joined the faction. Method: $method");
+		$this->main->getFList()->onMemberJoin($this, $newMember);
 		return true;
 	}
 	/**
 	 * @param string $memberName
 	 */
 	public function kick($memberName){
+		unset($this->members[strtolower($memberName)]);
+		$this->main->getFList()->onMemberKick($memberName);
 	}
 	/**
 	 * @param Chunk $chunk
@@ -347,6 +350,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 			$this->sendMessage("[WARNING] The faction's bank account is now overdraf", self::CHAT_ANNOUNCEMENT);
 		}
 		$this->chunks[] = $chunk;
+		$this->main->getFList()->onChunkClaimed($this, $chunk);
 		return true;
 	}
 	public function addLoan($name, $amount){
