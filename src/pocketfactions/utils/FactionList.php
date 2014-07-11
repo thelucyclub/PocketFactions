@@ -83,6 +83,7 @@ class FactionList{
 		$this->db->exec("CREATE TABLE factions_chunks (x INT, z INT, ownerid INT);");
 		$this->db->exec("CREATE TABLE factions_rels (smallid INT, largeid INT, relid INT);");
 		$this->db->exec("CREATE TABLE factions_members (lowname TEXT, factionid INT);");
+		$this->db->exec("CREATE TABLE factions_homes (x INT, y INT, z INT, name TEXT, fid INT);");
 		foreach($factions as $f){
 			$this->add($f);
 		}
@@ -104,6 +105,15 @@ class FactionList{
 			$op = $this->db->prepare("INSERT INTO factions_members (lowname, factionid) VALUES (:lowname, :id);");
 			$op->bindValue(":lowname", strtolower($member));
 			$op->bindValue(":id", $faction->getID());
+			$op->execute();
+		}
+		foreach($faction->getHomes() as $name => $pos){
+			$op = $this->db->prepare("INSERT INTO factions_homes (x, y, z, name, fid) VALUES (:x, :y, :z, :name, :fid);");
+			$op->bindValue(":x", $pos->getFloorX());
+			$op->bindValue(":y", $pos->getFloorY());
+			$op->bindValue(":z", $pos->getFloorZ());
+			$op->bindValue(":name", $name);
+			$op->bindValue(":fid", $faction->getID());
 			$op->execute();
 		}
 	}
@@ -133,6 +143,17 @@ class FactionList{
 	 * @return bool|null|Faction
 	 */
 	public function getFaction($identifier){
+		$id = $this->getFactionID($identifier);
+		if(is_int($id)){
+			return isset($this->factions[$id]) ? $this->factions[$id]:false;
+		}
+		return $id;
+	}
+	/**
+	 * @param string|int|IPlayer|Chunk $identifier
+	 * @return bool|null|int
+	 */
+	public function getFactionID($identifier){
 		if($this->factions === false or $this->db === null){
 			return null;
 		}
@@ -143,16 +164,15 @@ class FactionList{
 				if($result === false){
 					return false;
 				}
-				$id = $result["id"];
-				return $this->factions[$id];
+				return $result["id"];
 			case is_int($identifier): // ID
-				return isset($this->factions[$identifier]) ? $this->factions[$identifier]:false;
+				return $identifier;
 			case $identifier instanceof IPlayer:
 				$result = $this->db->query("SELECT factionid FROM factions_members WHERE lowname = '".strtolower($identifier->getName())."';")->fetchArray(SQLITE3_ASSOC);
 				if($result === false){
 					return false;
 				}
-				return $this->factions[$result["factionid"]];
+				return $result["factionid"];
 			case $identifier instanceof Chunk:
 				$op = $this->db->prepare("SELECT ownerid FROM factions_chunks WHERE x = :x AND z = :z");
 				$op->bindValue(":x", $identifier->getX());
@@ -161,7 +181,7 @@ class FactionList{
 				if($result === false){
 					return false;
 				}
-				return $this->factions[$result["ownerid"]];
+				return $result["ownerid"];
 			default:
 				return false;
 		}
@@ -228,10 +248,46 @@ class FactionList{
 		}
 		return $out;
 	}
+	/**
+	 * @param Chunk $chunk
+	 * @return bool|Faction
+	 */
+	public function isKeyChunk(Chunk $chunk){
+		$op = $this->db->prepare("SELECT fid, FROM factions_homes WHERE (x BETWEEN :minx AND :maxx) AND (z BETWEEN :minz AND :maxz);");
+		$op->bindValue(":minx", $chunk->getX() * 16);
+		$op->bindValue(":maxx", $chunk->getX() * 16 + 15); // it is inclusive BETWEEN right?
+		$op->bindValue(":minz", $chunk->getZ() * 16);
+		$op->bindValue(":maxz", $chunk->getZ() * 16 + 15);
+		$result = $op->execute()->fetchArray(SQLITE3_ASSOC);
+		if($result === false){
+			return false;
+		}
+		return $this->factions[$result["fid"]];
+	}
 	public function onChunkClaimed(Faction $faction, Chunk $chunk){
 		$op = $this->db->prepare("INSERT INTO factions_chunks (x, z, ownerid) VALUES (:x, :z, :id);");
 		$op->bindValue(":x", $chunk->getX());
 		$op->bindValue(":z", $chunk->getZ());
+		$op->bindValue(":id", $faction->getID());
+		$op->execute();
+	}
+	public function onChunkUnclaimed(Chunk $chunk){
+		$op = $this->db->prepare("DELETE FROM factions_chunks WHERE x = :x AND z = :z;");
+		$op->bindValue(":x", $chunk->getX());
+		$op->bindValue(":z", $chunk->getZ());
+		$op->execute();
+		$op = $this->db->prepare("DELETE FROM factions_homes WHERE (x BETWEEN :minx AND :maxx) AND (z BETWEEN :minz AND :maxz);");
+		$op->bindValue(":minx", $chunk->getX() * 16);
+		$op->bindValue(":maxx", $chunk->getX() * 16 + 15);
+		$op->bindValue(":minz", $chunk->getZ() * 16);
+		$op->bindValue(":maxz", $chunk->getZ() * 16 + 15);
+		$op->execute();
+	}
+	public function onAllChunksUnclaimed(Faction $faction){
+		$op = $this->db->prepare("DETELE FROM factions_chunks WHERE ownerid = :id;");
+		$op->bindValue(":id", $faction->getID());
+		$op->execute();
+		$op = $this->db->prepare("DELETE FROM factions_homes WHERE fid = :id;");
 		$op->bindValue(":id", $faction->getID());
 		$op->execute();
 	}

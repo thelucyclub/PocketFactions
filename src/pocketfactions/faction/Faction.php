@@ -48,7 +48,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	protected $chunks;
 	/** @var Chunk $baseChunk The base chunk o a faction. TODO should we remove it? Possibly yes. */
 	protected $baseChunk;
-	/** @var \pocketmine\level\Position[] $homes */
+	/** @var \pocketmine\level\Position[] $homes with keys as name strings */
 	protected $homes = [];
 	/** @var bool */
 	protected $whitelist;
@@ -352,6 +352,28 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		$this->chunks[] = $chunk;
 		$this->main->getFList()->onChunkClaimed($this, $chunk);
 		return true;
+	}
+	/**
+	 * @param Chunk $chunk
+	 * @return bool|string|int
+	 */
+	public function unclaim(Chunk $chunk){
+		$this->getMain()->getFList()->onChunkUnclaimed($chunk);
+		$id = false;
+		foreach($this->chunks as $i => $c){
+			if($c->equals($chunk)){
+				$id = $i;
+			}
+		}
+		if($id === false){
+			return "This chunk is not the territory of $this.";
+		}
+		unset($this->chunks[$id]);
+		return true;
+	}
+	public function unclaimAll(){
+		$this->chunks = [];
+		$this->getMain()->getFList()->onAllChunksUnclaimed($this);
 	}
 	public function addLoan($name, $amount){
 		if(isset($this->liabilities[$name])){
