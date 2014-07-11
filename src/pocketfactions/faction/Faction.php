@@ -133,6 +133,10 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 */
 	public function setName($name){
 		$this->name = $name;
+		$op = $this->getMain()->getFList()->getDb()->prepare("UPDATE factions SET name = :name WHERE id = :id;");
+		$op->bindValue(":name", $name);
+		$op->bindValue(":id", $this->id);
+		$op->execute();
 	}
 	/**
 	 * @return string
@@ -179,6 +183,15 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 */
 	public function setMembers(array $members){
 		$this->members = $members;
+		$sql = $this->getMain()->getFList()->getDb();
+		$op = $sql->prepare("DELTE FROM factions_members WHERE factionid = :fid;");
+		$op->bindValue(":fid", $this->id);
+		$op->execute();
+		foreach($members as $member => $r){
+			$op = $sql->prepare("INSERT INTO factions_members (factionid, lowname) VALUES (:fid, '$member');");
+			$op->bindValue(":fid", $this->id);
+			$op->execute();
+}
 	}
 	/**
 	 * @return Chunk[]
@@ -249,6 +262,14 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 */
 	public function setHome($name = "default", Position $pos){
 		$this->homes[$name] = Position::fromObject($pos, $pos->getLevel());
+		$db = $this->getMain()->getFList()->getDb();
+		$op = $db->prepare("INSERT OR REPLACE INTO factions_homes (x, y, z, name, fid) VALUES (:x, :y, :z, :name, :id);");
+		$op->bindValue(":x", $pos->getX());
+		$op->bindValue(":y", $pos->getY());
+		$op->bindValue(":z", $pos->getZ());
+		$op->bindValue(":name", $name);
+		$op->bindValue(":id", $this->id);
+		$op->execute();
 	}
 	/**
 	 * @return int
@@ -258,6 +279,10 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	}
 	public function setActiveNow(){
 		$this->lastActive = time();
+		$op = $this->getMain()->getFList()->getDb()->prepare("UPDATE factions SET lastactive = :lastactive WHERE id = :id;");
+		$op->bindValue(":lastactive", $this->lastActive);
+		$op->bindValue(":id", $this->id);
+		$op->execute();
 	}
 	public function hasChunk(Chunk $chunk){
 		foreach($this->chunks as $cchunk){
@@ -323,7 +348,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 */
 	public function kick($memberName){
 		unset($this->members[strtolower($memberName)]);
-		$this->main->getFList()->onMemberKick($memberName);
+		$this->main->getFList()->onMemberKick(strtolower($memberName));
 	}
 	/**
 	 * @param Chunk $chunk
@@ -347,8 +372,9 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 			if(!$this->getMemberRank($player)->hasPerm(Rank::P_SPEND_MONEY_BANK_OVERDRAFT)){
 				return Subcommand::NO_PERM;
 			}
-			$this->sendMessage("[WARNING] The faction's bank account is now overdraf", self::CHAT_ANNOUNCEMENT);
+			$this->sendMessage("[WARNING] The faction's bank account is now overdrafted", self::CHAT_ANNOUNCEMENT);
 		}
+		$account->pay($this->getMain()->getXEconService(), $charge["amount"], "Claim a chunk");
 		$this->chunks[] = $chunk;
 		$this->main->getFList()->onChunkClaimed($this, $chunk);
 		return true;

@@ -24,11 +24,12 @@ class Rename extends Subcommand{
 		}
 		$fee = $this->getMain()->getFactionRenameFee();
 		$account = $faction->getAccount($fee["account"]);
-		$amount = $account->getAmount();
+		$amount = $account->getAmount() - $fee["amount"];
 		if($amount < 0 - $this->getMain()->getMaxBankOverdraft() and $fee["account"] === "bank" or $amount < 0){
 			return "Your faction doesn't have enough money to rename :( consider taking loans or donating money?";
 		}
 		$faction->setName($args[0]);
+		$account->pay($this->getMain()->getXEconService(), $fee["amount"]);
 		$faction->sendMessage("The faction name has been changed to $args[0]!");
 		return "";
 	}

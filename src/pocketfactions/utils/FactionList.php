@@ -79,20 +79,22 @@ class FactionList{
 			$this->db = null;
 		}
 		$this->db = new \SQLite3(":memory:");
-		$this->db->exec("CREATE TABLE factions (id INT, name TEXT);");
+		$this->db->exec("CREATE TABLE factions (id INT, name TEXT, open INT, lastactive INT);");
 		$this->db->exec("CREATE TABLE factions_chunks (x INT, z INT, ownerid INT);");
 		$this->db->exec("CREATE TABLE factions_rels (smallid INT, largeid INT, relid INT);");
 		$this->db->exec("CREATE TABLE factions_members (lowname TEXT, factionid INT);");
-		$this->db->exec("CREATE TABLE factions_homes (x INT, y INT, z INT, name TEXT, fid INT);");
+		$this->db->exec("CREATE TABLE factions_homes (x REAL, y REAL, z REAL, name TEXT, fid INT);"); // floating point coordinates
 		foreach($factions as $f){
 			$this->add($f);
 		}
 	}
 	public function add(Faction $faction){
 		$this->factions[$faction->getID()] = $faction;
-		$op = $this->db->prepare("INSERT INTO factions (id, name) VALUES (:id, :name);");
+		$op = $this->db->prepare("INSERT INTO factions (id, name, open, lastactive) VALUES (:id, :name, :open, :lastactive);");
 		$op->bindValue(":id", $faction->getID());
 		$op->bindValue(":name", $faction->getName());
+		$op->bindValue(":open", $faction->isOpen() ? 1:0); // maybe we will have more types in the future
+		$op->bindValue(":lastactive", $faction->getLastActive());
 		$op->execute();
 		foreach($faction->getChunks() as $chunk){
 			$op = $this->db->prepare("INSERT INTO factions_chunks (x, z, ownerid) VALUES (:x, :z, :id);"); // can we make it faster?
@@ -208,6 +210,9 @@ class FactionList{
 		$op = $this->db->prepare("DELETE FROM factions_rels WHERE smallid = :id OR largeid = :id;");
 		$op->bindValue(":id", $faction->getID());
 		$op->execute();
+		$op = $this->db->prepare("DELETE FROM factions_homes WHERE fid = :id");
+		$op->bindValue(":id", $faction->getID());
+		$op->execute();
 	}
 	/**
 	 * @param IFaction $f0
@@ -301,5 +306,8 @@ class FactionList{
 		$op = $this->db->prepare("DELETE FROM factions_members WHERE lowname = :name;");
 		$op->bindValue(":name", strtolower($name));
 		$op->execute();
+	}
+	public function getDb(){
+		return $this->db;
 	}
 }
