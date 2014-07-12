@@ -80,10 +80,10 @@ class FactionList{
 		}
 		$this->db = new \SQLite3(":memory:");
 		$this->db->exec("CREATE TABLE factions (id INT, name TEXT, open INT, lastactive INT);");
-		$this->db->exec("CREATE TABLE factions_chunks (x INT, z INT, ownerid INT);");
-		$this->db->exec("CREATE TABLE factions_rels (smallid INT, largeid INT, relid INT);");
+		$this->db->exec("CREATE TABLE factions_chunks (x INT, z INT, ownerid INT) WITHOUT ROWID;");
+		$this->db->exec("CREATE TABLE factions_rels (smallid INT, largeid INT, relid INT) WITHOUT ROWID;");
 		$this->db->exec("CREATE TABLE factions_members (lowname TEXT, factionid INT);");
-		$this->db->exec("CREATE TABLE factions_homes (x REAL, y REAL, z REAL, name TEXT, fid INT);"); // floating point coordinates
+		$this->db->exec("CREATE TABLE factions_homes (x REAL, y REAL, z REAL, name TEXT, fid INT) WITHOUT WORID;"); // floating point coordinates
 		foreach($factions as $f){
 			$this->add($f);
 		}
