@@ -22,3 +22,4 @@ Working stages:
 
 - [ ] Writing description
 - [ ] Releasing on forums
+- [ ] Writing documentation

@@ -71,6 +71,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 * @param string $motto
 	 * @param bool $whitelist
 	 * @param int|bool $id
+	 * @return Faction
 	 */
 	public static function newInstance($name, $founder, array $ranks, $defaultRankIndex, Main $main, $home, $motto = "", $whitelist = true, $id = false){
 		if(!is_int($id)){
@@ -79,6 +80,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		$data = ["name" => $name, "motto" => $motto, "id" => $id, "founder" => strtolower($founder), "ranks" => $ranks, "default-rank" => $ranks[$defaultRankIndex], "members" => [], "last-active" => time(), "chunks" => [], "homes" => (array) $home, "base-chunk" => Chunk::fromObject($home), "whitelist" => $whitelist];
 		$faction = new Faction($data, $main);
 		$main->getFList()->add($faction);
+		return $faction;
 	}
 	public function __construct(array $args, Main $main){
 		$this->name = $args["name"];
@@ -169,7 +171,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 * @return Rank
 	 */
 	public function getDefaultRank(){
-		return $this->defaultRank;
+		return $this->ranks[$this->defaultRank];
 	}
 	/**
 	 * @param bool $raw
