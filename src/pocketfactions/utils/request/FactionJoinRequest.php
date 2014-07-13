@@ -20,7 +20,10 @@ class FactionJoinRequest extends ToFactionRequest{
 		return $this->from . " sent a request to join your faction.";
 	}
 	public function onAccepted(){
-		// TODO
+		/** @var Faction $to */
+		$to = $this->getTo();
+		$to->sendMessage("The request to join the faction from ".$this->from." has been accepted!");
+		$to->join($this->from, "Join request");
 	}
 	public function onRejected(){
 		// TODO
