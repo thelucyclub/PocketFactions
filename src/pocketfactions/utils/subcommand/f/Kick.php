@@ -26,9 +26,7 @@ class Kick extends Subcommand{
 			return self::WRONG_USE;
 		}
 		if($faction->hasMember($name = array_shift($args))){
-			$members = $faction->getMembers(true);
-			unset($members[strtolower($name)]);
-			$faction->setMembers($members);
+			$faction->kick($name);
 			$faction->sendMessage("$name has been kicked by " . $player->getName() . ". Reason: " . implode(" ", $args));
 			if(($p = $this->getMain()->getServer()->getPlayerExact($name)) instanceof Player){
 				$p->sendMessage("You have been kicked from the faction. Reason: " . implode(" ", $args));

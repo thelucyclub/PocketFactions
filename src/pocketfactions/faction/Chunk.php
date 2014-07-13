@@ -47,7 +47,7 @@ class Chunk{
 	 * @param Chunk $that
 	 * @return bool
 	 */
-	public function equals(static $that){
+	public function equals(self $that){
 		return $this->X === $that->X and $this->Z === $that->Z and $this->level = $that->level;
 	}
 	/**
@@ -55,6 +55,6 @@ class Chunk{
 	 * @return static
 	 */
 	public static function fromObject(Position $pos){
-		return new static($pos->getX() >> 4, $pos->getZ() >> 4, $pos->getLevel());
+		return new self($pos->getX() >> 4, $pos->getZ() >> 4, $pos->getLevel()); // don't refer to the object directly, else clone it
 	}
 }
