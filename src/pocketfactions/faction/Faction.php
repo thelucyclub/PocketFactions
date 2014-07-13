@@ -434,7 +434,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	}
 	public function initDefaultAccounts(){
 		$this->addAccount("Cash", $this->main->getDefaultCash(), $this->main->getMaxCash());
-		$this->addAccount("Bank", $this->main->getDefaultBank(), $this->main->getMaxBank());
+		$this->addAccount("Bank", $this->main->getDefaultBank(), $this->main->getMaxBank(), $this->main->getMaxBankOverdraft());
 		foreach($this->main->getBankLoanTypesRaw() as $name => $data){
 			$this->addLiability($name, $data["maximum"] * $data["amount"]);
 		}
