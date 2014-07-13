@@ -17,7 +17,8 @@ use xecon\entity\Entity;
 
 class Faction implements InventoryHolder, Requestable, IFaction{
 	use Entity;
-
+	const BANK = "Bank";
+	const CASH = "Cash";
 	const CHAT_ADMIN = 0;
 	const CHAT_ANNOUNCEMENT = 1;
 	const CHAT_ALL = 2;
