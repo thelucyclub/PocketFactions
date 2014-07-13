@@ -30,6 +30,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\permission\Permission;
+use pocketmine\Player;
 use pocketmine\plugin\PluginBase as Prt;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as Font;
@@ -44,6 +45,7 @@ class Main extends Prt implements Listener{
 	 * @var Config
 	 */
 	public $cleanSave;
+	public $haveRequiredSimpleAuth = false;
 	/**
 	 * @var Config
 	 */
@@ -101,6 +103,10 @@ class Main extends Prt implements Listener{
 	}
 	private function registerEvents(){
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
+		if(class_exists($event = "SimpleAuth\\event\\PlayerAuthenticateEvent")){
+			$this->haveRequiredSimpleAuth = true;
+			$this->getServer()->getPluginManager()->registerEvents(new SimpleAuthListener($this), $this);
+		}
 	}
 	private function registerCmds(){
 		$this->fCmd = new SubcommandMap("factions", $this, "Factions main command", "pocketfactions.cmd.factions", ["f"]);
@@ -163,12 +169,17 @@ class Main extends Prt implements Listener{
 		return $this->getDataFolder() . "database/factions.dat";
 	}
 	public function onLogin(PlayerJoinEvent $evt){
-		$f = $this->getFList()->getFaction($evt->getPlayer());
+		if(!$this->haveRequiredSimpleAuth){
+			$this->onLoggedIn($evt->getPlayer());
+		}
+	}
+	public function onLoggedIn(Player $player){
+		$f = $this->getFList()->getFaction($player);
 		if(!($f instanceof Faction)){
 			return;
 		}
 		$f->setActiveNow();
-		$this->loggedIn[$evt->getPlayer()->getID()] = true;
+		$this->loggedIn[$player->getID()] = true;
 	}
 	public function onQuit(PlayerQuitEvent $evt){
 		$cid = $evt->getPlayer()->getID();
