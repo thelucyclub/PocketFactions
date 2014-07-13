@@ -19,10 +19,9 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	use Entity;
 	const BANK = "Bank";
 	const CASH = "Cash";
-	const CHAT_ADMIN = 0;
-	const CHAT_ANNOUNCEMENT = 1;
-	const CHAT_ALL = 2;
-	// vars
+	const CHAT_ADMIN = Rank::P_CHAT_ADMIN;
+	const CHAT_ANNOUNCEMENT = Rank::P_CHAT_ANNOUNCEMENT;
+	const CHAT_ALL = Rank::P_CHAT_ALL;
 	/** @var Main */
 	protected $main;
 	/** @var string $name */
@@ -419,11 +418,16 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	// Inherited functions //
 	/////////////////////////
 	public function sendMessage($message, $level = self::CHAT_ADMIN){
-		return null;
+		foreach($this->getMain()->getServer()->getOnlinePlayers() as $player){
+			$rank = $this->getMemberRank($player);
+			if(($rank instanceof Rank) and $rank->hasPerm($level)){
+				$player->sendMessage($message);
+			}
+		}
 	}
 	// xEcon-related
 	public function getInventory(){
-		return new DummyInventory($this, "Faction Account"); // TODO replace the dummy placeholder
+		return new DummyInventory($this, "Faction Account"); // TODO replace the dummy placeholder // e.g. Chest inventory
 	}
 	public function getEconomicEntity(){
 		return $this;
