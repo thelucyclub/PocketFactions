@@ -18,11 +18,9 @@ Now, this is the documentation for each parameter:
 public function \pocketfactions\faction\Rank::__construct(int $id, string $name, int $perms);
 ```
 
-`$id` is the internal ID of the rank. If you populate an empty array with instances of `Rank`, put the key in the array of the rank as `$id`.
-
-`$name` is the human-readable name of the rank. Examples are "member", "official" and "founder".
-
-`$perms` is an integer expressed by the permissions he has, as in `\pocketfactions\faction\Rank::P_*****`, combined using the bitwise `OR` operator.
+  * `$id` is the internal ID of the rank. If you populate an empty array with instances of `Rank`, put the key in the array of the rank as `$id`.
+  * `$name` is the human-readable name of the rank. Examples are "member", "official" and "founder".
+  * `$perms` is an integer expressed by the permissions he has, as in `\pocketfactions\faction\Rank::P_*****`, combined using the bitwise `OR` operator.
 
 * `int $defaultRankIndex` is the key of the rank in `$ranks` that is the rank a player has when he newly joins. For normal factions (factions created using `/f create` and recruit using `/f invite` or `/f join`), the default one is member.
 * `\pocketfactions\Main $main` is an instance of the faction's main class. You can get it by `$server->getPluginManager()->getPlugin("PocketFactions")`, where `$server` is an instance of `\pocketmine\Server`, usually resolved by `$this->getServer()` or `\pocketmine\Server::getInstance()`.
