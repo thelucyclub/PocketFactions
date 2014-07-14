@@ -13,11 +13,9 @@ Now, this is the documentation for each parameter:
 * `string $name` is the name of the faction. It doesn't have to be unique. However, its not being unique could lead to issues when the player uses commands that refer to the faction's name, like `/f rel`, `/f join`, etc. Any strings are accepted, as long as the server owner would accept.
 * `string $founder` is the lowercase name of the faction founder. This foundership is constant unless it is passed to a successor due to his inactivity. If the faction is server-owned, put "console" for that. This parameter only serves as a function to give automatic foundership to that player.
 * `Rank[] $ranks` is an array of instances of `Rank`. A `Rank` object can be instantiated by:
-
 ```php
 public function \pocketfactions\faction\Rank::__construct(int $id, string $name, int $perms);
 ```
-
   * `$id` is the internal ID of the rank. If you populate an empty array with instances of `Rank`, put the key in the array of the rank as `$id`.
   * `$name` is the human-readable name of the rank. Examples are "member", "official" and "founder".
   * `$perms` is an integer expressed by the permissions he has, as in `\pocketfactions\faction\Rank::P_*****`, combined using the bitwise `OR` operator.
