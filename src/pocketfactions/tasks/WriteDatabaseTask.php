@@ -17,72 +17,67 @@ class WriteDatabaseTask extends AsyncTask{
 		$this->onPreRun();
 	}
 	public function onPreRun(){
-		$res = $this->res;
-		$this->writeBuffer($res, FactionList::MAGIC_P);
-		$this->writeBuffer($res, Main::V_CURRENT);
-		$this->writeBuffer($res, Bin::writeInt(count($this->main->getFList()->getAll())));
+		$this->buffer .= FactionList::MAGIC_P;
+		$this->buffer .= Main::V_CURRENT;
+		$this->buffer .= Bin::writeInt(count($this->main->getFList()->getAll()));
 		foreach($this->main->getFList()->getAll() as $f){
 			if(!($f instanceof Faction)){
 				continue;
 			}
-			$this->writeBuffer($res, Bin::writeInt($f->getID()));
-			$this->writeBuffer($res, Bin::writeByte(strlen($f->getName()) | ($f->isWhitelisted() ? 0b10000000:0)));
-			$this->writeBuffer($res, $f->getName());
-			$this->writeBuffer($res, Bin::writeShort(strlen($f->getMotto())));
-			$this->writeBuffer($res, $f->getMotto());
-			$this->writeBuffer($res, Bin::writeByte(strlen($f->getFounder())));
-			$this->writeBuffer($res, $f->getFounder());
+			$this->buffer .= Bin::writeInt($f->getID());
+			$this->buffer .= Bin::writeByte(strlen($f->getName()) | ($f->isWhitelisted() ? 0b10000000:0));
+			$this->buffer .= $f->getName();
+			$this->buffer .= Bin::writeShort(strlen($f->getMotto()));
+			$this->buffer .= $f->getMotto();
+			$this->buffer .= Bin::writeByte(strlen($f->getFounder()));
+			$this->buffer .= $f->getFounder();
 			$ranks = $f->getRanks();
-			$this->writeBuffer($res, Bin::writeByte(count($ranks)));
+			$this->buffer .= Bin::writeByte(count($ranks));
 			foreach($ranks as $rk){
-				$this->writeBuffer($res, Bin::writeByte($rk->getID()));
-				$this->writeBuffer($res, Bin::writeByte(strlen($rk->getName())));
-				$this->writeBuffer($res, $rk->getName());
-				$this->writeBuffer($res, Bin::writeInt($rk->getPerms()));
+				$this->buffer .= Bin::writeByte($rk->getID());
+				$this->buffer .= Bin::writeByte(strlen($rk->getName()));
+				$this->buffer .= $rk->getName();
+				$this->buffer .= Bin::writeInt($rk->getPerms());
 			}
-			$this->writeBuffer($res, Bin::writeByte($f->getDefaultRank()));
+			$this->buffer .= Bin::writeByte($f->getDefaultRank());
 			$mbrs = $f->getMembers();
-			$this->writeBuffer($res, Bin::writeInt(count($mbrs)));
+			$this->buffer .= Bin::writeInt(count($mbrs));
 			foreach($mbrs as $name => $rank){
-				$this->writeBuffer($res, Bin::writeByte(strlen($name)));
-				$this->writeBuffer($res, $name);
-				$this->writeBuffer($res, Bin::writeByte($rank));
+				$this->buffer .= Bin::writeByte(strlen($name));
+				$this->buffer .= $name;
+				$this->buffer .= Bin::writeByte($rank);
 			}
-			$this->writeBuffer($res, Bin::writeLong($f->getLastActive()));
+			$this->buffer .= Bin::writeLong($f->getLastActive());
 			$chunks = $f->getChunks();
-			array_unshift($chunks, $f->getBaseChunk());
-			$this->writeBuffer($res, Bin::writeShort(count($chunks)));
+			$this->buffer .= Bin::writeShort(count($chunks));
 			foreach($chunks as $c){
-				$this->writeBuffer($res, Bin::writeShort($c->getX()));
-				$this->writeBuffer($res, Bin::writeShort($c->getZ()));
-				$this->writeBuffer($res, Bin::writeByte(strlen($c->getLevel())));
-				$this->writeBuffer($res, $c->getLevel());
+				$this->buffer .= Bin::writeShort($c->getX());
+				$this->buffer .= Bin::writeShort($c->getZ());
+				$this->buffer .= Bin::writeByte(strlen($c->getLevel()));
+				$this->buffer .= $c->getLevel();
 			}
 			$homes = $f->getHomes();
-			$this->writeBuffer($res, Bin::writeByte(count($homes)));
+			$this->buffer .= Bin::writeByte(count($homes));
 			foreach($homes as $name => $home){
-				$this->writeBuffer($res, Bin::writeByte(strlen($name)));
-				$this->writePosition($home, $res);
+				$this->buffer .= Bin::writeByte(strlen($name));
+				$this->writePosition($home);
 			}
 		}
 		$states = $this->main->getFList()->getFactionsStates();
-		$this->writeBuffer($res, Bin::writeLong(count($states)));
+		$this->buffer .= Bin::writeLong(count($states));
 		foreach($states as $state){
-			$this->writeBuffer($res, Bin::writeInt($state->getF0()->getID()));
-			$this->writeBuffer($res, Bin::writeInt($state->getF1()->getID()));
-			$this->writeBuffer($res, Bin::writeByte($state->getState()));
+			$this->buffer .= Bin::writeInt($state->getF0()->getID());
+			$this->buffer .= Bin::writeInt($state->getF1()->getID());
+			$this->buffer .= Bin::writeByte($state->getState());
 		}
-		$this->writeBuffer($res, FactionList::MAGIC_S);
+		$this->buffer .= FactionList::MAGIC_S;
 	}
-	protected function writePosition(Position $pos, $res){
-		$this->writeBuffer($res, Bin::writeInt($pos->getX() >> 4));
-		$this->writeBuffer($res, Bin::writeInt($pos->getZ() >> 4));
-		$this->writeBuffer($res, Bin::writeByte((($pos->getX() & 0x0F) << 4) & ($pos->getZ() & 0x0F)));
-		$this->writeBuffer($res, Bin::writeByte(strlen($pos->getLevel()->getName())));
-		$this->writeBuffer($res, $pos->getLevel()->getName());
-	}
-	protected function writeBuffer($res, $string){
-		$this->buffer .= $string;
+	protected function writePosition(Position $pos){
+		$this->buffer .= Bin::writeInt($pos->getX() >> 4);
+		$this->buffer .= Bin::writeInt($pos->getZ() >> 4);
+		$this->buffer .= Bin::writeByte((($pos->getX() & 0x0F) << 4) & ($pos->getZ() & 0x0F));
+		$this->buffer .= Bin::writeByte(strlen($pos->getLevel()->getName()));
+		$this->buffer .= $pos->getLevel()->getName();
 	}
 	public function onRun(){
 		fwrite($this->res, $this->buffer);

@@ -37,26 +37,22 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	/** @var int $defaultRank internal rank ID of the default rank */
 	protected $defaultRank;
 	/**
-	 * This array is a list keyed with lowercase member names and filled with Rank object references to $Faction->ranks.
+	 * This array is a list indexed with lowercase member names and filled with integers of the member's rank ID.
 	 * Use <code>array_keys()</code> to get a plain list of members.
-	 * @var Rank[] $members
+	 * @var int[] $members
 	 */
 	protected $members;
 	/** @var  int $lastActive */
 	protected $lastActive;
 	/** @var Chunk[] $chunks numerically keyed chunks with undefined order (possibly, but not sure, sequence of claiming) */
 	protected $chunks;
-	/** @var Chunk $baseChunk The base chunk o a faction. TODO should we remove it? Possibly yes. */
-	protected $baseChunk;
 	/** @var \pocketmine\level\Position[] $homes with keys as name strings */
 	protected $homes = [];
 	/** @var bool */
 	protected $whitelist;
 	/** @var */
 	protected $econEnt;
-	/**
-	 * @var Server
-	 */
+	/** @var Server */
 	public $server;
 	//////////////////
 	// constructors //
@@ -94,16 +90,6 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		$this->chunks = $args["chunks"];
 		$this->homes = $args["homes"];
 		$this->main = $main;
-		//		$this->chunks = [];
-		//		/** @var Chunk[] $chunks */
-		//		$chunks = $args["chunks"];
-		//		foreach($chunks as $c){
-		//			if(!isset($this->chunks[$c->getLevel()])){
-		//				$this->chunks[$c->getLevel()] = [];
-		//			}
-		//			$this->chunks[$c->getLevel()][$c->getX().",".$c->getZ()] = $c;
-		//		}
-		$this->baseChunk = $args["base-chunk"];
 		$this->whitelist = $args["whitelist"];
 		$this->server = Server::getInstance();
 		$levels = [];
@@ -186,26 +172,20 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	public function setMembers(array $members){
 		$this->members = $members;
 		$sql = $this->getMain()->getFList()->getDb();
-		$op = $sql->prepare("DELTE FROM factions_members WHERE factionid = :fid;");
+		$op = $sql->prepare("DELETE FROM factions_members WHERE factionid = :fid;");
 		$op->bindValue(":fid", $this->id);
 		$op->execute();
 		foreach($members as $member => $r){
 			$op = $sql->prepare("INSERT INTO factions_members (factionid, lowname) VALUES (:fid, '$member');");
 			$op->bindValue(":fid", $this->id);
 			$op->execute();
-}
+		}
 	}
 	/**
 	 * @return Chunk[]
 	 */
 	public function getChunks(){
 		return $this->chunks;
-	}
-	/**
-	 * @return Chunk
-	 */
-	public function getBaseChunk(){
-		return $this->baseChunk;
 	}
 	/**
 	 * @param Player|string $member
@@ -215,7 +195,8 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		if($member instanceof Player){
 			$member = $member->getName();
 		}
-		return isset($this->members[strtolower($member)]) ? $this->members[strtolower($member)]:null;
+		$member = strtolower($member);
+		return isset($this->members[$member]) ? $this->ranks[$this->members[$member]]:null;
 	}
 	/**
 	 * @return bool
@@ -260,7 +241,6 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	/**
 	 * @param string $name
 	 * @param Position $pos
-	 * @return bool whether the home already exists
 	 */
 	public function setHome($name = "default", Position $pos){
 		$this->homes[$name] = Position::fromObject($pos, $pos->getLevel());
@@ -300,7 +280,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	}
 	public function getPower(){
 		$power = 0;
-		foreach($this->members as $mbr){
+		foreach($this->members as $mbr => $rank){
 			$statsCore = StatsCore::getInstance();
 			if(!($statsCore instanceof StatsCore) or $statsCore->isDisabled()){
 				$this->main->getLogger()->error("StatsCore is not found or is disabled.");
@@ -313,7 +293,10 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		return $power;
 	}
 	public function hasMember($name){
-		return in_array(strtolower($name), $this->members);
+		if($name instanceof Player){
+			$name = $name->getName();
+		}
+		return isset($this->members[strtolower($name)]);
 	}
 	public function canClaimMore(){
 		return count($this->chunks) + 1 <= $this->powerClaimable();

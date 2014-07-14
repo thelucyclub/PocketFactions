@@ -25,50 +25,47 @@ class ReadDatabaseTask extends AsyncTask{
 		$this->main = $main;
 	}
 	public function onRun(){
-		while(!feof($this->res)){
-			$this->buffer .= fread($this->res, 1);
-		}
+		$this->buffer = stream_get_contents($this->res);
 		fclose($this->res);
 	}
 	public function onCompletion(Server $server){
-		$res = 0;
 		$this->setResult(self::WIP);
-		$prefix = $this->read($res, strlen(FactionList::MAGIC_P));
+		$prefix = $this->read(strlen(FactionList::MAGIC_P));
 		if($prefix !== FactionList::MAGIC_P){
 			$this->setResult(self::CORRUPTED);
 			return;
 		}
-		$version = $this->read($res, 1);
+		$version = $this->read(1);
 		if($version !== Main::V_CURRENT){
 			switch($version){
 				case Main::V_INIT:
 					break;
 			}
 		}
-		$total = Bin::readBin($this->read($res, 4));
+		$total = Bin::readBin($this->read(4));
 		$factions = array();
 		for($i = 0; $i < $total; $i++){
-			$id = Bin::readBin($this->read($res, 4));
-			$name = Bin::readBin($this->read($res, 1));
+			$id = Bin::readBin($this->read(4));
+			$name = Bin::readBin($this->read(1));
 			$whitelist = false;
 			if($name & 0b10000000){
 				$whitelist = true;
 			}
 			$name &= 0b01111111;
-			$name = $this->read($res, $name);
-			$motto = Bin::readBin($this->read($res, 2));
-			$motto = $this->read($res, $motto);
-			$founder = Bin::readBin($this->read($res, 1));
-			$founder = $this->read($res, $founder);
+			$name = $this->read($name);
+			$motto = Bin::readBin($this->read(2));
+			$motto = $this->read($motto);
+			$founder = Bin::readBin($this->read(1));
+			$founder = $this->read($founder);
 			$ranks = array();
-			for($i = 0; $i < Bin::readBin($this->read($res, 1)); $i++){
-				$id = Bin::readBin($this->read($res, 1));
-				$rkName = Bin::readBin($this->read($res, 1));
-				$rkName = $this->read($res, $rkName);
-				$perms = Bin::readBin($this->read($res, 4));
+			for($i = 0; $i < Bin::readBin($this->read(1)); $i++){
+				$id = Bin::readBin($this->read(1));
+				$rkName = Bin::readBin($this->read(1));
+				$rkName = $this->read($rkName);
+				$perms = Bin::readBin($this->read(4));
 				$ranks[$id] = new Rank($id, $rkName, $perms);
 			}
-			$defaultRank = Bin::readBin($this->read($res, 1));
+			$defaultRank = Bin::readBin($this->read(1));
 			if(!isset($ranks[$defaultRank])){
 				trigger_error("Cannot find default rank $defaultRank from resource {$this->res}", E_USER_WARNING);
 				$this->setResult(self::CORRUPTED);
@@ -79,40 +76,51 @@ class ReadDatabaseTask extends AsyncTask{
 			 * @var Rank[] $members Ranks indexed by member names, object reference from $ranks (not cloned)
 			 */
 			$members = array();
-			for($i = 0; $i < Bin::readBin($this->read($res, 4)); $i++){
-				$mbName = Bin::readBin($this->read($res, 1));
-				$mbName = $this->read($res, $mbName);
-				$members[$mbName] = $ranks[Bin::readBin($this->read($res, 1))]; // not cloned
+			for($i = 0; $i < Bin::readBin($this->read(4)); $i++){
+				$mbName = Bin::readBin($this->read(1));
+				$mbName = $this->read($mbName);
+				$members[$mbName] = $ranks[Bin::readBin($this->read(1))]; // not cloned
 			}
-			$lastActive = Bin::readBin($this->read($res, 8));
+			$lastActive = Bin::readBin($this->read(8));
 			$chunks = array();
-			for($i = 0; $i < Bin::readBin($this->read($res, 2)); $i++){
-				$X = Bin::readBin($this->read($res, 4)) - 0x80000000;
-				$Z = Bin::readBin($this->read($res, 4)) - 0x80000000;
-				$world = Bin::readBin($this->read($res, 1));
-				$world = $this->read($res, $world);
+			for($i = 0; $i < Bin::readBin($this->read(2)); $i++){
+				$X = Bin::readBin($this->read(4)) - 0x80000000;
+				$Z = Bin::readBin($this->read(4)) - 0x80000000;
+				$world = Bin::readBin($this->read(1));
+				$world = $this->read($world);
 				$chunks[] = new Chunk($X, $Z, $world);
 			}
 			if(count($chunks) == 0){
 				$this->setResult(self::CORRUPTED);
 				return;
 			}
-			$baseChunk = array_shift($chunks);
 			$homes = [];
-			for($i = 0; $i < $this->read($res, 1); $i++){
-				$homeName = $this->readString($res);
-				$homes[$homeName] = $this->readPosition($res);
+			for($i = 0; $i < $this->read(1); $i++){
+				$homeName = $this->readString();
+				$homes[$homeName] = $this->readPosition();
 			}
-			$factions[$id] = new Faction(array("name" => $name, "motto" => $motto, "id" => $id, "founder" => $founder, "ranks" => $ranks, "default-rank" => $defaultRank, "members" => $members, "last-active" => $lastActive, "chunks" => $chunks, "base-chunk" => $baseChunk, "whitelist" => $whitelist, "homes" => $homes,), $this->main);
+			$factions[$id] = new Faction([
+				"name" => $name,
+				"motto" => $motto,
+				"id" => $id,
+				"founder" => $founder,
+				"ranks" => $ranks,
+				"default-rank" => $defaultRank,
+				"members" => $members,
+				"last-active" => $lastActive,
+				"chunks" => $chunks,
+				"whitelist" => $whitelist,
+				"homes" => $homes,
+			],$this->main);
 		}
 		$states = [];
-		for($i = 0; $i < Bin::readBin($this->read($res, 8)); $i++){
-			$f0 = Bin::readBin($this->read($res, 4));
-			$f1 = Bin::readBin($this->read($res, 4));
-			$state = Bin::readBin($this->read($res, 1));
+		for($i = 0; $i < Bin::readBin($this->read(8)); $i++){
+			$f0 = Bin::readBin($this->read(4));
+			$f1 = Bin::readBin($this->read(4));
+			$state = Bin::readBin($this->read(1));
 			$states[] = new State($factions[$f0], $factions[$f1], $state);
 		}
-		if($this->read($res, strlen(FactionList::MAGIC_S)) !== FactionList::MAGIC_S){
+		if($this->read(strlen(FactionList::MAGIC_S)) !== FactionList::MAGIC_S){
 			$this->setResult(self::CORRUPTED);
 			return;
 		}
@@ -123,25 +131,29 @@ class ReadDatabaseTask extends AsyncTask{
 		call_user_func($this->onFinished, $factions, $this);
 		$this->main->getLogger()->info("PocketFactions database parsing completed.");
 	}
-	protected function read($res, $length = 1){
+	/**
+	 * @param int $length
+	 * @return string
+	 */
+	protected function read($length){
 		$string = substr($this->buffer, $this->offset, $length);
 		$this->offset += $length;
 		if(strlen($string) < $length){
-			trigger_error("PocketFactions database corrupted: Unexpected end of file", E_USER_WARNING);
+			trigger_error("PocketFactions database corrupted: Unexpected EOF", E_USER_WARNING);
 		}
 		return $string;
 	}
-	protected function readPosition($res){
-		$X = Bin::readBin($this->read($res, 4)) - 0x80000000;
-		$Z = Bin::readBin($this->read($res, 4)) - 0x80000000;
-		$xz = Bin::readBin($this->read($res));
+	protected function readPosition(){
+		$X = Bin::readBin($this->read(4)) - 0x80000000;
+		$Z = Bin::readBin($this->read(4)) - 0x80000000;
+		$xz = Bin::readBin($this->read(1));
 		$z = $xz & 0x0F;
 		$x = $xz & 0xF0;
 		$x >>= 4;
 		$x += ($X * 16);
 		$z += ($Z * 16);
-		$y = Bin::readBin($this->read($res, 2));
-		$world = $this->readString($res);
+		$y = Bin::readBin($this->read(2));
+		$world = $this->readString(1);
 		$world = $this->forceGetLevel($world);
 		return new Position($x, $y, $z, $world);
 	}
@@ -155,8 +167,8 @@ class ReadDatabaseTask extends AsyncTask{
 		}
 		return $server->getLevel($world);
 	}
-	protected function readString($res, $lengthPointer = 1){
-		$length = Bin::readBin($this->read($res, $lengthPointer));
-		return $this->read($res, $length);
+	protected function readString($lengthPointer = 1){
+		$length = Bin::readBin($this->read($lengthPointer));
+		return $this->read($length);
 	}
 }
