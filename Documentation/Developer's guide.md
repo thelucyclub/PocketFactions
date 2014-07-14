@@ -32,3 +32,15 @@ public function \pocketfactions\faction\Rank::__construct(int $id, string $name,
 * `int $id` is the ID of the faction. Do not put a value for this parameter unless you know what you are doing.
 
 After calling this function, your new faction object should be returned. This function would automatically register the faction to the faction list and the in-memory database for indexing.
+
+## I want to get the object of an existing faction
+Currently, there are several ways of getting a faction. There are four identifiers available:
+
+* Search by faction ID (fastest way)
+* Search by faction name
+* Search by faction alike name (like how players are found with alike names)
+* Search by a chunk claimed by a faction
+* Search by faction's member (a player object must be provided)
+
+## I want to add faction money
+Faction is a subclass of xEcon entity. Refer to xEcon documentation for how to add money to xEcon entities.
