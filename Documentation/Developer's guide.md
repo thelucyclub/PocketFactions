@@ -35,5 +35,22 @@ Currently, there are several ways of getting a faction. There are four identifie
 * Search by a chunk claimed by a faction
 * Search by faction's member (a player object must be provided)
 
+You can get a faction object by using the `FactionList::getFaction(mixed)` method. For example:
+
+```php
+$pocketfactions = $this->getServer()->getPluginManager()->getPlugin("PocketFactions");
+$list = $pocketfactions->getFList();
+// get faction by exact name
+$named = $list->getFaction("Named");
+// get faction by similar name
+$similarName = $list->getFaction("Similar");
+// get the faction of the player
+$playerFaction = $list->getFaction($this->getServer()->getPlayer("Player"));
+if(!($playerFaction instanceof Faction)){
+    // player doesn't belong to any factions
+}
+$chunkOwner = $list->getFaction(Chunk::fromObject($position));
+```
+
 ## I want to add faction money
 Faction is a subclass of xEcon entity. Refer to xEcon documentation for how to add money to xEcon entities.
