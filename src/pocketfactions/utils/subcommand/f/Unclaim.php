@@ -6,10 +6,9 @@ use pocketfactions\faction\Chunk;
 use pocketfactions\faction\Faction;
 use pocketfactions\faction\Rank;
 use pocketfactions\Main;
-use pocketfactions\utils\subcommand\Subcommand;
 use pocketmine\Player;
 
-class Unclaim extends Subcommand{
+class Unclaim extends FactionMemberSubcommand{
 	public function __construct(Main $main){
 		parent::__construct($main, "unclaim");
 	}
@@ -18,6 +17,9 @@ class Unclaim extends Subcommand{
 	}
 	public function onRun(array $args, Faction $faction, Player $player){
 		$chunk = Chunk::fromObject($player);
+		if(!$faction->getMemberRank($player)->hasPerm(Rank::P_UNCLAIM_CENTER) and $faction->isCentreLocation($player)){
+			return self::NO_PERM;
+		}
 		return ($result = $faction->unclaim($chunk)) === true ? "The chunk you are standing in has been unclaimed.":$result;
 	}
 	public function getDescription(){

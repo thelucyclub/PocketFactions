@@ -359,7 +359,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 			}
 			$this->sendMessage("[WARNING] The faction's bank account is now overdrafted", self::CHAT_ANNOUNCEMENT);
 		}
-		$account->pay($this->getMain()->getXEconService(), $charge["amount"], "Claim a chunk");
+		$account->pay($this->getMain()->getXEconService(), $charge["amount"], "Charge for claiming a chunk");
 		$this->chunks[] = $chunk;
 		$this->main->getFList()->onChunkClaimed($this, $chunk);
 		return true;
@@ -380,11 +380,18 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 			return "This chunk is not the territory of $this.";
 		}
 		unset($this->chunks[$id]);
+		$refund = $this->getMain()->getChunkUnclaimRepay();
+		$account = $this->getAccount($refund["account"]);
+		$this->getMain()->getXEconService()->pay($account, $refund["amount"], "Refund for unclaiming a chunk");
 		return true;
 	}
 	public function unclaimAll(){
+		$chunks = count($this->chunks);
 		$this->chunks = [];
 		$this->getMain()->getFList()->onAllChunksUnclaimed($this);
+		$refund = $this->getMain()->getChunkUnclaimRepay();
+		$account = $this->getAccount($refund["account"]);
+		$this->getMain()->getXEconService()->pay($account, $refund["amount"] * $chunks, "Refund for unclaiming all chunks");
 	}
 	public function addLoan($name, $amount){
 		if(isset($this->liabilities[$name])){
