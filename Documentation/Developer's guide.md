@@ -10,22 +10,19 @@ public static function \pocketfactions\faction\Faction::newInstance(string $name
 ```
 
 Now, this is the documentation for each parameter:
-* `string $name` is the name of the faction. It doesn't have to be unique. However, its not being unique could lead to issues when the player uses commands that refer to the faction's name, like `/f rel`, `/f join`, etc. Any strings are accepted, as long as the server owner would accept.
-* `string $founder` is the lowercase name of the faction founder. This foundership is constant unless it is passed to a successor due to his inactivity. If the faction is server-owned, put "console" for that. This parameter only serves as a function to give automatic foundership to that player.
-* `Rank[] $ranks` is an array of instances of `Rank`. A `Rank` object can be instantiated by:
-```php
-public function \pocketfactions\faction\Rank::__construct(int $id, string $name, int $perms);
-```
-  * `$id` is the internal ID of the rank. If you populate an empty array with instances of `Rank`, put the key in the array of the rank as `$id`.
-  * `$name` is the human-readable name of the rank. Examples are "member", "official" and "founder".
-  * `$perms` is an integer expressed by the permissions he has, as in `\pocketfactions\faction\Rank::P_*****`, combined using the bitwise `OR` operator.
+* `string $name`: This is the name of the faction. It doesn't have to be unique. However, its not being unique could lead to issues when the player uses commands that refer to the faction's name, like `/f rel`, `/f join`, etc. Any strings are accepted, as long as the server owner would accept.
+* `string $founder`: This is the lowercase name of the faction founder. This foundership is constant unless it is passed to a successor due to his inactivity. If the faction is server-owned, put "console" for that. This parameter only serves as a function to give automatic foundership to that player.
+* `Rank[] $ranks`: This is an array of instances of `Rank`. A `Rank` object can be instantiated by `public function \pocketfactions\faction\Rank::__construct(int $id, string $name, int $perms);`, where the parameters are:
+  * `$id`: This is the internal ID of the rank. If you populate an empty array with instances of `Rank`, put the key in the array of the rank as `$id`.
+  * `$name`: This is the human-readable name of the rank. Examples are "member", "official" and "founder".
+  * `$perms`: This is an integer expressed by the permissions he has, as in `\pocketfactions\faction\Rank::P_*****`, combined using the bitwise `OR` operator.
 
-* `int $defaultRankIndex` is the key of the rank in `$ranks` that is the rank a player has when he newly joins. For normal factions (factions created using `/f create` and recruit using `/f invite` or `/f join`), the default one is member.
-* `\pocketfactions\Main $main` is an instance of the faction's main class. You can get it by `$server->getPluginManager()->getPlugin("PocketFactions")`, where `$server` is an instance of `\pocketmine\Server`, usually resolved by `$this->getServer()` or `\pocketmine\Server::getInstance()`.
-* `Position|Position[] $homes` are the default homes of the faction. It is safe to just put `[]` (empty array) for that, since homes aren't always necessary.
-* `string $motto` is the default motto of the faction. It can be left as blank.
-* `bool $whitelist` is the boolean value of whether players have to be invited to join the faction. Default is `true`.
-* `int $id` is the ID of the faction. Do not put a value for this parameter unless you know what you are doing.
+* `int $defaultRankIndex`: This is the key of the rank in `$ranks` that is the rank a player has when he newly joins. For normal factions (factions created using `/f create` and recruit using `/f invite` or `/f join`), the default one is member.
+* `\pocketfactions\Main $main`: This is an instance of the faction's main class. You can get it by `$server->getPluginManager()->getPlugin("PocketFactions")`, where `$server` is an instance of `\pocketmine\Server`, usually resolved by `$this->getServer()` or `\pocketmine\Server::getInstance()`.
+* `Position|Position[] $homes`: This are the default homes of the faction. It is safe to just put `[]` (empty array) for that, since homes aren't always necessary.
+* `string $motto`: This is the default motto of the faction. It can be left as blank.
+* `bool $whitelist`: This is the boolean value of whether players have to be invited to join the faction. Default is `true`.
+* `int $id`: This is the ID of the faction. Do not put a value for this parameter unless you know what you are doing.
 
 After calling this function, your new faction object should be returned. This function would automatically register the faction to the faction list and the in-memory database for indexing.
 
