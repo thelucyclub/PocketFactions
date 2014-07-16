@@ -4,10 +4,9 @@ namespace pocketfactions\utils\subcommand\f;
 
 use pocketfactions\faction\Faction;
 use pocketfactions\Main;
-use pocketfactions\utils\subcommand\Subcommand;
 use pocketmine\Player;
 
-class Homes extends Subcommand{
+class Homes extends FactionMemberSubcommand{
 	public function __construct(Main $main){
 		parent::__construct($main, "homes");
 	}
@@ -17,10 +16,10 @@ class Homes extends Subcommand{
 	public function getUsage(){
 		return "";
 	}
-	public function checkPermission(Faction $faction){
+	public function checkPermission(Faction $faction, Player $player){
 		return count($faction->getHomes()) > 0 and $this->getMain()->getMaxHomes() > 0;
 	}
-	public function onRun(array $args, Faction $faction){
+	public function onRun(array $args, Faction $faction, Player $player){
 		return "Homes of $faction: " . implode(", ", array_keys($faction->getHomes()));
 	}
 }

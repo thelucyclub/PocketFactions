@@ -25,6 +25,7 @@ use pocketfactions\utils\subcommand\f\Unclaim;
 use pocketfactions\utils\subcommand\f\Unclaimall;
 use pocketfactions\utils\subcommand\SubcommandMap;
 use pocketfactions\utils\WildernessFaction;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
@@ -41,6 +42,8 @@ class Main extends Prt implements Listener{
 	const XECON_SERV_NAME = "PocketFactionsCharger"; // any better names?
 	const V_INIT = "\x00";
 	const V_CURRENT = "\x00";
+	/** @var bool[] */
+	private $adminModes = [];
 	/**
 	 * @var Config
 	 */
@@ -93,6 +96,20 @@ class Main extends Prt implements Listener{
 	public function getXEconConfig(){
 		return $this->xeconConfig;
 	}
+	/**
+	 * @param Player $player
+	 * @return bool
+	 */
+	public function getAdminMode(Player $player){
+		return isset($this->adminModes[$player->getID()]) ? $this->adminModes[$player->getID()]:false;
+	}
+	/**
+	 * @param Player $player
+	 * @param bool $on
+	 */
+	public function setAdminMode(Player $player, $on){
+		$this->adminModes[$player->getID()] = $on;
+	}
 	private function regPermWithObject(Permission $perm, Permission $parent = null){
 		if($parent instanceof Permission){
 			$parent->getChildren()[$perm->getName()] = true;
@@ -134,10 +151,15 @@ class Main extends Prt implements Listener{
 		$this->getServer()->getCommandMap()->registerAll("pocketfactions", [$this->fCmd, $this->fmCmd]);
 	}
 	/**
+	 * @param PlayerInteractEvent $evt
 	 * @priority HIGH
+	 * @ignoreCancelled true
 	 */
 	public function onBlockTouch(PlayerInteractEvent $evt){
 		$p = $evt->getPlayer();
+		if($this->getAdminMode($p)){
+			return;
+		}
 		$cf = $this->getFList()->getFaction(Chunk::fromObject($evt->getBlock()));
 		if($cf === false){
 			$cf = $this->getWilderness();
@@ -161,6 +183,18 @@ class Main extends Prt implements Listener{
 		$evt->setCancelled();
 		$p->sendMessage("You cannot build at the claimed chunk of faction $cf!");
 		return;
+	}
+	/**
+	 * @param EntityDamageByEntityEvent $event
+	 * @priority HIGH
+	 * @ignoreCancelled true
+	 */
+	public function onFight(EntityDamageByEntityEvent $event){
+		$victim = $event->getEntity();
+		$faction = $this->getFList()->getFaction(Chunk::fromObject($victim));
+		if(!$faction->canFight($event->getDamager(), $event->getEntity())){
+			$event->setCancelled();
+		}
 	}
 	/**
 	 * @return string

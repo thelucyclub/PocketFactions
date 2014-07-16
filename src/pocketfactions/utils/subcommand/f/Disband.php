@@ -15,7 +15,8 @@ class Disband extends Subcommand{
 	public function checkPermission(Faction $faction, Player $player){
 		return $faction->getMemberRank($player)->hasPerm(Rank::P_DISBAND);
 	}
-	public function onRun(array $args, Faction $faction){
+	public function onRun(array $args, Faction $faction, Player $player){
+		$faction->sendMessage($player->getName()." disbanded this faction! Reason given: ".implode(" ", $args), Faction::CHAT_ALL);
 		$this->main->getFList()->disband($faction);
 	}
 	public function getDescription(){

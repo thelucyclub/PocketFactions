@@ -6,10 +6,9 @@ use pocketfactions\faction\Chunk;
 use pocketfactions\faction\Faction;
 use pocketfactions\faction\Rank;
 use pocketfactions\Main;
-use pocketfactions\utils\subcommand\Subcommand;
 use pocketmine\Player;
 
-class Claim extends Subcommand{
+class Claim extends FactionMemberSubcommand{
 	public function __construct(Main $main){
 		parent::__construct($main, "claim");
 	}
