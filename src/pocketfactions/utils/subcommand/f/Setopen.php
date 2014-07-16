@@ -26,6 +26,12 @@ class Setopen extends Subcommand{
 			case "true":
 			case "unwhite":
 			case "unwhitelist":
+				$fee = $this->getMain()->getSetOpenFee();
+				$account = $faction->getAccount($fee["account"]);
+				if($account->canPay($fee["amount"])){
+					return "Your faction doesn't have enough ".$account->getName()." money to turn off whitelist!";
+				}
+				$account->pay($this->getMain()->getXEconService(), $fee["amount"], "Opening faction for joining");
 				$faction->setWhitelisted(false);
 				$faction->sendMessage("Your faction is now open for joining.", Faction::CHAT_ANNOUNCEMENT);
 				return "";
@@ -34,7 +40,13 @@ class Setopen extends Subcommand{
 			case "close":
 			case "false":
 			case "white":
-			case "whitelist":
+				case "whitelist":
+				$fee = $this->getMain()->getSetNotOpenFee();
+				$account = $faction->getAccount($fee["account"]);
+				if($account->canPay($fee["amount"])){
+					return "Your faction doesn't have enough ".$account->getName()." money to turn on whitelist!";
+				}
+				$account->pay($this->getMain()->getXEconService(), $fee["amount"], "Whitelisting faction");
 				$faction->setWhitelisted(true);
 				$faction->sendMessage("Your faction is now whitelisted.", Faction::CHAT_ANNOUNCEMENT);
 				return "";

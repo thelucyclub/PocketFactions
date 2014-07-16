@@ -97,6 +97,12 @@ rank adding charge:
 rank removing charge:
   account: cash
   amount: 0
+set open:
+  account: cash
+  amount: 100
+set not open:
+  account: cash
+  amount: 100
 #################
 ## PERMISSIONS ##
 #################

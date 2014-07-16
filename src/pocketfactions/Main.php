@@ -39,7 +39,7 @@ use pocketmine\utils\TextFormat;
 
 class Main extends Prt implements Listener{
 	const NAME = "PocketFactions";
-	const XECON_SERV_NAME = "PocketFactionsCharger"; // any better names?
+	const XECON_SERV_NAME = "PocketFactionsCharges"; // any better names?
 	const V_INIT = "\x00";
 	const V_CURRENT = "\x00";
 	/** @var bool[] */
@@ -348,6 +348,12 @@ class Main extends Prt implements Listener{
 	}
 	public function getFactionRenameFee(){
 		return $this->xeconConfig->get("faction rename charge");
+	}
+	public function getSetOpenFee(){
+		return $this->xeconConfig->get("set open");
+	}
+	public function getSetNotOpenFee(){
+		return $this->xeconConfig->get("set not open");
 	}
 	public function getRankChangingCharge(){
 		return $this->xeconConfig->get("rank changing charge");
