@@ -6,6 +6,7 @@ use pocketfactions\faction\Chunk;
 use pocketfactions\faction\Faction;
 use pocketfactions\faction\Rank;
 use pocketfactions\faction\State;
+use pocketfactions\tasks\CheckInactiveFactionsTask;
 use pocketfactions\utils\FactionList;
 use pocketfactions\utils\subcommand\f\Claim;
 use pocketfactions\utils\subcommand\f\Create;
@@ -15,6 +16,7 @@ use pocketfactions\utils\subcommand\f\Homes;
 use pocketfactions\utils\subcommand\f\Invite;
 use pocketfactions\utils\subcommand\f\Join;
 use pocketfactions\utils\subcommand\f\Kick;
+use pocketfactions\utils\subcommand\f\ListSubcmd;
 use pocketfactions\utils\subcommand\f\Money;
 use pocketfactions\utils\subcommand\f\Motto;
 use pocketfactions\utils\subcommand\f\Perm;
@@ -34,7 +36,6 @@ use pocketmine\permission\Permission;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase as Prt;
 use pocketmine\utils\Config;
-use pocketmine\utils\TextFormat as Font;
 use pocketmine\utils\TextFormat;
 
 class Main extends Prt implements Listener{
@@ -69,17 +70,19 @@ class Main extends Prt implements Listener{
 	private $fCmd;
 	private $fmCmd;
 	public function onEnable(){
-		$this->getLogger()->info(Font::AQUA . "Initializing", false, 1);
+		$this->getLogger()->info(TextFormat::AQUA . "Initializing", false, 1);
 		$this->initDatabase();
 		/** @var \xecon\Main $xEcon */
 		$xEcon = $this->getServer()->getPluginManager()->getPlugin("xEcon");
 		$service = $xEcon->getService();
 		$service->registerService(self::XECON_SERV_NAME);
 		echo ".";
+		$this->getServer()->getScheduler()->scheduleDelayedRepeatingTask(new CheckInactiveFactionsTask($this), $this->getInactiveCheckInterval() * 1200, $this->getInactiveCheckInterval() * 1200);
 		$this->registerEvents();
 		echo ".";
 		$this->registerCmds();
-		echo TextFormat::toANSI(Font::GREEN . " Done!" . Font::RESET . PHP_EOL);
+		echo PHP_EOL;
+		$this->getLogger()->info(TextFormat::toANSI(TextFormat::GREEN . " Done!" . TextFormat::RESET . PHP_EOL));
 	}
 	protected function initDatabase(){
 		$this->flist = new FactionList($this); // used AsyncTask because the server could be running in the middle
@@ -137,6 +140,7 @@ class Main extends Prt implements Listener{
 			new Invite($this), // send request to other to join own faction
 			new Join($this), // send requeset to faction to join it
 			new Kick($this), // kick one from own faction
+			new ListSubcmd($this), // list all active factions
 			new Money($this), // manage own faction's money
 			new Motto($this), // change own faction's motto
 			new Perm($this), // manage own faction's permissions

@@ -10,7 +10,7 @@ class CheckInactiveFactionsTask extends PluginTask{
 		$main = $this->getOwner();
 		$list = $main->getFList();
 		$op = $list->getDb()->prepare("SELECT id FROM factions WHERE lastactive < :timeout;");
-		$op->bindValue(":timeout", time() - $main->getMaxInactiveTime());
+		$op->bindValue(":timeout", time() - $main->getMaxInactiveTime() * 3600);
 		$result = $op->execute();
 		while(is_array($array = $result->fetchArray(SQLITE3_ASSOC))){
 			$list->disband($list->getFaction($array["id"]));
