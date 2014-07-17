@@ -306,6 +306,15 @@ class Main extends Prt implements Listener{
 	public function getMaxHomes(){
 		return $this->getConfig()->get("max homes");
 	}
+	public function getMaxInactiveTime(){
+		return $this->getConfig()->get("faction inactive time");
+	}
+	public function getInactiveCheckInterval(){
+		return $this->getConfig()->get("faction inactive check interval");
+	}
+	public function getSemiInactiveTime(){
+		return $this->getConfig()->get("faction semi-inactive time");
+	}
 	/////////////////
 	// XECON STUFF //
 	/////////////////

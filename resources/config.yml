@@ -63,4 +63,22 @@ faction name min length: 3
 faction name max length: 15
 # If the faction name is rejected, send this message:
 faction name reject message: Invalid faction name. The faction name must not be shorter than 3 characters or longer than 15 characters.
+
+## Factions management
+# Definition of activity
+# Put "auth" or "join" here
+# TODO add more options
+faction activity definition: auth
+# Disbanding inactive factions
+# How long can a faction stay inactive (no any members successfully authenticating in the server) before getting automatically disbanded?
+# The unit is hours.
+faction inactive time: 168
+# How often to check for inactive factions?
+# The unit is minutes.
+faction inactive check interval: 120
+# Unlisting semi-inactive factions
+# How long can a faction stay inactive (no any members successfully authenticating in the server) before getting unlisted?
+# Note: The faction will be re-added to the list if it gets active again.
+# The unit is hours.
+faction semi-inactive time: 72
 ...
