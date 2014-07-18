@@ -3,7 +3,20 @@
 ###########
 ## POWER ##
 ###########
-## Power affects how many chunks a faction can claim. Power is not taken when a chunk is claimed, but a faction cannot claim more chunks if the power is not high enough.
+#### Power affects how many chunks a faction can claim.
+#### Power is not taken when a chunk is claimed, but a faction cannot claim more chunks if the power is not high enough.
+#### Reputation
+## Reputation is a modifier of power.
+# The reputation power increases for the following relations
+relation reputations modifiers:
+  enemy: -100
+  truce: 25
+  ally: 100
+# Sieging chunks is impolite and makes a faction lose reputation
+# Note: When a faction sieges a chunk, it loses reputation as well as increase the number of chunks claimed.
+# Therefore, the power reduced in a siege is siege reputation loss + power required to claim a chunk
+siege reputation loss: 500
+#### Player
 ## Power of a faction depends on its members. When it loses members, its power drops.
 # The power required for a faction to claim a chunk
 power required to claim a chunk: 1000
@@ -15,12 +28,13 @@ power lost per offline FULL day: 40
 power gained per player kill: 60
 power gained per mob kill:
   default: 5
-  zombie pigman: 40
+  zombie pigman: 30
   creeper: 40
   skeleton: 30
   zombie: 20
 # This counts the number of TINY slimes killed.
   slime: 2
+  enderman: 40
 # The power of a player decreases when he dies
 power lost per death:
   default: 30

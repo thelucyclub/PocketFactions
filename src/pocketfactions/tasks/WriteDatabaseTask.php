@@ -37,7 +37,7 @@ class WriteDatabaseTask extends AsyncTask{
 				$this->buffer .= Bin::writeByte($rk->getID());
 				$this->buffer .= Bin::writeByte(strlen($rk->getName()));
 				$this->buffer .= $rk->getName();
-				$this->buffer .= Bin::writeInt($rk->getPerms());
+				$this->buffer .= Bin::writeLong($rk->getPerms());
 			}
 			$this->buffer .= Bin::writeByte($f->getDefaultRank());
 			$mbrs = $f->getMembers();
@@ -48,6 +48,7 @@ class WriteDatabaseTask extends AsyncTask{
 				$this->buffer .= Bin::writeByte($rank);
 			}
 			$this->buffer .= Bin::writeLong($f->getLastActive());
+			$this->buffer .= Bin::writeLong($f->getNetReputation());
 			$chunks = $f->getChunks();
 			$this->buffer .= Bin::writeShort(count($chunks));
 			foreach($chunks as $c){

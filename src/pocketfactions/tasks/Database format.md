@@ -10,17 +10,28 @@ The following is a brief of the database format of PocketFactions.
 | Boolean + Number | `CompoundByte` | A boolean at the first bit + A number at the last seven bits | `true` or `false` + Any numbers from 0 to 127 | 1 |
 | Number | `short` | A integer saved as two bytes, unsigned | numbers from 0 to 65535 | 2 |
 | Number | `int` | A integer saved as four bytes, unsigned | number from 0 to 0xFFFFFFFF | 4 |
-| Number | `SignedInt` | An `int` showing how much larger the integer is from -0x80000000 | integers from -0x80000000 to 0x7FFFFFFF | 4
+| Number | `SignedInt` | An `int` showing how much larger the integer is from -0x80000000 | integers from -0x80000000 to 0x7FFFFFFF | 4 |
 | Number | `long` | A number saved as eight bytes, unsigned | number from 0 to 0xFFFFFFFFFFFFFFFF | 8 |
-| Number | `SignedLong` | An `Long` showing how much larger the integer is from -0x8000000000000000 | integers from -0x8000000000000000 to 0x7FFFFFFFFFFFFFFF | 8
+| Number | `SignedLong` | An `Long` showing how much larger the integer is from -0x8000000000000000 | integers from -0x8000000000000000 to 0x7FFFFFFFFFFFFFFF | 8 |
+| Number | `double` | A signed double with `Binary::writeDouble()` and `Binary::readDouble()` | undefined | 8 |
 | Boolean | `ByteBool` | A group of 8 booleans | any matches of 8 booleans | 1 |
 | Boolean | `ShortBool` | A group of 16 booleans | any matches of 16 booleans | 2 |
-| Boolean | `IntBool` | A group of 16 booleans | any matches of 32 booleans | 4 |
+| Boolean | `IntBool` | A group of 32 booleans | any matches of 32 booleans | 4 |
+| Boolean | `LongBool` | A group of 64 booleans | any matches of 64 booleans | 8 |
 | Text | `RawString` | A string saved directly | any strings | The number of characters in the string |
 | Text | `ByteString` | A string saved prefixed with a `byte` of string length | any strings of not more than 255 characters long | 1 + The number of characters in the string |
 | Text | `ShortString` | A string saved prefixed with a `short` of string length | any strings of not more than 65535 characters long | 2 + The number of characters in the string |
 | Boolean + Text | `CompoundString` | A string prefixed with a `CompoundByte` of a boolean description of the string and string length | `true` or `false` + Any strings of not more than 127 characters long | 1 + The number of characters in the string |
-| Number + Text | `Position` | A position (x, y, z, level name) saved as two `SignedInt`s for X and Z chunk indices, one `byte` with the first four bits for x-coord inside the chunk and last four bits z-coord inside the chunk, one `short` for y-coord and one `ByteString` | any walk-in-able valid positions in any worlds of names not more than 255 characters long | 12 + The number of characters in the world name |
+| Number + Text | `Position` | See below | any walk-in-able valid positions in any worlds of names not more than 255 characters long | 12 + The number of characters in the world name |
+
+### Format of `Position`:
+```
+SignedInt X chunk index
+SignedInt Z chunk index
+byte x-coord inside the chunk for front four bytes, z-coord inside the chunk for last four bytes
+short y-coord
+ByteString world name
+```
 
 ## Format
 ```
@@ -36,13 +47,14 @@ int Count of saved factions
     -> for each rank:
         byte Internal ID of the internal rank
         ByteString Name of the rank
-        IntBool Permissions of the faction, with reference to [rank.php](../Rank.php)
+        LongBool Permissions of the faction, with reference to [rank.php](../faction/Rank.php)
     byte Internal ID of the default internal rank
     int Number of members in the faction
     -> for each member:
         ByteString Lowercase name of the member
         byte Internal ID of the rank of the member
     long last active timestamp
+    SignedLong reputation power
     short Number of chunks claimed by the faction
     -> for each chunk: (the base chunk is the first chunk shifted)
         SignedInt The X-index of the claimed chunk in the world

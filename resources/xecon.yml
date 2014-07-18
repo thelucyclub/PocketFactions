@@ -1,11 +1,11 @@
 ---
-
-# README: In this config file, if you are required to fill in a fee/charge with account and amount,
-# please put a POSITIVE value for amount and either "bank" or "cash" (in lower case) for account.
-
-#############
+#####################################################################################################
+# README: In this config file, if you are required to fill in a fee/charge with account and amount, #
+#  please put a POSITIVE value for amount and either "bank" or "cash" (in lower case) for account.  #
+#####################################################################################################
+##############
 ## ACCOUNTS ##
-#############
+##############
 ## Default accounts
 # How much money should the faction have in its cash account by default?
 default cash: 3000
@@ -17,6 +17,7 @@ max cash: 10000
 max bank: 50000
 
 ## External accounts
+# WARNING: The following may not have been implemented when the plugin is released.
 # If the faction has too much money and cash and bank accounts are not enough to save them, they can purchase external inventories to inventories money.
 # Types of external inventories
 # "safe" and "locker" are names of inventories
@@ -34,16 +35,28 @@ inventory types:
 ###################
 ## BANK SERVICES ##
 ###################
-## Bank interest
+#### Bank interest
 # Customers can usually receive interest if they save money in banks.
 # What should be the range of the hourly interest percentage (compound interest)?
-# All factions will receive the same percentage of interest in the same hour.
+# All factions will receive the same percentage of interest every time interest is given.
 # The percentage will be a random number (correct to two decimal places) inside the range.
 # Make sure minimum is smaller than maximum :)
 bank interest range minimum: 0.75
 bank interest range maximum: 1.05
+# How often (in minutes) should interest be received?
+bank interest receive interval: 60
 
-## Liabilities from bank
+#### Liabilities from bank
+## Bank overdraft
+# A faction sometimes forgets to deposit money into bank but they need money urgently. They probably can repay the outstanding balance in a short time.
+# To make it more convenient, bank overdraft can be allowed. Bank overdraft is a negative amount of assets, so it is a liability.
+# Set the maximum amount of overdraft allowed.
+bank max overdraft: 500
+# Negative times positive equals negative. If you don't want to take interest from the faction when there is bank overdraft, set this to false.
+bank overdraft take interest: true
+
+## Loans
+## WARNING: The following may not have been implemented when the plugin is released.
 # Bank provides loan to factions. The debtor of the loan is the faction, not the faction founder or owner.
 # Usually, there can be different types of loans with different time horizons.
 # What types of loan should there be?
@@ -58,12 +71,6 @@ loan types:
     amount: 8000
     horizon: 48
     maximum: 1
-# A faction sometimes forgets to deposit money into bank but they need money urgently. They probably can repay the outstanding balance in a short time.
-# To make it more convenient, bank overdraft can be allowed. Bank overdraft is a negative amount of assets, so it is a liability.
-# Set the maximum amount of overdraft allowed.
-bank max overdraft: 500
-# Negative times positive equals negative. If you don't want to take interest from the faction when there is bank overdraft, set this to false.
-bank overdraft take interest: true
 # The total amount of credit (loan + overdraft) allowed
 max liability: 9000
 
@@ -75,10 +82,14 @@ max liability: 9000
 chunk claim fee:
   account: bank
   amount: 2000
-# How much money to give back when a faction unclaims a chunk
+# How much money to refund when a faction unclaims a chunk. It can be a negative value.
 chunk unclaim repay:
   account: bank
   amount: 1000
+# How much **extra** money to take from a faction's account when it sieges a chunk
+chunk siege extras:
+  account: cash
+  amount: 500
 
 ## Homes
 # How much money to take from a faction when it sets a new home
@@ -122,5 +133,4 @@ set not open:
 ## Factions earn money by donations from its members. Faction founders could abuse this money by withdrawing all money into his account and disbanding the faction if anything is added to the array below.
 # Allow the faction founder to withdraw money from the faction accounts?
 accounts withdrawable to founder: []
-
 ...

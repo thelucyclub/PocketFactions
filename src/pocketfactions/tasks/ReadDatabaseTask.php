@@ -62,7 +62,7 @@ class ReadDatabaseTask extends AsyncTask{
 				$id = Bin::readBin($this->read(1));
 				$rkName = Bin::readBin($this->read(1));
 				$rkName = $this->read($rkName);
-				$perms = Bin::readBin($this->read(4));
+				$perms = Bin::readBin($this->read(8));
 				$ranks[$id] = new Rank($id, $rkName, $perms);
 			}
 			$defaultRank = Bin::readBin($this->read(1));
@@ -82,6 +82,7 @@ class ReadDatabaseTask extends AsyncTask{
 				$members[$mbName] = $ranks[Bin::readBin($this->read(1))]; // not cloned
 			}
 			$lastActive = Bin::readBin($this->read(8));
+			$reputation = Bin::readBin($this->read(8)) - 0x8000000000000000;
 			$chunks = array();
 			for($i = 0; $i < Bin::readBin($this->read(2)); $i++){
 				$X = Bin::readBin($this->read(4)) - 0x80000000;
@@ -111,7 +112,8 @@ class ReadDatabaseTask extends AsyncTask{
 				"chunks" => $chunks,
 				"whitelist" => $whitelist,
 				"homes" => $homes,
-			],$this->main);
+				"reputation" => $reputation
+			], $this->main);
 		}
 		$states = [];
 		for($i = 0; $i < Bin::readBin($this->read(8)); $i++){

@@ -6,7 +6,6 @@ use legendofmcpe\statscore\Requestable;
 use legendofmcpe\statscore\StatsCore;
 use pocketfactions\utils\IFaction;
 use pocketfactions\Main;
-use pocketfactions\utils\subcommand\Subcommand;
 use pocketmine\entity\Entity as MCEntity;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\level\Position;
@@ -42,8 +41,10 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 * @var int[] $members
 	 */
 	protected $members;
-	/** @var  int $lastActive */
+	/** @var int $lastActive */
 	protected $lastActive;
+	/** @var int $reputation The net reputation value of a faction */
+	protected $reputation;
 	/** @var Chunk[] $chunks numerically keyed chunks with undefined order (possibly, but not sure, sequence of claiming) */
 	protected $chunks;
 	/** @var \pocketmine\level\Position[] $homes with keys as name strings */
@@ -67,13 +68,14 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 * @param string $motto
 	 * @param bool $whitelist
 	 * @param int|bool $id
+	 * @param int $reputation
 	 * @return Faction
 	 */
-	public static function newInstance($name, $founder, array $ranks, $defaultRankIndex, Main $main, $home, $motto = "", $whitelist = true, $id = false){
+	public static function newInstance($name, $founder, array $ranks, $defaultRankIndex, Main $main, $home, $motto = "", $whitelist = true, $id = false, $reputation = 0){
 		if(!is_int($id)){
 			$id = self::nextID($main);
 		}
-		$data = ["name" => $name, "motto" => $motto, "id" => $id, "founder" => strtolower($founder), "ranks" => $ranks, "default-rank" => $ranks[$defaultRankIndex], "members" => [], "last-active" => time(), "chunks" => [], "homes" => (array) $home, "base-chunk" => Chunk::fromObject($home), "whitelist" => $whitelist];
+		$data = ["name" => $name, "motto" => $motto, "id" => $id, "founder" => strtolower($founder), "ranks" => $ranks, "default-rank" => $ranks[$defaultRankIndex], "members" => [], "last-active" => time(), "chunks" => [], "homes" => (array) $home, "base-chunk" => Chunk::fromObject($home), "whitelist" => $whitelist, "reputation" => $reputation];
 		$faction = new Faction($data, $main);
 		$main->getFList()->add($faction);
 		return $faction;
@@ -91,6 +93,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		$this->homes = $args["homes"];
 		$this->main = $main;
 		$this->whitelist = $args["whitelist"];
+		$this->reputation = isset($args["reputation"]) ? $args["reputation"]:0;
 		$this->server = Server::getInstance();
 		$levels = [];
 		foreach($this->chunks as $chunk){
@@ -295,7 +298,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		return (int) ($power / $this->main->getClaimSingleChunkPower());
 	}
 	public function getPower(){
-		$power = 0;
+		$power = $this->getReputation();
 		foreach($this->members as $mbr => $rank){
 			$statsCore = StatsCore::getInstance();
 			if(!($statsCore instanceof StatsCore) or $statsCore->isDisabled()){
@@ -307,6 +310,44 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 			// TODO add kills and deaths factors
 		}
 		return $power;
+	}
+	public function getNetReputation(){
+		return $this->reputation;
+	}
+	public function getReputation(){
+		$out = $this->reputation;
+		$data = [
+			State::REL_ALLY => 0,
+			State::REL_TRUCE => 0,
+			State::REL_ENEMY => 0
+		];
+		$db = $this->getMain()->getFList()->getDb();
+		$op = $db->prepare("SELECT relid FROM factions_rels WHERE smallid = :id OR largeid = :id;");
+		$op->bindValue(":id", $this->getID());
+		$result = $op->execute();
+		while(is_array($array = $result->fetchArray(SQLITE3_ASSOC))){
+			switch($array["relid"]){
+				case State::REL_ALLY:
+					$data[State::REL_ALLY]++;
+					break;
+				case State::REL_ENEMY:
+					$data[State::REL_ENEMY]++;
+					break;
+				case State::REL_TRUCE:
+					$data[State::REL_TRUCE]++;
+					break;
+			}
+		}
+		foreach([State::REL_ENEMY, State::REL_ALLY, State::REL_TRUCE] as $state){
+			$out += $this->getMain()->getRelationReputationModifiers()[$state] * $data[$state];
+		}
+		return $out;
+	}
+	public function addReputation($amount){
+		$this->reputation += $amount;
+	}
+	public function loseReputation($amount){
+		$this->reputation -= $amount;
 	}
 	public function hasMember($name){
 		if($name instanceof Player){
@@ -362,30 +403,39 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		}
 		$charge = $this->main->getChunkClaimFee();
 		$account = $this->getAccount($charge["account"]);
-		$balance = $account->getAmount() - $charge["amount"];
-		if($account->getName() === "Bank"){
-			$balance += $this->main->getMaxBankOverdraft();
-		}
-		if($balance < 0){
-			return "Your faction doesn't have money to claim more chunks. Consider donating money to your faction using \"/f donate\".";
-		}
-		if($balance < $this->main->getMaxBankOverdraft()){
-			if(!$this->getMemberRank($player)->hasPerm(Rank::P_SPEND_MONEY_BANK_OVERDRAFT)){
-				return Subcommand::NO_PERM;
-			}
-			$this->sendMessage("[WARNING] The faction's bank account is now overdrafted", self::CHAT_ANNOUNCEMENT);
+		if(!$account->canPay($charge["amount"])){
+			return "Not enough money to claim a chunk";
 		}
 		$account->pay($this->getMain()->getXEconService(), $charge["amount"], "Charge for claiming a chunk");
+		if($account->getAmount() < 0){
+			$this->sendMessage("[WARNING] The faction bank is now overdrafted! You will have to pay interest if you don't repay it ASAP!");
+		}
+		$this->forceClaim($chunk);
+		$this->sendMessage("$player has claimed a new chunk.", self::CHAT_ANNOUNCEMENT);
+		return true;
+	}
+	public function forceClaim(Chunk $chunk){
 		$this->chunks[] = $chunk;
 		$this->main->getFList()->onChunkClaimed($this, $chunk);
+	}
+	/**
+	 * @param Chunk $chunk
+	 * @return bool|string
+	 */
+	public function unclaim(Chunk $chunk){
+		if(($result = $this->forceUnclaim($chunk)) !== true){
+			return $result;
+		}
+		$refund = $this->getMain()->getChunkUnclaimRepay();
+		$account = $this->getAccount($refund["account"]);
+		$this->getMain()->getXEconService()->pay($account, $refund["amount"], "Refund for unclaiming a chunk");
 		return true;
 	}
 	/**
 	 * @param Chunk $chunk
-	 * @return bool|string|int
+	 * @return bool|string
 	 */
-	public function unclaim(Chunk $chunk){
-		$this->getMain()->getFList()->onChunkUnclaimed($chunk);
+	public function forceUnclaim(Chunk $chunk){
 		$id = false;
 		foreach($this->chunks as $i => $c){
 			if($c->equals($chunk)){
@@ -396,11 +446,12 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 			return "This chunk is not the territory of $this.";
 		}
 		unset($this->chunks[$id]);
-		$refund = $this->getMain()->getChunkUnclaimRepay();
-		$account = $this->getAccount($refund["account"]);
-		$this->getMain()->getXEconService()->pay($account, $refund["amount"], "Refund for unclaiming a chunk");
+		$this->getMain()->getFList()->onChunkUnclaimed($chunk);
 		return true;
 	}
+	/**
+	 * Unclaims all chunks in once
+	 */
 	public function unclaimAll(){
 		$chunks = count($this->chunks);
 		$this->chunks = [];
@@ -429,7 +480,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		foreach($this->getMain()->getServer()->getOnlinePlayers() as $player){
 			$rank = $this->getMemberRank($player);
 			if(($rank instanceof Rank) and $rank->hasPerm($level)){
-				$player->sendMessage($message);
+				$player->sendMessage("[$this] $message");
 			}
 		}
 	}

@@ -7,12 +7,14 @@ use pocketfactions\faction\Faction;
 use pocketfactions\faction\Rank;
 use pocketfactions\faction\State;
 use pocketfactions\tasks\CheckInactiveFactionsTask;
+use pocketfactions\tasks\GiveInterestTask;
 use pocketfactions\utils\FactionList;
 use pocketfactions\utils\subcommand\f\Claim;
 use pocketfactions\utils\subcommand\f\Create;
 use pocketfactions\utils\subcommand\f\Disband;
 use pocketfactions\utils\subcommand\f\Home;
 use pocketfactions\utils\subcommand\f\Homes;
+use pocketfactions\utils\subcommand\f\Info;
 use pocketfactions\utils\subcommand\f\Invite;
 use pocketfactions\utils\subcommand\f\Join;
 use pocketfactions\utils\subcommand\f\Kick;
@@ -24,6 +26,7 @@ use pocketfactions\utils\subcommand\f\Quit;
 use pocketfactions\utils\subcommand\f\RmHome;
 use pocketfactions\utils\subcommand\f\Sethome;
 use pocketfactions\utils\subcommand\f\Setopen;
+use pocketfactions\utils\subcommand\f\Siege;
 use pocketfactions\utils\subcommand\f\Unclaim;
 use pocketfactions\utils\subcommand\f\Unclaimall;
 use pocketfactions\utils\subcommand\SubcommandMap;
@@ -42,7 +45,7 @@ use pocketmine\utils\TextFormat;
 
 class Main extends Prt implements Listener{
 	const NAME = "PocketFactions";
-	const XECON_SERV_NAME = "PocketFactionsCharges"; // any better names?
+	const XECON_SERV_NAME = "PocketFactionsMoney"; // any better names?
 	const V_INIT = "\x00";
 	const V_CURRENT = "\x00";
 	/**
@@ -97,6 +100,7 @@ class Main extends Prt implements Listener{
 		$service->registerService(self::XECON_SERV_NAME);
 		echo ".";
 		$this->getServer()->getScheduler()->scheduleDelayedRepeatingTask(new CheckInactiveFactionsTask($this), $this->getInactiveCheckInterval() * 1200, $this->getInactiveCheckInterval() * 1200);
+		$this->getServer()->getScheduler()->scheduleRepeatingTask(new GiveInterestTask($this), $this->getReceiveInterestInterval());
 		$this->registerEvents();
 		$this->registerCmds();
 		$this->declareActivityDefinition();
@@ -148,6 +152,7 @@ class Main extends Prt implements Listener{
 			new Disband($this), // disband own faction
 			new Home($this), // teleport to faction home(s)
 			new Homes($this), // view faction home list
+			new Info($this), // view information of a faction
 			new Invite($this), // send request to other to join own faction
 			new Join($this), // send requeset to faction to join it
 			new Kick($this), // kick one from own faction
@@ -160,10 +165,12 @@ class Main extends Prt implements Listener{
 			new RmHome($this), // remove current faction's home
 			new Sethome($this), // add/move current faction's home(s)
 			new Setopen($this), // view/set whitelist on/off of own faction
-//			new Siege($this), // siege a chunk of an enemy faction
 			new Unclaim($this), // unclaim chunk
 			new Unclaimall($this) // unclaim all claimed chunks
 		];
+		if($this->isSiegingEnabled()){
+			$subcmds[] = new Siege($this);
+		}
 		$this->fCmd->registerAll($subcmds);
 		$this->getServer()->getCommandMap()->registerAll("pocketfactions", [$this->fCmd, $this->fmCmd]);
 	}
@@ -296,6 +303,12 @@ class Main extends Prt implements Listener{
 	// CONFIG //
 	////////////
 	// to make it easier to debug
+	public function getSiegeReputationLoss(){
+		return $this->getConfig()->get("siege reputation loss");
+	}
+	public function getRelationReputationModifiers(){
+		return $this->getConfig()->get("relation reputation modifiers");
+	}
 	public function getClaimSingleChunkPower(){
 		return $this->getConfig()->get("power required to claim a chunk");
 	}
@@ -393,6 +406,9 @@ class Main extends Prt implements Listener{
 	public function getRandomBankInterestPercentage(){
 		return mt_rand((int) ($this->xeconConfig->get("bank interest range minimum") * 100), (int) ($this->xeconConfig->get("bank interest range maximum") * 100)) / 100;
 	}
+	public function getReceiveInterestInterval(){
+		return $this->getConfig()->get("bank interest receive interval");
+	}
 	public function getBankLoanTypesRaw(){
 		return $this->xeconConfig->get("loan types");
 	}
@@ -441,10 +457,4 @@ class Main extends Prt implements Listener{
 	public function getFounderWithdrawableAccounts(){
 		return $this->xeconConfig->get("accounts withdrawable to founder");
 	}
-	//	/**
-	//	 * LOL
-	//	 */
-	//	public function suicide(){
-	//		$this->setEnabled(false);
-	//	}
 }
