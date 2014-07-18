@@ -27,6 +27,8 @@ use pocketfactions\utils\subcommand\f\Unclaim;
 use pocketfactions\utils\subcommand\f\Unclaimall;
 use pocketfactions\utils\subcommand\SubcommandMap;
 use pocketfactions\utils\WildernessFaction;
+use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
@@ -206,6 +208,26 @@ class Main extends Prt implements Listener{
 		return;
 	}
 	/**
+	 * @param BlockPlaceEvent $event
+	 * @priority MONITOR
+	 * @ignoreCancelled true
+	 */
+	public function onBlockPlace(BlockPlaceEvent $event){
+		if(self::$ACTIVITY_DEFINITION === self::ACTIVITY_BUILD){
+			$this->onLoggedIn($event->getPlayer());
+		}
+	}
+	/**
+	 * @param BlockBreakEvent $event
+	 * @priority MONITOR
+	 * @ignoreCancelled true
+	 */
+	public function onBlockBreak(BlockBreakEvent $event){
+		if(self::$ACTIVITY_DEFINITION === self::ACTIVITY_BUILD){
+			$this->onLoggedIn($event->getPlayer());
+		}
+	}
+	/**
 	 * @param EntityDamageByEntityEvent $event
 	 * @priority HIGH
 	 * @ignoreCancelled true
@@ -229,6 +251,9 @@ class Main extends Prt implements Listener{
 		}
 	}
 	public function onLoggedIn(Player $player){
+		if(isset($this->loggedIn[$player->getID()])){
+			return;
+		}
 		$f = $this->getFList()->getFaction($player);
 		if(!($f instanceof Faction)){
 			return;

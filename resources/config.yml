@@ -66,9 +66,11 @@ faction name reject message: Invalid faction name. The faction name must not be 
 
 ## Factions management
 # Definition of activity
-# Put "auth" or "join" here
-# TODO add more options
-faction activity definition: auth
+# Put one of the following here (case-insensitive):
+# JOIN
+# AUTH
+# BUILD
+faction activity definition: AUTH
 # Disbanding inactive factions
 # How long can a faction stay inactive (no any members successfully authenticating in the server) before getting automatically disbanded?
 # The unit is hours.

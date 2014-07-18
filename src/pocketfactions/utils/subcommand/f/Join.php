@@ -17,7 +17,7 @@ class Join extends Subcommand{
 		if(!isset($args[0])){
 			return false;
 		}
-		if(!(($f = $this->getMain()->getFList()->getFaction($name = array_shift($args))) instanceof Faction)){
+		if(!(($f = $this->getMain()->getFList()->getFactionBySimilarName($name = array_shift($args))) instanceof Faction)){
 			return self::WRONG_FACTION;
 		}
 		$request = new FactionJoinRequest($player, $f, implode(" ", $args));
