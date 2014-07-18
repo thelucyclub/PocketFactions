@@ -11,6 +11,8 @@ class SimpleAuthListener implements Listener{
 		$this->main = $plugin;
 	}
 	public function onAuth(PlayerAuthenticateEvent $event){
-		$this->main->onLoggedIn($event->getPlayer());
+		if(Main::$ACTIVITY_DEFINITION === Main::ACTIVITY_AUTH){
+			$this->main->onLoggedIn($event->getPlayer());
+		}
 	}
 }

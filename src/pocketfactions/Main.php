@@ -43,6 +43,22 @@ class Main extends Prt implements Listener{
 	const XECON_SERV_NAME = "PocketFactionsCharges"; // any better names?
 	const V_INIT = "\x00";
 	const V_CURRENT = "\x00";
+	/**
+	 * The constant to put in the config for activating a faction upon game quit of a player who:
+	 * spawned in the server
+	 */
+	const ACTIVITY_JOIN = 0;
+	/**
+	 * The constant to put in the config for activating a faction upon game quit of a player who:
+	 * authenticated in the server using SimpleAuth
+	 */
+	const ACTIVITY_AUTH = 1;
+	/**
+	 * The constant to put in the config for activating a faction upon game quit of a player who:
+	 * edited the factions world
+	 */
+	const ACTIVITY_BUILD = 2;
+	public static $ACTIVITY_DEFINITION;
 	/** @var bool[] */
 	private $adminModes = [];
 	/**
@@ -72,6 +88,7 @@ class Main extends Prt implements Listener{
 	public function onEnable(){
 		$this->getLogger()->info(TextFormat::AQUA . "Initializing", false, 1);
 		$this->initDatabase();
+		echo ".";
 		/** @var \xecon\Main $xEcon */
 		$xEcon = $this->getServer()->getPluginManager()->getPlugin("xEcon");
 		$service = $xEcon->getService();
@@ -79,8 +96,8 @@ class Main extends Prt implements Listener{
 		echo ".";
 		$this->getServer()->getScheduler()->scheduleDelayedRepeatingTask(new CheckInactiveFactionsTask($this), $this->getInactiveCheckInterval() * 1200, $this->getInactiveCheckInterval() * 1200);
 		$this->registerEvents();
-		echo ".";
 		$this->registerCmds();
+		$this->declareActivityDefinition();
 		echo PHP_EOL;
 		$this->getLogger()->info(TextFormat::toANSI(TextFormat::GREEN . " Done!" . TextFormat::RESET . PHP_EOL));
 	}
@@ -166,7 +183,7 @@ class Main extends Prt implements Listener{
 		}
 		$cf = $this->getFList()->getFaction(Chunk::fromObject($evt->getBlock()));
 		if($cf === false){
-			$cf = $this->getWilderness();
+			return; // wilderness faction allows free building
 		}
 		$pf = $this->getFList()->getFaction($p);
 		if($pf === false){ // doesn't join any factions
@@ -207,7 +224,7 @@ class Main extends Prt implements Listener{
 		return $this->getDataFolder() . "database/factions.dat";
 	}
 	public function onLogin(PlayerJoinEvent $evt){
-		if(!$this->haveRequiredSimpleAuth){
+		if(self::$ACTIVITY_DEFINITION === self::ACTIVITY_JOIN){
 			$this->onLoggedIn($evt->getPlayer());
 		}
 	}
@@ -309,6 +326,22 @@ class Main extends Prt implements Listener{
 	}
 	public function getMaxHomes(){
 		return $this->getConfig()->get("max homes");
+	}
+	public function declareActivityDefinition(){
+		$def = $this->getConfig()->get("faction activity definition");
+		if(!defined($path = get_class()."::ACTIVITY_".strtoupper($def))){
+			$this->getLogger()->alert("Activity definition \"".$def."\" is undefined. The default (JOIN) will be used.");
+			self::$ACTIVITY_DEFINITION = self::ACTIVITY_JOIN;
+		}
+		else{
+			self::$ACTIVITY_DEFINITION = constant($path);
+		}
+		if(self::$ACTIVITY_DEFINITION === self::ACTIVITY_AUTH){
+			if(!class_exists("Simpleauth\\event\\PlayerAuthenticateEvent")){
+				$this->getLogger()->error("SimpleAuth is not loaded. Default activity definition (JOIN) will be used.");
+				self::$ACTIVITY_DEFINITION = self::ACTIVITY_JOIN;
+			}
+		}
 	}
 	public function getMaxInactiveTime(){
 		return $this->getConfig()->get("faction inactive time");
