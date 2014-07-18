@@ -21,6 +21,7 @@ use pocketfactions\utils\subcommand\f\Money;
 use pocketfactions\utils\subcommand\f\Motto;
 use pocketfactions\utils\subcommand\f\Perm;
 use pocketfactions\utils\subcommand\f\Quit;
+use pocketfactions\utils\subcommand\f\RmHome;
 use pocketfactions\utils\subcommand\f\Sethome;
 use pocketfactions\utils\subcommand\f\Setopen;
 use pocketfactions\utils\subcommand\f\Unclaim;
@@ -154,9 +155,10 @@ class Main extends Prt implements Listener{
 			new Money($this), // manage own faction's money
 			new Motto($this), // change own faction's motto
 			new Perm($this), // manage own faction's permissions
-			// new Rel($this), // manage own faction's relations with another
+//			new Rel($this), // manage own faction's relations with another
 			new Quit($this), // quit current faction, and pass ownership to somebody if is owner
-			new Sethome($this), // set current faction's home(s)
+			new RmHome($this), // remove current faction's home
+			new Sethome($this), // add/move current faction's home(s)
 			new Setopen($this), // view/set whitelist on/off of own faction
 //			new Siege($this), // siege a chunk of an enemy faction
 			new Unclaim($this), // unclaim chunk
