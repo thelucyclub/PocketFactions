@@ -20,6 +20,9 @@ class Sethome extends Subcommand{
 		if(!isset($args[0])){
 			$args[0] = "default";
 		}
+		if(!$faction->hasChunk(Chunk::fromObject($player))){
+			return "Homes must be created in chunks claimed by your faction!";
+		}
 		$homes = $faction->getHomes();
 		if(isset($homes[$args[0]])){
 			$faction->setHome($args[0], $player); // a new position will be created instead of the player position
