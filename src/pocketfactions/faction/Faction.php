@@ -224,7 +224,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	}
 	/**
 	 * @param string|bool $name name of the home
-	 * @return \pocketmine\level\Position|bool
+	 * @return Position|bool
 	 */
 	public function getHome($name = false){
 		if($this->getMain()->getMaxHomes() === 1){
@@ -252,6 +252,22 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		$op->bindValue(":name", $name);
 		$op->bindValue(":id", $this->id);
 		$op->execute();
+	}
+	/**
+	 * @param string $name
+	 * @return bool Whether the removal succeeded
+	 */
+	public function rmHome($name = "default"){
+		if(!isset($this->homes[$name])){
+			return false;
+		}
+		unset($this->homes[$name]);
+		$db = $this->getMain()->getFList()->getDb();
+		$op = $db->prepare("DELETE FROM factions_homes WHERE fid = :fid AND name = :name;");
+		$op->bindValue(":fid", $this->getID());
+		$op->bindValue(":name", $name);
+		$op->execute();
+		return true;
 	}
 	/**
 	 * @return int

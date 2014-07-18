@@ -25,6 +25,12 @@ class Sethome extends Subcommand{
 		}
 		$homes = $faction->getHomes();
 		if(isset($homes[$args[0]])){
+			$fee = $this->getMain()->getMoveHomeFee();
+			$account = $faction->getAccount($fee["account"]);
+			if(!$account->canPay($fee["amount"])){
+				return "Your faction doesn't have enough ".$fee["account"]." money to move a home.";
+			}
+			$account->pay($this->getMain()->getXEconService(), $fee["amount"], "Moving home");
 			$faction->setHome($args[0], $player); // a new position will be created instead of the player position
 			$faction->sendMessage("Faction home $args[0] has been moved to " . $player->getName() . "'s location.", Faction::CHAT_ANNOUNCEMENT);
 			return "";
@@ -32,6 +38,12 @@ class Sethome extends Subcommand{
 		if(count($homes) + 1 > ($max = $this->getMain()->getMaxHomes())){
 			return "A faction can only set a maximum of $max home(s)!";
 		}
+		$fee = $this->getMain()->getNewHomeFee();
+		$account = $faction->getAccount($fee["account"]);
+		if(!$account->canPay($fee["amount"])){
+			return "Your faction doesn't have enoug ".$fee["account"]." money to add a new home.";
+		}
+		$account->pay($this->getMain()->getXEconService(), $fee["amount"], "Adding new home");
 		$faction->setHome($args[0], $player);
 		$faction->sendMessage("A new home $args[0] has been created at " . $player->getName() . "'s location.", Faction::CHAT_ANNOUNCEMENT);
 		return "";

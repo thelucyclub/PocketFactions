@@ -34,7 +34,6 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\permission\Permission;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase as Prt;
 use pocketmine\utils\Config;
@@ -132,14 +131,6 @@ class Main extends Prt implements Listener{
 	public function setAdminMode(Player $player, $on){
 		$this->adminModes[$player->getID()] = $on;
 	}
-	private function regPermWithObject(Permission $perm, Permission $parent = null){
-		if($parent instanceof Permission){
-			$parent->getChildren()[$perm->getName()] = true;
-			return $this->regPermWithObject($perm);
-		}
-		$this->getServer()->getPluginManager()->addPermission($perm);
-		return $this->getServer()->getPluginManager()->getPermission($perm->getName());
-	}
 	private function registerEvents(){
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 		if(class_exists($event = "SimpleAuth\\event\\PlayerAuthenticateEvent")){
@@ -167,6 +158,7 @@ class Main extends Prt implements Listener{
 			new Quit($this), // quit current faction, and pass ownership to somebody if is owner
 			new Sethome($this), // set current faction's home(s)
 			new Setopen($this), // view/set whitelist on/off of own faction
+//			new Siege($this), // siege a chunk of an enemy faction
 			new Unclaim($this), // unclaim chunk
 			new Unclaimall($this) // unclaim all claimed chunks
 		];
@@ -416,6 +408,15 @@ class Main extends Prt implements Listener{
 	}
 	public function getChunkUnclaimRepay(){
 		return $this->xeconConfig->get("chunk unclaim repay");
+	}
+	public function getNewHomeFee(){
+		return $this->xeconConfig->get("new home fee");
+	}
+	public function getMoveHomeFee(){
+		return $this->xeconConfig->get("move home fee");
+	}
+	public function getRmHomeFee(){
+		return $this->xeconConfig->get("remove home fee");
 	}
 	public function getFactionRenameFee(){
 		return $this->xeconConfig->get("faction rename charge");

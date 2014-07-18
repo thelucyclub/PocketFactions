@@ -40,7 +40,6 @@ inventory types:
 # All factions will receive the same percentage of interest in the same hour.
 # The percentage will be a random number (correct to two decimal places) inside the range.
 # Make sure minimum is smaller than maximum :)
-#
 bank interest range minimum: 0.75
 bank interest range maximum: 1.05
 
@@ -80,6 +79,20 @@ chunk claim fee:
 chunk unclaim repay:
   account: bank
   amount: 1000
+
+## Homes
+# How much money to take from a faction when it sets a new home
+new home fee:
+  account: cash
+  amount: 100
+# How much money to take from a faction when it moves a home
+move home fee:
+  account: cash
+  amount: 50
+# How much money to take from a faction when it removes a home
+remove home fee:
+  account: cash
+  amount: 10
 
 ## Faction internals actions
 # How much money to take from a faction's account when it renames itself
