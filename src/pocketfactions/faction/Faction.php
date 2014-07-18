@@ -373,7 +373,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 			if(!$this->getMemberRank($player)->hasPerm(Rank::P_SPEND_MONEY_BANK_OVERDRAFT)){
 				return Subcommand::NO_PERM;
 			}
-			$this->sendMessage("[WARNING] The faction's bank account is now overdrafted", self::CHAT_ANNOUNCEMENT);
+			$this->sendMessage("[WARNING] The faction's bank account is now over drafted", self::CHAT_ANNOUNCEMENT);
 		}
 		$account->pay($this->getMain()->getXEconService(), $charge["amount"], "Charge for claiming a chunk");
 		$this->chunks[] = $chunk;
@@ -435,7 +435,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	}
 	// xEcon-related
 	public function getInventory(){
-		return new DummyInventory($this, "Faction Account"); // TODO replace the dummy placeholder // e.g. Chest inventory
+		return new DummyInventory($this, "Faction Account"); // TODO replace the dummy place holder // e.g. Chest inventory
 	}
 	public function getEconomicEntity(){
 		return $this;

@@ -32,7 +32,7 @@ class Donate extends Subcommand{
 			$factionAccount = $faction->getAccount("Bank");
 			$account->pay($factionAccount, $amount, "Donation");
 		}
-		$faction->sendMessage("Receiveed a donation of \$$amount from ".$player->getName()."!");
+		$faction->sendMessage("Received a donation of \$$amount from ".$player->getName()."!");
 		return "\$$amount has been deposited into the faction bank from your bank account.";
 	}
 	public function getDescription(){

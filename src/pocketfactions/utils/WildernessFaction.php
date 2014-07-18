@@ -16,7 +16,7 @@ class WildernessFaction implements IFaction{
 		return 0;
 	}
 	public function getName(){
-		return "Wilderness";
+		return "~~Wilderness~~";
 	}
 	public function isOpen(){
 		return false;
