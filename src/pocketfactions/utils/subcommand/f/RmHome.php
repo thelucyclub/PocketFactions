@@ -30,7 +30,7 @@ class RmHome extends Subcommand{
 			return "Your faction don't have enough ".$fee["account"]." money to remove a home.";
 		}
 		$account->pay($this->getMain()->getXEconService(), $fee["amount"], "Home removal");
-		return $faction->rmHome($name) ? "Home $name has been removed.":"Home \"".$name."\" not found.";
+		return $faction->rmHome($name) ? "$name home has been removed.":"Home \"".$name."\" not found.";
 	}
 	public function getUsage(){
 		return "[name]";

@@ -205,7 +205,7 @@ class Main extends Prt implements Listener{
 			return;
 		}
 		$evt->setCancelled();
-		$p->sendMessage("You cannot build at the claimed chunk of faction $cf!");
+		$p->sendMessage("You can't build at the claimed chunk of faction $cf!");
 		return;
 	}
 	/**
