@@ -6,7 +6,6 @@ use pocketfactions\faction\Faction;
 use pocketfactions\faction\Rank;
 use pocketfactions\Main;
 use pocketfactions\utils\subcommand\Subcommand;
-use pocketmine\level\Position;
 use pocketmine\Player;
 use pocketmine\Server;
 

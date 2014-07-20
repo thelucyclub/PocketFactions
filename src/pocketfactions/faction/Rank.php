@@ -72,6 +72,8 @@ class Rank{
 	const P_SET_HOME =                      0b0000000000000000000000000000000000000000000000000000000000000000;
 	/** Permission to rename faction */
 	const P_RENAME =                        0b0000000000000000000000000000000000000000000000000000000000000000;
+	/** Permission to manage permissions */
+	const P_PERM =                          0b0000000000000000000000000000000000000000000000000000000000000000;
 	/**
 	 * Lowest level of broadcast
 	 * EVERYONE should be able to listen to it
