@@ -1,7 +1,5 @@
 <?php
 
-namespace pocketfactions\tasks;
-
 abstract class Bin{
 	public static function writeByte($num){
 		return chr($num & 0xFF);
@@ -27,6 +25,14 @@ abstract class Bin{
 		$front >>= 32;
 		$end = $int & 0xFFFFFFFF;
 		return self::writeInt($front).self::writeInt($end);
+	}
+	public static function writeBin($int){
+		$output = "";
+		for($i = strlen($int) - 1; $i >= 0; $i--){
+			$digit = ($int >> (8 * 3)) & 0xFF;
+			$output .= chr($digit);
+		}
+		return $output;
 	}
 	public static function readBin($bin){
 		$result = 0;
