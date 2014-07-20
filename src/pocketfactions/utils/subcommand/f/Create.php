@@ -25,7 +25,9 @@ class Create extends Subcommand{
 		elseif($this->getMain()->getFList()->getFaction($name) instanceof Faction){
 			return "A faction with name \"$name\" already exists!";
 		}
-		Faction::newInstance($name, $player->getName(), Rank::defaults(), Rank::defaultRank(), $this->main, Position::fromObject($player, $player->getLevel())); // I'll get rid of the base chunk thing soon. I just don't understand why a faction needs to exist with zero chunk, since it will be a bit of truoble.
+		Faction::newInstance($name, $player->getName(), Rank::defaults($this->getMain()),
+			Rank::defaultRank($this->getMain()), Rank::defaultAllyRank($this->getMain()),
+			Rank::defaultTruceRank($this->getMain()), $this->main);
 		$this->main->getServer()->broadcast("[PF] A new faction called $name has been created!", Server::BROADCAST_CHANNEL_USERS);
 		return "";
 	}

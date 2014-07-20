@@ -49,6 +49,8 @@ int Count of saved factions
         ByteString Name of the rank
         LongBool Permissions of the faction, with reference to [rank.php](../faction/Rank.php)
     byte Internal ID of the default internal rank
+    byte Internal ID of ally faction rank
+    byte Internal ID of truce faction rank
     int Number of members in the faction
     -> for each member:
         ByteString Lowercase name of the member

@@ -66,12 +66,8 @@ class ReadDatabaseTask extends AsyncTask{
 				$ranks[$id] = new Rank($id, $rkName, $perms);
 			}
 			$defaultRank = Bin::readBin($this->read(1));
-			if(!isset($ranks[$defaultRank])){
-				trigger_error("Cannot find default rank $defaultRank from resource {$this->res}", E_USER_WARNING);
-				$this->setResult(self::CORRUPTED);
-				return;
-			}
-			$defaultRank = $ranks[$defaultRank];
+			$allyRank = Bin::readBin($this->read(1));
+			$truceRank = Bin::readBin($this->read(1));
 			/**
 			 * @var Rank[] $members Ranks indexed by member names, object reference from $ranks (not cloned)
 			 */
@@ -107,12 +103,14 @@ class ReadDatabaseTask extends AsyncTask{
 				"founder" => $founder,
 				"ranks" => $ranks,
 				"default-rank" => $defaultRank,
+				"ally-rank" => $allyRank,
+				"truce-rank" => $truceRank,
 				"members" => $members,
 				"last-active" => $lastActive,
 				"chunks" => $chunks,
 				"whitelist" => $whitelist,
 				"homes" => $homes,
-				"reputation" => $reputation
+				"reputation" => $reputation,
 			], $this->main);
 		}
 		$states = [];

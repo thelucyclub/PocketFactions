@@ -90,9 +90,28 @@ class Main extends Prt implements Listener{
 	private $loggedIn = array();
 	private $fCmd;
 	private $fmCmd;
+	private $worlds = [];
 	public function onEnable(){
 		$this->getLogger()->info(TextFormat::AQUA . "Initializing", false, 1);
 		$this->initDatabase();
+		if(isset($worlds[0]) and substr($worlds, 0, 4) === ">>>>"){
+			$this->getLogger()->critical("Please enter your faction worlds before using PocketFactions. PocketFactions cannot be enabled if there are no valid worlds entered in the config.");
+			$this->setEnabled(false); // SUICIDE!
+			return;
+		}
+		else{
+			$this->worlds = $worlds;
+			foreach($worlds as $offset => $world){
+				if(!$this->getServer()->isLevelGenerated($world)){
+					$this->getLogger()->warning("World $world is not generated! This world will not become a faction world.");
+					unset($this->worlds[$offset]);
+					continue;
+				}
+				if(!$this->getServer()->isLevelLoaded($world)){
+					$this->getServer()->loadLevel($world);
+				}
+			}
+		}
 		echo ".";
 		/** @var \xecon\Main $xEcon */
 		$xEcon = $this->getServer()->getPluginManager()->getPlugin("xEcon");
@@ -118,6 +137,7 @@ class Main extends Prt implements Listener{
 		$this->saveResource("xecon.yml");
 		$this->reloadConfig();
 		$this->xeconConfig = new Config($this->getDataFolder() . "xecon.yml", Config::YAML);
+		Rank::defaults($this);
 	}
 	public function getXEconConfig(){
 		return $this->xeconConfig;

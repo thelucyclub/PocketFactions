@@ -39,7 +39,9 @@ class WriteDatabaseTask extends AsyncTask{
 				$this->buffer .= $rk->getName();
 				$this->buffer .= Bin::writeLong($rk->getPerms());
 			}
-			$this->buffer .= Bin::writeByte($f->getDefaultRank());
+			$this->buffer .= Bin::writeByte($f->getDefaultRank()->getID());
+			$this->buffer .= Bin::writeByte($f->getAllyRank()->getID());
+			$this->buffer .= Bin::writeByte($f->getTruceRank()->getID());
 			$mbrs = $f->getMembers();
 			$this->buffer .= Bin::writeInt(count($mbrs));
 			foreach($mbrs as $name => $rank){

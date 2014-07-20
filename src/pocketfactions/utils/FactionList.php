@@ -38,8 +38,8 @@ class FactionList{
 	protected function load(){
 		if(!is_file($this->path)){
 			$this->factions = [];
-			Faction::newInstance("PvP-Zone", "console", [new Rank(0, "staff", 0)], 0, $this->main, $this->server->getDefaultLevel()->getSafeSpawn(), $this->server->getServerName() . " server-owned PvP areas", true, self::PVP); // console is a banned name in PocketMine-MP
-			Faction::newInstance("Safe-Zone", "console", [new Rank(0, "staff", 0)], 0, $this->main, $this->server->getDefaultLevel()->getSafeSpawn(), $this->server->getServerName() . " server-owned PvP-free areas", true, self::SAFE);
+			Faction::newInstance("PvP-Zone", "console", [new Rank(0, "staff", 0, "Staff rank")], 0, 0, 0, $this->main, $this->server->getDefaultLevel()->getSafeSpawn(), $this->server->getServerName() . " server-owned PvP areas", true, self::PVP);
+			Faction::newInstance("Safe-Zone", "console", [new Rank(0, "staff", 0, "Staff rank")], 0, 0, 0, $this->main, $this->server->getDefaultLevel()->getSafeSpawn(), $this->server->getServerName() . " server-owned PvP-free areas", true, self::SAFE);
 		}
 		else{
 			$this->loadFrom(fopen($this->path, "rb"));
