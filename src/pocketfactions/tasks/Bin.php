@@ -7,32 +7,23 @@ abstract class Bin{
 		return chr($num & 0xFF);
 	}
 	public static function writeShort($num){
-		$num &= 0xFFFF;
-		$output = "";
-		$output .= chr(($num & 0xFF00) >> 8);
-		$output .= chr($num & 0xFF);
-		return $output;
+		return self::writeBin($num, 2);
 	}
 	public static function writeInt($int){
-		$int &= 0xFFFFFFFF;
-		$output = "";
-		$output .= chr(($int & 0xFF000000) >> 24);
-		$output .= chr(($int & 0x00FF0000) >> 16);
-		$output .= chr(($int & 0x0000FF00) >> 8);
-		$output .= chr($int & 0x000000FF);
-		return $output;
+		return self::writeBin($int, 4);
 	}
 	public static function writeLong($int){
-		$front = $int & 0xFFFFFFFF00000000;
-		$front >>= 32;
-		$end = $int & 0xFFFFFFFF;
-		return self::writeInt($front).self::writeInt($end);
+		return self::writeBin($int, 8);
 	}
-	public static function writeBin($int){
+	public static function writeBin($int, $digits = null){
 		$output = "";
-		for($i = strlen($int) - 1; $i >= 0; $i--){
-			$digit = ($int >> (8 * 3)) & 0xFF;
+		for($i = floor(log($int, 256)); $i >= 0; $i--){
+			$digit = ($int >> (8 * $i)) & 0xFF;
 			$output .= chr($digit);
+		}
+		if(is_int($digits)){
+			$output = str_repeat(chr(0x00), $digits).$output;
+			$output = substr($output, -$digits);
 		}
 		return $output;
 	}
