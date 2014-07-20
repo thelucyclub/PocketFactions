@@ -70,7 +70,7 @@ level generation seed: null
 
 ## Faction defaults
 # The following is a regular expression of the rule that limits faction names. If you don't understand regular expressions, leave this as it is.
-faction naming rule: '#[A-Za-z0-9\-_]{@min,@max}#i'
+faction naming rule: '#[A-Za-z0-9\-_]{@min,@max}#'
 # The minimum length of the faction name
 faction name min length: 3
 # The maximum length (cannot be greater than 255)
