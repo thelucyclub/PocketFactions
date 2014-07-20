@@ -1,5 +1,7 @@
 <?php
 
+namespace pocketfactions\tasks;
+
 abstract class Bin{
 	public static function writeByte($num){
 		return chr($num & 0xFF);
