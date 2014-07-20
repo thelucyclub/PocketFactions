@@ -97,4 +97,6 @@ faction inactive check interval: 120
 # Note: The faction will be re-added to the list if it gets active again.
 # The unit is hours.
 faction semi-inactive time: 72
+
+# Default permissions
 ...

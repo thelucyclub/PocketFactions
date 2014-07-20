@@ -33,8 +33,8 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	protected $founder;
 	/** @var Rank[] $ranks indexed by internal rank IDs */
 	protected $ranks;
-	/** @var int $defaultRank internal rank ID of the default rank */
-	protected $defaultRank;
+	/** @var int internal rank ID of the default rank */
+	protected $defaultRank, $allyRank, $truceRank;
 	/**
 	 * This array is a list indexed with lowercase member names and filled with integers of the member's rank ID.
 	 * Use <code>array_keys()</code> to get a plain list of members.
@@ -63,6 +63,8 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 * @param string $founder name of the faction founder
 	 * @param Rank[] $ranks
 	 * @param int $defaultRankIndex the default rank's key in $ranks
+	 * @param int $allyRankIndex
+	 * @param int $truceRankIndex
 	 * @param Main $main
 	 * @param Position|Position[] $home the home position of the faction
 	 * @param string $motto
@@ -71,11 +73,27 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 * @param int $reputation
 	 * @return Faction
 	 */
-	public static function newInstance($name, $founder, array $ranks, $defaultRankIndex, Main $main, $home, $motto = "", $whitelist = true, $id = false, $reputation = 0){
+	public static function newInstance($name, $founder, array $ranks, $defaultRankIndex, $allyRankIndex, $truceRankIndex, Main $main, $home, $motto = "", $whitelist = true, $id = false, $reputation = 0){
 		if(!is_int($id)){
 			$id = self::nextID($main);
 		}
-		$data = ["name" => $name, "motto" => $motto, "id" => $id, "founder" => strtolower($founder), "ranks" => $ranks, "default-rank" => $ranks[$defaultRankIndex], "members" => [], "last-active" => time(), "chunks" => [], "homes" => (array) $home, "base-chunk" => Chunk::fromObject($home), "whitelist" => $whitelist, "reputation" => $reputation];
+		$data = [
+			"name" => $name,
+			"motto" => $motto,
+			"id" => $id,
+			"founder" => strtolower($founder),
+			"ranks" => $ranks,
+			"default-rank" => $defaultRankIndex,
+			"truce-rank" => $truceRankIndex,
+			"ally-rank" => $allyRankIndex,
+			"members" => [],
+			"last-active" => time(),
+			"chunks" => [],
+			"homes" => (array) $home,
+			"base-chunk" => Chunk::fromObject($home),
+			"whitelist" => $whitelist,
+			"reputation" => $reputation
+		];
 		$faction = new Faction($data, $main);
 		$main->getFList()->add($faction);
 		return $faction;
@@ -87,6 +105,8 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		$this->founder = $args["founder"];
 		$this->ranks = $args["ranks"];
 		$this->defaultRank = $args["default-rank"];
+		$this->allyRank = $args["ally-rank"];
+		$this->truceRank = $args["truce-rank"];
 		$this->members = $args["members"];
 		$this->lastActive = $args["last-active"];
 		$this->chunks = $args["chunks"];
@@ -161,6 +181,12 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 */
 	public function getDefaultRank(){
 		return $this->ranks[$this->defaultRank];
+	}
+	public function getTruceRank(){
+		return $this->ranks[$this->truceRank];
+	}
+	public function getAllyRank(){
+		return $this->ranks[$this->allyRank];
 	}
 	/**
 	 * @param bool $raw

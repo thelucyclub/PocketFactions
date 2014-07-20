@@ -103,11 +103,11 @@ class Rank{
 		return $this->name;
 	}
 	/**
-	 * @return static[] the default ranks for a faction
+	 * @return self[] the default ranks for a faction
 	 */
 	public static function defaults(){
-		return [0 => new static(0, "owner", self::P_ALL), 1 => new static(1, "member", self::P_ENTER, self::P_ENTER_CENTRE), 2 => new static(2, "builder", self::P_BUILD), 3 => new static(3, "core-builder", self::P_BUILD_CENTRE), 4 => new static(4, "new-member", self::P_ENTER),];
-		// TODO use config
+
+		return [];
 	}
 	/**
 	 * @return int default rank internal ID
