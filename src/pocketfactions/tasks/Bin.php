@@ -2,6 +2,8 @@
 
 namespace pocketfactions\tasks;
 
+
+
 abstract class Bin{
 	public static function writeByte($num){
 		return chr($num & 0xFF);
@@ -17,7 +19,7 @@ abstract class Bin{
 	}
 	public static function writeBin($int, $digits = null){
 		$output = "";
-		for($i = floor(log($int, 256)); $i >= 0; $i--){
+		for($i = (int) floor(log($int, 256)); $i >= 0; $i--){
 			$digit = ($int >> (8 * $i)) & 0xFF;
 			$output .= chr($digit);
 		}
