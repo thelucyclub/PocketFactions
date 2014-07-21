@@ -6,6 +6,7 @@ use pocketfactions\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginIdentifiableCommand;
+use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
 class SubcommandMap extends Command implements PluginIdentifiableCommand{
@@ -37,7 +38,7 @@ class SubcommandMap extends Command implements PluginIdentifiableCommand{
 		}
 		$cmd = array_shift($args);
 		if(isset($this->subcmds[$cmd = strtolower(trim($cmd))]) and $cmd !== "help"){
-			if(($issuer instanceof Position) and !$this->main->isFactionWorld($issuer->getLevel()->getName()){
+			if(($issuer instanceof Player) and !$this->main->isFactionWorld($issuer->getLevel()->getName())){
 				$issuer->sendMessage("You must be in a faction world to run this command.");
 				return false;
 			}

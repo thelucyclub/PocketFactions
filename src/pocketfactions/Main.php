@@ -91,6 +91,7 @@ class Main extends Prt implements Listener{
 	private $fCmd;
 	private $fmCmd;
 	private $worlds = [];
+	private $cachedDefaultRanks = [];
 	public function onEnable(){
 		$this->getLogger()->info(TextFormat::AQUA . "Initializing", false, 1);
 		$this->initDatabase();
@@ -138,7 +139,6 @@ class Main extends Prt implements Listener{
 		$this->saveResource("xecon.yml");
 		$this->reloadConfig();
 		$this->xeconConfig = new Config($this->getDataFolder() . "xecon.yml", Config::YAML);
-		Rank::defaults($this);
 	}
 	public function getXEconConfig(){
 		return $this->xeconConfig;
@@ -325,9 +325,12 @@ class Main extends Prt implements Listener{
 	////////////
 	// to make it easier to debug
 	public function isFactionWorld($world){
-		return in_array(strtolower($world), array_map("strtolower", $this->getConfig()->get("faction worlds"));
+		return in_array(strtolower($world), array_map("strtolower", $this->getConfig()->get("faction worlds")));
 	}
 	public function getDefaultRanks(){
+		if(is_array($this->cachedDefaultRanks)){
+			return $this->cachedDefaultRanks;
+		}
 		/** @var Rank[] $out */
 		$out = [];
 		$rels = [];
@@ -374,6 +377,7 @@ class Main extends Prt implements Listener{
 		foreach($rels as $child => $parent){
 			$out[$child]->setPermsRaw($out[$child]->getPerms() | $out[$parent]->getPerms());
 		}
+		$this->cachedDefaultRanks = $out;
 		return $out;
 	}
 	public function getDefaultRank(){

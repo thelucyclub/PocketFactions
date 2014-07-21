@@ -3,7 +3,6 @@
 namespace pocketfactions\utils\subcommand\f;
 
 use pocketfactions\faction\Faction;
-use pocketfactions\faction\Rank;
 use pocketfactions\Main;
 use pocketfactions\utils\subcommand\Subcommand;
 use pocketmine\Player;
@@ -25,8 +24,8 @@ class Create extends Subcommand{
 			return "A faction with name \"$name\" already exists!";
 		}
 		Faction::newInstance($name, $player->getName(), $this->getMain()->getDefaultRanks(),
-			$this->getMain()->getDefaultRank(), $this->getDefaultAllyRank(),
-			$this->getDefaultTruceRank(), $this->getDefaultStdRank(), $this->main); // TODO ranks
+			$this->getMain()->getDefaultRank(), $this->getMain()->getDefaultAllyRank(),
+			$this->getMain()->getDefaultTruceRank(), $this->getMain()->getDefaultStdRank(), $this->main);
 		$this->main->getServer()->broadcast("[PF] A new faction called $name has been created!", Server::BROADCAST_CHANNEL_USERS);
 		return "";
 	}

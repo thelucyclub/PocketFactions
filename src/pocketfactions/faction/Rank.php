@@ -1,7 +1,6 @@
 <?php
 
 namespace pocketfactions\faction;
-use pocketfactions\Main;
 
 /**
  * Class Rank

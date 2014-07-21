@@ -252,6 +252,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 						return $this->getTruceRank();
 					default:
 						return $this->getStdRank();
+				}
 			}
 		}
 	}
