@@ -149,9 +149,13 @@ default ranks:
   id: 8
   permissions:
   - P_ALL
+- name: others
+  id: 9
+  permissions:
+  - P_NONE
 founder rank: 8
 default rank: 1
 ally rank: 2
 truce rank: 3
-
+standard rank: 9
 ...

@@ -153,68 +153,6 @@ class Rank{
 		return $this->name;
 	}
 	/**
-	 * @param Main $main
-	 * @return self[] the default ranks for a faction
-	 */
-	public static function defaults(Main $main){
-		/** @var Rank[] $out */
-		$out = [];
-		$rels = [];
-		foreach($main->getConfig()->get("default ranks") as $rank){
-			$id = $rank["id"];
-			if(isset($out[$id])){
-				$main->getLogger()->warning("Default rank ID $id is duplicated! ".
-					"Only the first one will be used.");
-				continue;
-			}
-			$perms = 0;
-			if(isset($ranks["permissions"])){
-				foreach($rank["permissions"] as $origPerm){
-					$perm = $origPerm;
-					$inverse = false;
-					if(substr($perm, 0, 1) === "!"){
-						$perm = substr($perm, 1);
-						$inverse = true;
-					}
-					if(defined($path = get_class()."::$perm")){
-						if($inverse){
-							$perms &= ~constant($path);
-						}
-						else{
-							$perms |= constant($path);
-						}
-					}
-					else{
-						$main->getLogger()->warning("Undefined permission node: $perm. This permission will be ignored.");
-					}
-				}
-			}
-			$out[$id] = new Rank($id, $rank["name"], $perms, isset($rank["description"]) ? $rank["description"]:"");
-			if(isset($rank["parent"])){
-				if($rank["parent"] >= $id){
-					$main->getLogger()->error("Parent rank ID must be smaller than child rank ID! ".
-						"(Rank ID $id < ".$rank["parent"].".) Some bugs might occur if you don't stop ".
-						"the server and fix it.");
-				}
-				$rels[$id] = $rank["parent"];
-			}
-		}
-		ksort($rels, SORT_NUMERIC); // no more recursiveness :)
-		foreach($rels as $child => $parent){
-			$out[$child]->setPermsRaw($out[$child]->getPerms() | $out[$parent]->getPerms());
-		}
-		return $out;
-	}
-	public static function defaultRank(Main $main){
-		return $main->getConfig()->get("default rank");
-	}
-	public static function defaultAllyRank(Main $main){
-		return $main->getConfig()->get("ally rank");
-	}
-	public static function defaultTruceRank(Main $main){
-		return $main->getConfig()->get("truce rank");
-	}
-	/**
 	 * @return string
 	 */
 	public function getDescription(){

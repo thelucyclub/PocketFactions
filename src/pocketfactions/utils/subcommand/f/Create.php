@@ -24,9 +24,9 @@ class Create extends Subcommand{
 		elseif($this->getMain()->getFList()->getFaction($name) instanceof Faction){
 			return "A faction with name \"$name\" already exists!";
 		}
-		Faction::newInstance($name, $player->getName(), Rank::defaults($this->getMain()),
-			Rank::defaultRank($this->getMain()), Rank::defaultAllyRank($this->getMain()),
-			Rank::defaultTruceRank($this->getMain()), 0, $this->main); // TODO ranks
+		Faction::newInstance($name, $player->getName(), $this->getMain()->getDefaultRanks(),
+			$this->getMain()->getDefaultRank(), $this->getDefaultAllyRank(),
+			$this->getDefaultTruceRank(), $this->getDefaultStdRank(), $this->main); // TODO ranks
 		$this->main->getServer()->broadcast("[PF] A new faction called $name has been created!", Server::BROADCAST_CHANNEL_USERS);
 		return "";
 	}

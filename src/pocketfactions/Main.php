@@ -327,6 +327,67 @@ class Main extends Prt implements Listener{
 	public function isFactionWorld($world){
 		return in_array(strtolower($world), array_map("strtolower", $this->getConfig()->get("faction worlds"));
 	}
+	public function getDefaultRanks(){
+		/** @var Rank[] $out */
+		$out = [];
+		$rels = [];
+		foreach($this->getConfig()->get("default ranks") as $rank){
+			$id = $rank["id"];
+			if(isset($out[$id])){
+				$this->getLogger()->warning("Default rank ID $id is duplicated! ".
+					"Only the first one will be used.");
+				continue;
+			}
+			$perms = 0;
+			if(isset($ranks["permissions"])){
+				foreach($rank["permissions"] as $origPerm){
+					$perm = $origPerm;
+					$inverse = false;
+					if(substr($perm, 0, 1) === "!"){
+						$perm = substr($perm, 1);
+						$inverse = true;
+					}
+					if(defined($path = get_class()."::$perm")){
+						if($inverse){
+							$perms &= ~constant($path);
+						}
+						else{
+							$perms |= constant($path);
+						}
+					}
+					else{
+						$this->getLogger()->warning("Undefined permission node: $perm. This permission will be ignored.");
+					}
+				}
+			}
+			$out[$id] = new Rank($id, $rank["name"], $perms, isset($rank["description"]) ? $rank["description"]:"");
+			if(isset($rank["parent"])){
+				if($rank["parent"] >= $id){
+					$this->getLogger()->error("Parent rank ID must be smaller than child rank ID! ".
+						"(Rank ID $id < ".$rank["parent"].".) Some bugs might occur if you don't stop ".
+						"the server and fix it.");
+				}
+				$rels[$id] = $rank["parent"];
+			}
+		}
+		ksort($rels, SORT_NUMERIC); // no more recursiveness :)
+		foreach($rels as $child => $parent){
+			$out[$child]->setPermsRaw($out[$child]->getPerms() | $out[$parent]->getPerms());
+		}
+		return $out;
+	}
+	public function getDefaultRank(){
+		return $this->getConfig()->get("default rank");
+	}
+	public function getDefaultAllyRank(){
+		return $this->getConfig()->get("ally rank");
+	}
+	public function getDefaultTruceRank(){
+		return $this->getConfig()->get("truce rank");
+	}
+	public function getDefaultStdRank(){
+		return $this->getConfig()->get("standard rank");
+	}
 	public function getSiegeReputationLoss(){
 		return $this->getConfig()->get("siege reputation loss");
 	}
