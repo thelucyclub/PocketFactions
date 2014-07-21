@@ -13,7 +13,7 @@ class Money extends Subcommand{
 		parent::__construct($main, "money");
 	}
 	public function getUsage(){
-		return "<view|withdraw|deposit> [amount]";
+		return "<view|withdraw|deposit> [[faction] amount]";
 	}
 	public function checkPermission(Faction $faction, Player $player){
 		$rank = $faction->getMemberRank($player);
@@ -36,6 +36,7 @@ class Money extends Subcommand{
 		$rank = $faction->getMemberRank($player);
 		switch($cmd = array_shift($args)){
 			case "view":
+			case "balance":
 				$player->sendMessage("Bank balance: \$".$faction->getAccount(Faction::BANK)->getAmount());
 				return "Cash balance: \$".$faction->getAccount(Faction::CASH)->getAmount();
 			case "withdraw":
@@ -68,6 +69,25 @@ class Money extends Subcommand{
 				}
 				$cash->pay($bank, $amount, "Cash deposit");
 				return "\$$amount of cash has been deposited into your faction bank.";
+			case "ff":
+				if(!isset($args[1])){
+					return "Usage: /f money ff <faction> <amount>";
+				}
+				$other = $this->getMain()->getFList()->getFactionBySimilarName(array_shift($args));
+				$amount = (int) array_shift($args);
+				if($amount <= 0){
+					return "Amount must be larger than zero.";
+				}
+				$account = $faction->getAccount(Faction::CASH);
+				if(!$account->canPay($amount)){
+					return "Your faction doesn't have enough cash!";
+				}
+				$otherAccount = $other->getAccount(Faction::CASH);
+				$account->pay($otherAccount, $amount, "Transfer using /f money ff");
+				$other->sendMessage("\$$amount cash has been transferred from faction $faction.");
+				return "\$$amount cash has been transferred to faction $other.";
+			case "pf":
+				return "Please use \"/f donate\" instead.";
 			case "export":
 				// TODO
 				return "TODO";
