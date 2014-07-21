@@ -225,7 +225,22 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 			$member = $member->getName();
 		}
 		$member = strtolower($member);
-		return isset($this->members[$member]) ? $this->ranks[$this->members[$member]]:null;
+		if(isset($this->members[$member])){
+			return $this->ranks[$this->members[$member]];
+		}
+		else{
+			$result = $this->getMain()->getFList()->getDb()->prepare("SELECT factionid FROM factions_players WHERE lowname = :lowname;");
+			$result->bindValue(":lowname", $member);
+			$result = $result->execute();
+			$data = $result->fetchArray(SQLITE3_ASSOC);
+			if(!is_array($data)){
+				return null;
+			}
+			else{
+				$faction = $this->getMain()->getFList()->getFaction($data["factionid"]);
+				// TODO unfinished
+			}
+		}
 	}
 	/**
 	 * @return bool
