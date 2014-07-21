@@ -11,7 +11,7 @@ Factions
 When you first join a factions server, you have three choices:
 * [Join a faction](#Joining%20a%20faction)
 * [Create a faction](#Creating%20a%20faction)
-* [Don't join a faction (obviously the only choice if you do neither of the above)](#Staying%20neutral)
+* [Don't join a faction (obviously the only choice if you do neither of the above)](#Staying%20in%20the%20wilderness)
 
 Click the points above to see how you do that, and why you should/shouldn't do that.
 
@@ -21,6 +21,10 @@ There are three methods to join an existing faction. They are:
 * Sending a request to join that faction
 * Join an open faction
 
-
+When you first join the server, if you want to join a faction, use `/f list` to show all active factions.
 
 ## Creating a faction
+You can create
+
+## Staying in the wilderness
+Not joining any factions is an unwise action. While you can easily claim chunks for your faction, not creating a faction and claim nearlyby chunks to protect your constructions is dangerous because your constructions can be easily griefed.
