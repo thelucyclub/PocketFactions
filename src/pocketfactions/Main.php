@@ -94,6 +94,7 @@ class Main extends Prt implements Listener{
 	public function onEnable(){
 		$this->getLogger()->info(TextFormat::AQUA . "Initializing", false, 1);
 		$this->initDatabase();
+		$worlds = $this->getConfig()->get("faction worlds");
 		if(isset($worlds[0]) and substr($worlds, 0, 4) === ">>>>"){
 			$this->getLogger()->critical("Please enter your faction worlds before using PocketFactions. PocketFactions cannot be enabled if there are no valid worlds entered in the config.");
 			$this->setEnabled(false); // SUICIDE!
@@ -323,6 +324,9 @@ class Main extends Prt implements Listener{
 	// CONFIG //
 	////////////
 	// to make it easier to debug
+	public function isFactionWorld($world){
+		return in_array(strtolower($world), array_map("strtolower", $this->getConfig()->get("faction worlds"));
+	}
 	public function getSiegeReputationLoss(){
 		return $this->getConfig()->get("siege reputation loss");
 	}

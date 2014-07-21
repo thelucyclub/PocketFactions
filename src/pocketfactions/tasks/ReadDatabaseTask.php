@@ -68,14 +68,15 @@ class ReadDatabaseTask extends AsyncTask{
 			$defaultRank = Bin::readBin($this->read(1));
 			$allyRank = Bin::readBin($this->read(1));
 			$truceRank = Bin::readBin($this->read(1));
+			$stdRank = Bin::readBin($this->read(1));
 			/**
-			 * @var Rank[] $members Ranks indexed by member names, object reference from $ranks (not cloned)
+			 * @var int[] $members Rank IDs indexed by member names
 			 */
 			$members = array();
 			for($i = 0; $i < Bin::readBin($this->read(4)); $i++){
 				$mbName = Bin::readBin($this->read(1));
 				$mbName = $this->read($mbName);
-				$members[$mbName] = $ranks[Bin::readBin($this->read(1))]; // not cloned
+				$members[$mbName] = Bin::readBin($this->read(1));
 			}
 			$lastActive = Bin::readBin($this->read(8));
 			$reputation = Bin::readBin($this->read(8)) - 0x8000000000000000;
@@ -86,10 +87,6 @@ class ReadDatabaseTask extends AsyncTask{
 				$world = Bin::readBin($this->read(1));
 				$world = $this->read($world);
 				$chunks[] = new Chunk($X, $Z, $world);
-			}
-			if(count($chunks) == 0){
-				$this->setResult(self::CORRUPTED);
-				return;
 			}
 			$homes = [];
 			for($i = 0; $i < $this->read(1); $i++){
@@ -105,6 +102,7 @@ class ReadDatabaseTask extends AsyncTask{
 				"default-rank" => $defaultRank,
 				"ally-rank" => $allyRank,
 				"truce-rank" => $truceRank,
+				"std-rank" => $stdRank,
 				"members" => $members,
 				"last-active" => $lastActive,
 				"chunks" => $chunks,

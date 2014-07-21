@@ -37,6 +37,10 @@ class SubcommandMap extends Command implements PluginIdentifiableCommand{
 		}
 		$cmd = array_shift($args);
 		if(isset($this->subcmds[$cmd = strtolower(trim($cmd))]) and $cmd !== "help"){
+			if(($issuer instanceof Position) and !$this->main->isFactionWorld($issuer->getLevel()->getName()){
+				$issuer->sendMessage("You must be in a faction world to run this command.");
+				return false;
+			}
 			if($this->subcmds[$cmd]->hasPermission($issuer) and $issuer->hasPermission($this->getPermission() . "." . strtolower($this->subcmds[$cmd]->getName()))){
 				$this->subcmds[$cmd]->run($args, $issuer);
 			}else{

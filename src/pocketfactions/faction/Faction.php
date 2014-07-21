@@ -33,8 +33,8 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	protected $founder;
 	/** @var Rank[] $ranks indexed by internal rank IDs */
 	protected $ranks;
-	/** @var int internal rank ID of the default rank */
-	protected $defaultRank, $allyRank, $truceRank;
+	/** @var int internal rank ID of the default, ally, truce and standard (neutral/enemy/wilderness) rank */
+	protected $defaultRank, $allyRank, $truceRank, $stdRank;
 	/**
 	 * This array is a list indexed with lowercase member names and filled with integers of the member's rank ID.
 	 * Use <code>array_keys()</code> to get a plain list of members.
@@ -65,6 +65,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 * @param int $defaultRankIndex the default rank's key in $ranks
 	 * @param int $allyRankIndex
 	 * @param int $truceRankIndex
+	 * @param int $stdRankIndex
 	 * @param Main $main
 	 * @param Position|Position[] $home the home position of the faction
 	 * @param string $motto
@@ -73,7 +74,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 * @param int $reputation
 	 * @return Faction
 	 */
-	public static function newInstance($name, $founder, array $ranks, $defaultRankIndex, $allyRankIndex, $truceRankIndex, Main $main, $home, $motto = "", $whitelist = true, $id = false, $reputation = 0){
+	public static function newInstance($name, $founder, array $ranks, $defaultRankIndex, $allyRankIndex, $truceRankIndex, $stdRankIndex, Main $main, $home, $motto = "", $whitelist = true, $id = false, $reputation = 0){
 		if(!is_int($id)){
 			$id = self::nextID($main);
 		}
@@ -86,6 +87,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 			"default-rank" => $defaultRankIndex,
 			"ally-rank" => $allyRankIndex,
 			"truce-rank" => $truceRankIndex,
+			"std-rank" => $stdRankIndex,
 			"members" => [],
 			"last-active" => time(),
 			"chunks" => [],
@@ -107,6 +109,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		$this->defaultRank = $args["default-rank"];
 		$this->allyRank = $args["ally-rank"];
 		$this->truceRank = $args["truce-rank"];
+		$this->stdRank = $args["std-rank"];
 		$this->members = $args["members"];
 		$this->lastActive = $args["last-active"];
 		$this->chunks = $args["chunks"];
@@ -188,6 +191,9 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	public function getAllyRank(){
 		return $this->ranks[$this->allyRank];
 	}
+	public function getStdRank(){
+		return $this->ranks[$this->stdRank];
+	}
 	/**
 	 * @param bool $raw
 	 * @return string[] an array of names of members
@@ -234,11 +240,18 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 			$result = $result->execute();
 			$data = $result->fetchArray(SQLITE3_ASSOC);
 			if(!is_array($data)){
-				return null;
+				return $this->getStdRank();
 			}
 			else{
 				$faction = $this->getMain()->getFList()->getFaction($data["factionid"]);
-				// TODO unfinished
+				$rel= $this->getMain()->getFList()->getFactionsState($this, $faction);
+				switch($rel){
+					case State::REL_ALLY:
+						return $this->getAllyRank();
+					case State::REL_TRUCE:
+						return $this->getTruceRank();
+					default:
+						return $this->getStdRank();
 			}
 		}
 	}

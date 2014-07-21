@@ -38,8 +38,8 @@ class FactionList{
 	protected function load(){
 		if(!is_file($this->path)){
 			$this->factions = [];
-			Faction::newInstance("PvP-Zone", "console", [new Rank(0, "staff", 0, "Staff rank")], 0, 0, 0, $this->main, $this->server->getDefaultLevel()->getSafeSpawn(), $this->server->getServerName() . " server-owned PvP areas", true, self::PVP);
-			Faction::newInstance("Safe-Zone", "console", [new Rank(0, "staff", 0, "Staff rank")], 0, 0, 0, $this->main, $this->server->getDefaultLevel()->getSafeSpawn(), $this->server->getServerName() . " server-owned PvP-free areas", true, self::SAFE);
+			Faction::newInstance("PvP-Zone", "console", [0 => new Rank(0, "staff", Rank::P_ALL, "Staff rank"), 1 => new Rank(1, "normal", Rank::P_NORM_FIGHT, "Normal players")], 0, 0, 0, 1, $this->main, $this->server->getDefaultLevel()->getSafeSpawn(), $this->server->getServerName() . " server-owned PvP areas", true, self::PVP);
+			Faction::newInstance("Safe-Zone", "console", [new Rank(0, "staff", 0, "Staff rank"), 1 => new Rank(1, "normal", Rank::P_NONE, "Normal players")], 0, 0, 0, 1, $this->main, $this->server->getDefaultLevel()->getSafeSpawn(), $this->server->getServerName() . " server-owned PvP-free areas", true, self::SAFE);
 		}
 		else{
 			$this->loadFrom(fopen($this->path, "rb"));

@@ -26,7 +26,7 @@ class Create extends Subcommand{
 		}
 		Faction::newInstance($name, $player->getName(), Rank::defaults($this->getMain()),
 			Rank::defaultRank($this->getMain()), Rank::defaultAllyRank($this->getMain()),
-			Rank::defaultTruceRank($this->getMain()), $this->main);
+			Rank::defaultTruceRank($this->getMain()), 0, $this->main); // TODO ranks
 		$this->main->getServer()->broadcast("[PF] A new faction called $name has been created!", Server::BROADCAST_CHANNEL_USERS);
 		return "";
 	}
