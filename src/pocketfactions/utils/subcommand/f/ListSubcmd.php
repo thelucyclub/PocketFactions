@@ -17,11 +17,11 @@ class ListSubcmd extends Subcommand{
 	}
 	public function onRun(){
 		$factions = [];
-		$op = $this->getMain()->getFList()->getDb()->prepare("SELECT name FROM factions WHERE lastactive > :minactive;");
+		$op = $this->getMain()->getFList()->getDb()->prepare("SELECT name, open FROM factions WHERE lastactive > :minactive;");
 		$op->bindValue(":minactive", time() - $this->getMain()->getSemiInactiveTime() * 3600);
 		$result = $op->execute();
 		while(is_array($array = $result->fetchArray(SQLITE3_ASSOC))){
-			$factions[] = $array["name"];
+			$factions[] = $array["name"].($array["open"] === 1 ? " (opened)":" (closed)");
 		}
 		return "List of ".count($factions)." active factions on this server:\n".implode(", ", $factions);
 	}

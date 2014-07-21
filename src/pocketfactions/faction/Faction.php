@@ -267,6 +267,10 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 */
 	public function setWhitelisted($white){
 		$this->whitelist = $white;
+		$op = $this->getMain()->getFList()->getDb()->prepare("UPDATE factions SET open = :open WHERE id = :id;");
+		$op->bindValue(":open", $white ? 0:1);
+		$op->bindValue(":id", $this->id);
+		$op->execute();
 	}
 	/**
 	 * @return bool
@@ -278,7 +282,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	 * @param bool $open
 	 */
 	public function setOpen($open){
-		$this->whitelist = !$open;
+		$this->setWhitelisted(!$open);
 	}
 	/**
 	 * @param string|bool $name name of the home
