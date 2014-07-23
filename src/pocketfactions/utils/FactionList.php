@@ -197,6 +197,7 @@ class FactionList{
 		return ($f === false ? $this->main->getWilderness():$f);
 	}
 	public function disband(Faction $faction){
+		$faction->delete();
 		unset($this->factions[$faction->getID()]);
 		$op = $this->db->prepare("DELETE FROM factions WHERE id = :id;");
 		$op->bindValue(":id", $faction->getID());

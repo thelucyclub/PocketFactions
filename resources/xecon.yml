@@ -65,11 +65,11 @@ bank overdraft take interest: true
 loan types:
   small:
     amount: 2000
-    horizon: 12
-    maximum: 1
+    horizon: 24
+    maximum: 2
   large:
     amount: 8000
-    horizon: 48
+    horizon: 96
     maximum: 1
 # The total amount of credit (loan + overdraft) allowed
 max liability: 9000

@@ -25,7 +25,7 @@ class Donate extends Subcommand{
 		}
 		/** @var \xecon\Main $xEcon */
 		$xEcon = $this->getMain()->getServer()->getPluginManager()->getPlugin("xEcon");
-		$ent = $xEcon->getPlayerEntity($player);
+		$ent = $xEcon->getPlayerEnt($player);
 		$account = $ent->getAccount(PlayerEnt::ACCOUNT_BANK);
 		$amount = (int) array_shift($args);
 		if($account->canPay($amount)){

@@ -12,6 +12,7 @@ use pocketmine\level\Position;
 use pocketmine\Player;
 use pocketmine\Server;
 use xecon\account\DummyInventory;
+use xecon\account\Loan;
 use xecon\entity\Entity;
 
 class Faction implements InventoryHolder, Requestable, IFaction{
@@ -519,14 +520,24 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		$account = $this->getAccount($refund["account"]);
 		$this->getMain()->getXEconService()->pay($account, $refund["amount"] * $chunks, "Refund for unclaiming all chunks");
 	}
-	public function addLoan($name, $amount){
-		if(isset($this->liabilities[$name])){
-			// TODO decide where to save expire date
-			// TODO idea: save number of loans, then each loan is an account instead of each loan type is an account
-			$this->liabilities[$name]->add($amount);
+	public function addLoan_faction($type){
+		if(is_array($loan = $this->main->getLoan($type))){
+			$loanObj = new Loan($this->getMain()->getXEconLoanService(), $loan["amount"], $this, time() + $loan["horizon"] * 3600);
+			$loanObj->setName($type." ".$loanObj->getName());
+			$cnt = 1;
+			foreach($this->liabilities as $acc){
+				if(strstr($acc->getName(), " ", true) === $type){
+					$cnt++;
+				}
+			}
+			if($cnt > $loan["maximum"]){
+				return "Maximum limit exceeded";
+			}
+			$this->liabilities[$loanObj->getName()] = $loanObj;
 			return true;
-		}else{
-			return false;
+		}
+		else{
+			return "Invalid loan";
 		}
 	}
 	public function __toString(){
@@ -553,9 +564,6 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	public function initDefaultAccounts(){
 		$this->addAccount("Cash", $this->main->getDefaultCash(), $this->main->getMaxCash());
 		$this->addAccount("Bank", $this->main->getDefaultBank(), $this->main->getMaxBank(), -$this->main->getMaxBankOverdraft());
-		foreach($this->main->getBankLoanTypesRaw() as $name => $data){
-			$this->addLiability($name, $data["maximum"] * $data["amount"]);
-		}
 	}
 	public function getAbsolutePrefix(){
 		return "PocketFactions^^";

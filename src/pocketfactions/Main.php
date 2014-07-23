@@ -46,6 +46,7 @@ use pocketmine\utils\TextFormat;
 class Main extends Prt implements Listener{
 	const NAME = "PocketFactions";
 	const XECON_SERV_NAME = "PocketFactionsMoney"; // any better names?
+	const XECON_LOAN_SERV = "PocketFactionsLoans";
 	const V_INIT = "\x00";
 	const V_CURRENT = "\x00";
 	/**
@@ -119,6 +120,7 @@ class Main extends Prt implements Listener{
 		$xEcon = $this->getServer()->getPluginManager()->getPlugin("xEcon");
 		$service = $xEcon->getService();
 		$service->registerService(self::XECON_SERV_NAME);
+		$service->registerService(self::XECON_LOAN_SERV);
 		echo ".";
 		$this->getServer()->getScheduler()->scheduleDelayedRepeatingTask(new CheckInactiveFactionsTask($this), $this->getInactiveCheckInterval() * 1200, $this->getInactiveCheckInterval() * 1200);
 		$this->getServer()->getScheduler()->scheduleRepeatingTask(new GiveInterestTask($this), $this->getReceiveInterestInterval());
@@ -320,6 +322,11 @@ class Main extends Prt implements Listener{
 		$xEcon = $this->getServer()->getPluginManager()->getPlugin("xEcon");
 		return $xEcon->getService()->getService(self::XECON_SERV_NAME);
 	}
+	public function getXEconLoanService(){
+		/** @var \xecon\Main $xEcon */
+		$xEcon = $this->getServer()->getPluginManager()->getPlugin("xEcon");
+		return $xEcon->getService()->getService(self::XECON_LOAN_SERV);
+	}
 	////////////
 	// CONFIG //
 	////////////
@@ -500,6 +507,13 @@ class Main extends Prt implements Listener{
 	}
 	public function getBankLoanTypesRaw(){
 		return $this->xeconConfig->get("loan types");
+	}
+	public function getLoan($type){
+		$raw = $this->getBankLoanTypesRaw();
+		if(!isset($raw[$type])){
+			return null;
+		}
+		return $raw[$type];
 	}
 	public function getMaxBankOverdraft(){
 		return $this->xeconConfig->get("bank max overdraft");
