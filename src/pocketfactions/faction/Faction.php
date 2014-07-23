@@ -522,7 +522,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	}
 	public function addLoan_faction($type){
 		if(is_array($loan = $this->main->getLoan($type))){
-			$loanObj = new Loan($this->getMain()->getXEconLoanService(), $loan["amount"], $this, time() + $loan["horizon"] * 3600);
+			$loanObj = new Loan($this->getMain()->getXEconLoanService(), $loan["amount"], $this, time() + $loan["horizon"] * 3600, $loan["interest"]);
 			$loanObj->setName($type." ".$loanObj->getName());
 			$cnt = 1;
 			foreach($this->liabilities as $acc){
@@ -531,13 +531,20 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 				}
 			}
 			if($cnt > $loan["maximum"]){
-				return "Maximum limit exceeded";
+				return "Maximum limit for loan $type exceeded";
+			}
+			$liabilities = 0;
+			foreach($this->getLiabilities() as $l){
+				$liabilities += $l;
+			}
+			if(max(0, -$this->getAccount(self::BANK)) + $liabilities + $loan["amount"] > $this->getMain()->getMaxLiability()){
+				return "Maximum liability exceeded";
 			}
 			$this->liabilities[$loanObj->getName()] = $loanObj;
 			return true;
 		}
 		else{
-			return "Invalid loan";
+			return "Unknown loan type. Use /f loan types to see a list of loan types in this server.";
 		}
 	}
 	public function __toString(){

@@ -12,6 +12,7 @@ use pocketfactions\utils\FactionList;
 use pocketfactions\utils\subcommand\f\Claim;
 use pocketfactions\utils\subcommand\f\Create;
 use pocketfactions\utils\subcommand\f\Disband;
+use pocketfactions\utils\subcommand\f\Donate;
 use pocketfactions\utils\subcommand\f\Home;
 use pocketfactions\utils\subcommand\f\Homes;
 use pocketfactions\utils\subcommand\f\Info;
@@ -19,6 +20,7 @@ use pocketfactions\utils\subcommand\f\Invite;
 use pocketfactions\utils\subcommand\f\Join;
 use pocketfactions\utils\subcommand\f\Kick;
 use pocketfactions\utils\subcommand\f\ListSubcmd;
+use pocketfactions\utils\subcommand\f\Loan;
 use pocketfactions\utils\subcommand\f\Money;
 use pocketfactions\utils\subcommand\f\Motto;
 use pocketfactions\utils\subcommand\f\Perm;
@@ -173,6 +175,7 @@ class Main extends Prt implements Listener{
 			new Claim($this), // claim a chunk
 			new Create($this), // create a faction
 			new Disband($this), // disband own faction
+			new Donate($this), // donate to own faction
 			new Home($this), // teleport to faction home(s)
 			new Homes($this), // view faction home list
 			new Info($this), // view information of a faction
@@ -180,6 +183,7 @@ class Main extends Prt implements Listener{
 			new Join($this), // send requeset to faction to join it
 			new Kick($this), // kick one from own faction
 			new ListSubcmd($this), // list all active factions
+			new Loan($this), // manage loan of own faction
 			new Money($this), // manage own faction's money
 			new Motto($this), // change own faction's motto
 			new Perm($this), // manage own faction's permissions
@@ -188,6 +192,7 @@ class Main extends Prt implements Listener{
 			new RmHome($this), // remove current faction's home
 			new Sethome($this), // add/move current faction's home(s)
 			new Setopen($this), // view/set whitelist on/off of own faction
+			// new Siege($this),
 			new Unclaim($this), // unclaim chunk
 			new Unclaimall($this) // unclaim all claimed chunks
 		];

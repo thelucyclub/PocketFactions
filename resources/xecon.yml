@@ -16,22 +16,6 @@ max cash: 10000
 # How much money can the faction bank account deposit at most?
 max bank: 50000
 
-## External accounts
-# WARNING: The following may not have been implemented when the plugin is released.
-# If the faction has too much money and cash and bank accounts are not enough to save them, they can purchase external inventories to inventories money.
-# Types of external inventories
-# "safe" and "locker" are names of inventories
-# Inventories of money, if supported by xEcon, can be saved physically by saving in chests. //please refer to my comment at Create.php
-inventory types:
-  locker:
-    maximum: 3000
-    purchase daily price: 50
-    physical state: chest
-  safe:
-    maximum: 10000
-    purchase price: 200
-    physical state: false
-
 ###################
 ## BANK SERVICES ##
 ###################
@@ -56,21 +40,25 @@ bank max overdraft: 500
 bank overdraft take interest: true
 
 ## Loans
-## WARNING: The following may not have been implemented when the plugin is released.
 # Bank provides loan to factions. The debtor of the loan is the faction, not the faction founder or owner.
 # Usually, there can be different types of loans with different time horizons.
 # What types of loan should there be?
 # For the examples below, "small" and "large" are loan names.
-# Each loan type must consist of "amount", "horizon" (in real-life hours) and " maximum" number of that loan allowed to receive.
+# Each loan type must consist of "amount", "horizon" (in real-life hours), the "maximum" number of that loan allowed to receive, "interest" percentage to increase and hours of "interval" to increase interest.
+# WARNING: loan interest is not supported currently
 loan types:
   small:
     amount: 2000
     horizon: 24
     maximum: 2
+    interest: 1
+    interval: 1
   large:
     amount: 8000
     horizon: 96
     maximum: 1
+    interest: 1
+    interval: 8
 # The total amount of credit (loan + overdraft) allowed
 max liability: 9000
 
@@ -127,10 +115,4 @@ set open:
 set not open:
   account: cash
   amount: 100
-#################
-## PERMISSIONS ##
-#################
-## Factions earn money by donations from its members. Faction founders could abuse this money by withdrawing all money into his account and disbanding the faction if anything is added to the array below.
-# Allow the faction founder to withdraw money from the faction accounts?
-accounts withdrawable to founder: []
 ...
