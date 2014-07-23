@@ -30,4 +30,7 @@ class Quit extends FactionMemberSubcommand{
 	public function getUsage(){
 		return "";
 	}
+	public function getAliases(){
+		return ["q"];
+	}
 }

@@ -43,4 +43,7 @@ class Rename extends Subcommand{
 	public function checkPermission(Faction $faction, Player $player){
 		return $faction->getMemberRank($player)->hasPerm(Rank::P_RENAME);
 	}
+	public function getAliases(){
+		return ["name"];
+	}
 }

@@ -39,4 +39,7 @@ class Home extends Subcommand{
 	public function getUsage(){
 		return $this->getMain()->getMaxHomes() > 1 ? "[name] (if no name is provided, you will be\n    teleported to the earliest existing faction home":""; // shoghicp hates dynamic usages, but this is a subcommand map, so it doesn't match his "make plugin uasges static" statement :P
 	}
+	public function getAliases(){
+		return ["h"];
+	}
 }

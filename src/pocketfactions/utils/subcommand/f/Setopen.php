@@ -59,4 +59,7 @@ class Setopen extends Subcommand{
 	public function getDescription(){
 		return "Set your faction's open-for-joining status";
 	}
+	public function getAliases(){
+		return ["so", "open", "o"];
+	}
 }

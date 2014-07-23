@@ -40,4 +40,7 @@ class Claim extends FactionMemberSubcommand{
 	public function getUsage(){
 		return "";
 	}
+	public function getAliases(){
+		return ["c"];
+	}
 }

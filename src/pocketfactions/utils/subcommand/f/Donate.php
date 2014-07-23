@@ -38,4 +38,7 @@ class Donate extends Subcommand{
 	public function getDescription(){
 		return "Donate money into your faction";
 	}
+	public function getAliases(){
+		return ["d"];
+	}
 }

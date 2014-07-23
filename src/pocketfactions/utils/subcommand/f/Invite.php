@@ -42,4 +42,7 @@ class Invite extends Subcommand{
 	public function getUsage(){
 		return "<player> [extra message...]";
 	}
+	public function getAliases(){
+		return ["i"];
+	}
 }

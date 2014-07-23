@@ -29,4 +29,7 @@ class Motto extends Subcommand{
 	public function getUsage(){
 		return "<motto>";
 	}
+	public function getAliases(){
+		return ["desc"];
+	}
 }

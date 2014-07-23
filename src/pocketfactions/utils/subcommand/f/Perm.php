@@ -13,7 +13,7 @@ class Perm extends Subcommand{
 		parent::__construct($main, "perm");
 	}
 	public function onRun(array $args, Faction $faction, Player $player){
-		// another subcommand map? no please...
+		// TODO
 	}
 	public function checkPermission(Faction $faction, Player $player){
 		return $faction->getMemberRank($player)->hasPerm(Rank::P_PERM);
@@ -22,6 +22,9 @@ class Perm extends Subcommand{
 		return "Manage faction internal permissions";
 	}
 	public function getUsage(){
-		return "TODO"; // TODO
+		return "TODO";
+	}
+	public function getAliases(){
+		return ["p"];
 	}
 }

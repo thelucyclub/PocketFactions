@@ -36,4 +36,7 @@ class Join extends Subcommand{
 	public function getUsage(){
 		return "<faction> [extra message]";
 	}
+	public function getAliases(){
+		return ["j"];
+	}
 }

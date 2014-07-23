@@ -28,4 +28,7 @@ class Unclaim extends FactionMemberSubcommand{
 	public function getUsage(){
 		return "";
 	}
+	public function getAliases(){
+		return ["u"];
+	}
 }

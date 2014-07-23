@@ -28,6 +28,9 @@ class SubcommandMap extends Command implements PluginIdentifiableCommand{
 	}
 	public function registerSubcommand(Subcommand $subcmd){
 		$this->subcmds[strtolower(trim($subcmd->getName()))] = $subcmd;
+		foreach($subcmd->getAliases() as $alias){
+			$this->subcmds[strtolower(trim($alias))] = $subcmd;
+		}
 	}
 	public function getPlugin(){
 		return $this->main;

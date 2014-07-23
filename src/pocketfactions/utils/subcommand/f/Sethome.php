@@ -54,4 +54,7 @@ class Sethome extends Subcommand{
 	public function getUsage(){
 		return $this->getMain()->getMaxHomes() > 1 ? "<name>":"[name]";
 	}
+	public function getAliases(){
+		return ["sh"];
+	}
 }

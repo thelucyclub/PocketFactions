@@ -45,4 +45,7 @@ class ListSubcmd extends Subcommand{
 	public function getDescription(){
 		return "Get a list of factions active in the past ".$this->getMain()->getSemiInactiveTime()." hour(s)";
 	}
+	public function getAliases(){
+		return ["l"];
+	}
 }

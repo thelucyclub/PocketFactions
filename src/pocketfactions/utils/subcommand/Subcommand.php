@@ -119,6 +119,9 @@ abstract class Subcommand{
 	}
 	public abstract function getDescription();
 	public abstract function getUsage();
+	public function getAliases(){
+		return [];
+	}
 	/**
 	 * @param CommandSender $sender
 	 * @return bool

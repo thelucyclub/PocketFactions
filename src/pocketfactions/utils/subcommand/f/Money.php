@@ -97,4 +97,7 @@ class Money extends Subcommand{
 	public function getDescription(){
 		return "Manage faction money";
 	}
+	public function getAliases(){
+		return ["m"];
+	}
 }
