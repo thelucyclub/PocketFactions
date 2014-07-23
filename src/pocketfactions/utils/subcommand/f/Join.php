@@ -21,7 +21,9 @@ class Join extends Subcommand{
 			return self::WRONG_FACTION;
 		}
 		$request = new FactionJoinRequest($player, $f, implode(" ", $args));
-		StatsCore::getInstance()->getRequestList()->add($request);
+		/** @var StatsCore $statsCore */
+		$statsCore = $this->getMain()->getServer()->getPluginManager()->getPlugin("StatsCore");
+		$statsCore->getRequestList()->add($request);
 		return "[PF] Join faction request sent to $f.\n[PF] Preview:\n============\n" . $request->getContent();
 	}
 	public function checkPermission(Player $player){

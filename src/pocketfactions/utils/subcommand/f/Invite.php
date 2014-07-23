@@ -24,10 +24,7 @@ class Invite extends Subcommand{
 			return self::NO_PLAYER;
 		}
 		/** @var StatsCore $statsCore */
-		$statsCore = StatsCore::getInstance();
-		if($statsCore->isDisabled()){
-			// $this->main->suicide(); LOL
-		}
+		$statsCore = $this->getMain()->getServer()->getPluginManager()->getPlugin("StatsCore");
 		$request = new FactionInviteRequest($faction, new PlayerRequestable($target), implode(" ", $args));
 		$statsCore->getRequestList()->add($request);
 		$faction->sendMessage("[PF] A request has been sent to $name (" . $target->getName() . ")\n[PF] by {$player->getName()}.\n[PF] Preview:\n============\n" . $request->getContent());

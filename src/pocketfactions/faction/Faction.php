@@ -360,13 +360,13 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	public function getPower(){
 		$power = $this->getReputation();
 		foreach($this->members as $mbr => $rank){
-			$statsCore = StatsCore::getInstance();
+			$statsCore = $this->getMain()->getServer()->getPluginManager()->getPlugin("StatsCore");
 			if(!($statsCore instanceof StatsCore) or $statsCore->isDisabled()){
 				$this->main->getLogger()->error("StatsCore is not found or is disabled.");
 			}
 			$micro = $statsCore->getMLogger()->getTotalOnlineTime($mbr);
 			$power += (((int) ($micro / 60 / 60)) * $this->main->getPowerGainPerOnlineHour());
-			$power -= $statsCore->getInstance()->getMLogger()->getFullOfflineDays($mbr);
+			$power -= $statsCore->getMLogger()->getFullOfflineDays($mbr);
 			// TODO add kills and deaths factors
 		}
 		return $power;
