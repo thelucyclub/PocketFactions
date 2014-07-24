@@ -35,21 +35,27 @@ class FactionList{
 		$this->main = $main;
 		$this->load();
 	}
-	protected function load(){
+	protected function load($async = true){
 		if(!is_file($this->path)){
 			$this->factions = [];
 			Faction::newInstance("PvP-Zone", "console", [0 => new Rank(0, "staff", Rank::P_ALL, "Staff rank"), 1 => new Rank(1, "normal", Rank::P_NORM_FIGHT, "Normal players")], 0, 0, 0, 1, $this->main, $this->server->getDefaultLevel()->getSafeSpawn(), $this->server->getServerName() . " server-owned PvP areas", true, self::PVP);
 			Faction::newInstance("Safe-Zone", "console", [new Rank(0, "staff", 0, "Staff rank"), 1 => new Rank(1, "normal", Rank::P_NONE, "Normal players")], 0, 0, 0, 1, $this->main, $this->server->getDefaultLevel()->getSafeSpawn(), $this->server->getServerName() . " server-owned PvP-free areas", true, self::SAFE);
 		}
 		else{
-			$this->loadFrom(fopen($this->path, "rb"));
+			$this->loadFrom(fopen($this->path, "rb"), $async);
 		}
 	}
 	/**
 	 * @param resource $res
+	 * @param bool $async
 	 */
-	public function loadFrom($res){
-		$this->scheduleAsyncTask(new ReadDatabaseTask($res, array($this, "setAll"), array($this, "setFactionsStates"), $this->main));
+	public function loadFrom($res, $async = true){
+		if($async){
+			$this->scheduleAsyncTask(new ReadDatabaseTask($res, array($this, "setAll"), array($this, "setFactionsStates"), $this->main));
+		}
+		else{
+			new ReadDatabaseTask($res, array($this, "setAll"), array($this, "setFactionsStates"), $this->main, false);
+		}
 	}
 	public function save(){
 		$this->saveTo(fopen($this->path, "wb"));

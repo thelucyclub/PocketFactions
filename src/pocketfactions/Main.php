@@ -96,7 +96,8 @@ class Main extends Prt implements Listener{
 	private $worlds = [];
 	private $cachedDefaultRanks = [];
 	public function onEnable(){
-		$this->getLogger()->info(TextFormat::AQUA . "Initializing", false, 1);
+		$this->getLogger()->info(TextFormat::LIGHT_PURPLE."Initializing...", false, 1);
+		$this->getLogger()->info(TextFormat::LIGHT_PURPLE."Loading database...");
 		$this->initDatabase();
 		$worlds = $this->getConfig()->get("faction worlds");
 		if(isset($worlds[0]) and substr($worlds, 0, 4) === ">>>>"){
@@ -117,13 +118,11 @@ class Main extends Prt implements Listener{
 				}
 			}
 		}
-		echo ".";
 		/** @var \xecon\Main $xEcon */
 		$xEcon = $this->getServer()->getPluginManager()->getPlugin("xEcon");
 		$service = $xEcon->getService();
 		$service->registerService(self::XECON_SERV_NAME);
 		$service->registerService(self::XECON_LOAN_SERV);
-		echo ".";
 		$this->getServer()->getScheduler()->scheduleDelayedRepeatingTask(new CheckInactiveFactionsTask($this), $this->getInactiveCheckInterval() * 1200, $this->getInactiveCheckInterval() * 1200);
 		$this->getServer()->getScheduler()->scheduleRepeatingTask(new GiveInterestTask($this), $this->getReceiveInterestInterval());
 		$this->registerEvents();
@@ -131,6 +130,9 @@ class Main extends Prt implements Listener{
 		$this->declareActivityDefinition();
 		echo PHP_EOL;
 		$this->getLogger()->info(TextFormat::toANSI(TextFormat::GREEN . " Done!" . TextFormat::RESET . PHP_EOL));
+	}
+	public function onDisable(){
+		$this->getFList()->save();
 	}
 	protected function initDatabase(){
 		$this->flist = new FactionList($this); // used AsyncTask because the server could be running in the middle

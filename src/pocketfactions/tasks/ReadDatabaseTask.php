@@ -18,15 +18,21 @@ class ReadDatabaseTask extends AsyncTask{
 	const WIP = null;
 	protected $buffer = "";
 	protected $offset = 0;
-	public function __construct($res, callable $onFinished, callable $statesSetter, Main $main){
+	public function __construct($res, callable $onFinished, callable $statesSetter, Main $main, $isAsync = true){
 		$this->res = $res;
 		$this->onFinished = $onFinished;
 		$this->statesSetter = $statesSetter;
 		$this->main = $main;
+		if(!$isAsync){
+			$this->onRun();
+			$this->onCompletion(Server::getInstance());
+		}
 	}
 	public function onRun(){
-		$this->buffer = stream_get_contents($this->res);
-		fclose($this->res);
+		if(!$this->buffer){
+			$this->buffer = stream_get_contents($this->res);
+			fclose($this->res);
+		}
 	}
 	public function onCompletion(Server $server){
 		$this->setResult(self::WIP);
@@ -137,7 +143,7 @@ class ReadDatabaseTask extends AsyncTask{
 		$string = substr($this->buffer, $this->offset, $length);
 		$this->offset += $length;
 		if(strlen($string) < $length){
-			trigger_error("PocketFactions database corrupted: Unexpected EOF", E_USER_WARNING);
+			trigger_error("PocketFactions database corrupted: Unexpected end of file", E_USER_WARNING);
 		}
 		return $string;
 	}

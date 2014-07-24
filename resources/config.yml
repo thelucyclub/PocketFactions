@@ -154,8 +154,13 @@ default ranks:
   permissions:
   - P_NONE
 founder rank: 8
+# the rank of players who aren't the founder of the faction and haven't been granted with any ranks
 default rank: 1
+# the rank of players in factions marked as "ally"
 ally rank: 2
+# the rank of players in factions marked as "truce"
 truce rank: 3
+# the rank of players not in that faction, ally factions or truce factions
+# Note: enemy factions ALWAYS have P_NORM_FIGHT permission.
 standard rank: 9
 ...
