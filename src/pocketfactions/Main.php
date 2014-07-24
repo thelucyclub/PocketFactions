@@ -132,7 +132,7 @@ class Main extends Prt implements Listener{
 		$this->getLogger()->info(TextFormat::toANSI(TextFormat::GREEN . " Done!" . TextFormat::RESET . PHP_EOL));
 	}
 	public function onDisable(){
-		$this->getFList()->save();
+		$this->getFList()->save(false);
 	}
 	protected function initDatabase(){
 		$this->flist = new FactionList($this); // used AsyncTask because the server could be running in the middle

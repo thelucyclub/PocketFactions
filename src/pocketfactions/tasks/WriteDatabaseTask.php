@@ -11,10 +11,14 @@ use pocketmine\Server;
 
 class WriteDatabaseTask extends AsyncTask{
 	protected $buffer = "";
-	public function __construct($res, Main $main){
+	public function __construct($res, Main $main, $isAsync = true){
 		$this->res = $res;
 		$this->main = $main;
 		$this->onPreRun();
+		if(!$isAsync){
+			$this->onRun();
+			$this->onCompletion(Server::getInstance());
+		}
 	}
 	public function onPreRun(){
 		$this->buffer .= FactionList::MAGIC_P;

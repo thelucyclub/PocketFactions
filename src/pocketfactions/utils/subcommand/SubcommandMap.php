@@ -6,7 +6,7 @@ use pocketfactions\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginIdentifiableCommand;
-use pocketmine\Player;
+use pocketmine\level\Position;
 use pocketmine\utils\TextFormat;
 
 class SubcommandMap extends Command implements PluginIdentifiableCommand{
@@ -41,10 +41,6 @@ class SubcommandMap extends Command implements PluginIdentifiableCommand{
 		}
 		$cmd = array_shift($args);
 		if(isset($this->subcmds[$cmd = strtolower(trim($cmd))]) and $cmd !== "help"){
-			if(($issuer instanceof Player) and !$this->main->isFactionWorld($issuer->getLevel()->getName())){
-				$issuer->sendMessage("You must be in a faction world to run this command.");
-				return false;
-			}
 			if($this->subcmds[$cmd]->hasPermission($issuer) and $issuer->hasPermission($this->getPermission() . "." . strtolower($this->subcmds[$cmd]->getName()))){
 				$this->subcmds[$cmd]->run($args, $issuer);
 			}else{
@@ -97,5 +93,16 @@ class SubcommandMap extends Command implements PluginIdentifiableCommand{
 	}
 	public function getSubcommand($name){
 		return isset($this->subcmds[$name]) ? $this->subcmds[$name]:false;
+	}
+	public function testPermissionSilent(CommandSender $sender){
+		if($sender instanceof Position){
+			if(!$this->main->isFactionWorld($sender->getLevel()->getName())){
+				return false;
+			}
+		}
+		return parent::testPermissionSilent($sender);
+	}
+	public function getPermissionMessage(){
+		return "Please run this command in a faction world.";
 	}
 }

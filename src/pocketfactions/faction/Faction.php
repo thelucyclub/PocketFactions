@@ -579,7 +579,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		return true; // TODO
 	}
 	public function getRequestableIdentifier(){
-		return "PocketFaction " . $this->getID();
+		return "PocketFactions Faction #".$this->getID();
 	}
 	public function canFight(MCEntity $attacker, MCEntity $victim){
 		return true;

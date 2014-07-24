@@ -57,14 +57,20 @@ class FactionList{
 			new ReadDatabaseTask($res, array($this, "setAll"), array($this, "setFactionsStates"), $this->main, false);
 		}
 	}
-	public function save(){
-		$this->saveTo(fopen($this->path, "wb"));
+	public function save($async = true){
+		$this->saveTo(fopen($this->path, "wb"), $async);
 	}
 	/**
 	 * @param resource $res
+	 * @param bool $async
 	 */
-	public function saveTo($res){
-		$this->scheduleAsyncTask(new WriteDatabaseTask($res, $this->main));
+	public function saveTo($res, $async = true){
+		if($async){
+			$this->scheduleAsyncTask(new WriteDatabaseTask($res, $this->main));
+		}
+		else{
+			new WriteDatabaseTask($res, $this->main, false);
+		}
 	}
 	/**
 	 * @param AsyncTask $asyncTask
