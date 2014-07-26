@@ -85,6 +85,8 @@ class Main extends Prt implements Listener{
 	private $fmCmd;
 	private $worlds = [];
 	private $cachedDefaultRanks = [];
+	/** @var string */
+	private $lastFaction = [];
 	public function onEnable(){
 		$this->getLogger()->info(TextFormat::LIGHT_PURPLE."Loading database...");
 		$this->initDatabase();
@@ -198,6 +200,7 @@ class Main extends Prt implements Listener{
 	 * @ignoreCancelled true
 	 */
 	public function onBlockTouch(PlayerInteractEvent $evt){
+		if(!$this->isFactionWorld($evt->getPlayer()->getLevel()->getName())) return;
 		$p = $evt->getPlayer();
 		if($this->getAdminMode($p)){
 			return;
@@ -232,6 +235,7 @@ class Main extends Prt implements Listener{
 	 * @ignoreCancelled true
 	 */
 	public function onBlockPlace(BlockPlaceEvent $event){
+		if(!$this->isFactionWorld($event->getBlock()->getLevel()->getName())) return;
 		if(self::$ACTIVITY_DEFINITION === self::ACTIVITY_BUILD){
 			$this->onLoggedIn($event->getPlayer());
 		}
@@ -242,6 +246,7 @@ class Main extends Prt implements Listener{
 	 * @ignoreCancelled true
 	 */
 	public function onBlockBreak(BlockBreakEvent $event){
+		if(!$this->isFactionWorld($event->getBlock()->getLevel()->getName())) return;
 		if(self::$ACTIVITY_DEFINITION === self::ACTIVITY_BUILD){
 			$this->onLoggedIn($event->getPlayer());
 		}
@@ -252,6 +257,7 @@ class Main extends Prt implements Listener{
 	 * @ignoreCancelled true
 	 */
 	public function onFight(EntityDamageByEntityEvent $event){
+		if(!$this->isFactionWorld($event->getEntity()->getLevel()->getName())) return;
 		$victim = $event->getEntity();
 		$faction = $this->getFList()->getFaction(Chunk::fromObject($victim));
 		if(!$faction->canFight($event->getDamager(), $event->getEntity())){
