@@ -41,7 +41,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\Player;
-use pocketmine\plugin\PluginBase as Prt;
+use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
@@ -69,34 +69,23 @@ class Main extends Prt implements Listener{
 	public static $ACTIVITY_DEFINITION;
 	/** @var bool[] */
 	private $adminModes = [];
-	/**
-	 * @var Config
-	 */
+	/** @var Config */
 	public $cleanSave;
 	public $haveRequiredSimpleAuth = false;
-	/**
-	 * @var Config
-	 */
+	/** @var Config */
 	private $xeconConfig;
-	/**
-	 * @var string[][] Unread inbox messages indexed with lowercase player name
-	 */
-	/**
-	 * @var FactionList
-	 */
+	/** @var string[][] Unread inbox messages indexed with lowercase player name */
+	/** @var FactionList */
 	private $flist;
 	/** @var WildernessFaction */
 	private $wilderness;
-	/**
-	 * @var bool[] (all elements should be true)
-	 */
+	/** @var bool[] (all elements should be true) */
 	private $loggedIn = array();
 	private $fCmd;
 	private $fmCmd;
 	private $worlds = [];
 	private $cachedDefaultRanks = [];
 	public function onEnable(){
-		$this->getLogger()->info(TextFormat::LIGHT_PURPLE."Initializing...", false, 1);
 		$this->getLogger()->info(TextFormat::LIGHT_PURPLE."Loading database...");
 		$this->initDatabase();
 		$worlds = $this->getConfig()->get("faction worlds");
@@ -118,29 +107,28 @@ class Main extends Prt implements Listener{
 				}
 			}
 		}
+		$this->getLogger()->info("Communicating with dependency plugins...");
 		/** @var \xecon\Main $xEcon */
 		$xEcon = $this->getServer()->getPluginManager()->getPlugin("xEcon");
 		$service = $xEcon->getService();
 		$service->registerService(self::XECON_SERV_NAME);
 		$service->registerService(self::XECON_LOAN_SERV);
+		$this->getLogger()->info("Communicating with PocketMine-MP...");
 		$this->getServer()->getScheduler()->scheduleDelayedRepeatingTask(new CheckInactiveFactionsTask($this), $this->getInactiveCheckInterval() * 1200, $this->getInactiveCheckInterval() * 1200);
 		$this->getServer()->getScheduler()->scheduleRepeatingTask(new GiveInterestTask($this), $this->getReceiveInterestInterval());
 		$this->registerEvents();
 		$this->registerCmds();
 		$this->declareActivityDefinition();
-		echo PHP_EOL;
-		$this->getLogger()->info(TextFormat::toANSI(TextFormat::GREEN . " Done!" . TextFormat::RESET . PHP_EOL));
+		$this->getLogger()->info(TextFormat::toANSI(TextFormat::GREEN."Initialization done!".TextFormat::RESET.PHP_EOL));
 	}
 	public function onDisable(){
 		$this->getFList()->save(false);
 	}
 	protected function initDatabase(){
+		@mkdir($this->getDataFolder());
 		$this->flist = new FactionList($this); // used AsyncTask because the server could be running in the middle
 		$this->wilderness = new WildernessFaction($this);
-		@mkdir($this->getDataFolder() . "database/");
-		echo ".";
-		$this->cleanSave = new Config($this->getDataFolder() . "database/data.json", Config::JSON, ["next-fid" => 10, // 10 IDs left for defaults
-		]);
+		$this->cleanSave = new Config($this->getDataFolder() . "data.json", Config::JSON, ["next-fid" => 16,]); // 16 IDs reserved for defaults
 		$this->saveDefaultConfig();
 		$this->saveResource("xecon.yml");
 		$this->reloadConfig();
@@ -274,7 +262,7 @@ class Main extends Prt implements Listener{
 	 * @return string
 	 */
 	public function getFactionsFilePath(){
-		return $this->getDataFolder() . "database/factions.dat";
+		return $this->getDataFolder()."factions.dat";
 	}
 	public function onLogin(PlayerJoinEvent $evt){
 		if(self::$ACTIVITY_DEFINITION === self::ACTIVITY_JOIN){
