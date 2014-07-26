@@ -1,4 +1,4 @@
-Cobtributing Guidelines and Agreement
+Contributing Guidelines and Agreement
 ===
 Before creating an issue, a pull request or pushing a commit directly with owner/collaborator of the repository, please read the following first.
 
@@ -40,4 +40,4 @@ Generally, the most important rule is not to use The Repository as a forum.
 * The coding style should conform to either [the coding style requirements of PocketMine-MP](https://github.com/PocketMine/PocketMine-MP/blob/master/CONTRIBUTING.md) or the observed coding style in The Repo.
 * If the base branch of the pull request is a working version, please ensure that the pull request works too.
 
-Last modification of this file pushed to The Repo: 26/7/2014 4:30 GMT +8:00
+Last modification of this file pushed to The Repo: 26/7/2014 10:03 p.m. GMT +8:00
