@@ -28,16 +28,35 @@ Please follow these guidelines when contributing, or You may be blocked from the
 
 Generally, the most important rule is not to use The Repository as a forum.
 
-## Issues
-* Please do not use the issue tracker as a forum. Some discussion is allowed, but off-topic discussion that affects other people (by making many comments) is disallowed.
+## Questions
+* If you have a question or support request, please request for help on freenode IRC channel #LegendOfMCPE. You may not get an answer immediately, but you can quit the channel and check for an answer later on [the channel's public log](https://botbot.me/irc.freenode.net/LegendOfMCPE). If you find no reply to your question in 24 hours, we probably missed your question. If so, please ask again on the channel.
+* You can connect to the channel through your browser [using the webchat website](http://webchat.freenode.net/?channels=LegendOfMCPE).
+* You can also connect to it via an IRC client to server chat.freenode.net at port 6667.
+
+## Suggestions
+* Suggestions to the project are always welcome if they don't get to annoying spam. You can ask it on these places:
+  * Freenode IRC channel #LegendOfMCPE as mentioned above
+  * The release page of the plugin on the forums (if exists)
+  * A private message to the repository's main developers' accounts on PocketMine forums. Please don't ask for support by sending a private message to the account LegendsOfMCPE on PocketMine forums because we rarely check that account.
+
+## Bugs
+* Please do not use the issue tracker as a forum. Discussion is allowed, but off-topic discussion that affects other people (by making many comments) is disallowed.
 * Please try to combine several consecutive comments into the same comment if possible.
-* Please only report bugs or suggest features using the issue tracker.
-* Please check if such an issue is already opened, still open or closed.
-* Please suggest a method to reproduce the bug and, if possible, provide a bug log.
-* Reports of issues in development issues are welcome.
+* Please only report bugs using the issue tracker.
+* Please check if issues of the same problem are already created. The old issue may be closed or open. Please use [the search box on GitHub](../../search?ref=cmdform&type=Issues).
+* Please do not ask for help or support on the issue tracker. We will _not_ answer questions from the issue tracker.
+* Please write a descriptive title and description for the issue.
+  * A descriptive title is not "help", "crash report", etc. Please give representable titles, including very brief and short information like what happened, or when it happens.
+  * A descriptive description includes what happened, how to reproduce that issue, and if possible screenshots and error dumps too. You are encouraged to use a pastebin like http://pastebin.com or [the fenced code block syntax](https://help.github.com/articles/github-flavored-markdown#fenced-code-blocks) to put error dumps in.
+* Please use English. If you use a translator to translate your report to English, please use Google Translate and include the URL of the translate page in the report page too. (This can help us get more choices from the translator, or even read the original report in your language if one of our members in the organization understand it)
+* Please try to ensure that this issue is related to the project on this repo. If this project is a plugin, try to uninstall the plugin and reinstall it to confirm that it is the source of problem.
 
 ## Pull requests
 * The coding style should conform to either [the coding style requirements of PocketMine-MP](https://github.com/PocketMine/PocketMine-MP/blob/master/CONTRIBUTING.md) or the observed coding style in The Repo.
 * If the base branch of the pull request is a working version, please ensure that the pull request works too.
+* Do not modify the authors of the project in the pull request.
+* If you are to be added into the organization, we will ask you to. We have no reason to add you if you contributed no code at all, and we will not add you because you asked.
 
-Last modification of this file pushed to The Repo: 26/7/2014 10:03 p.m. GMT +8:00
+Last modification of this file pushed to The Repo: 26/7/2014 10:40 p.m. GMT +8:00
+
+Disclaimer: This file of contributing guidelines and agreement is written based on the contribution guidelines of PocketMine/PocketMine-MP.
