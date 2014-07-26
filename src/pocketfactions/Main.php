@@ -46,7 +46,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
-class Main extends Prt implements Listener{
+class Main extends PluginBase implements Listener{
 	const NAME = "PocketFactions";
 	const XECON_SERV_NAME = "PocketFactionsMoney"; // any better names?
 	const XECON_LOAN_SERV = "PocketFactionsLoans";
@@ -272,16 +272,18 @@ class Main extends Prt implements Listener{
 	 */
 	public function onMove(EntityMoveEvent $ev){
 		$e = $ev->getEntity();
-		if(!$this->isFactionWorld($ev->getLevel()->getName()) or !($e instanceof Player)) return;
+		if(!$this->isFactionWorld($e->getLevel()->getName())) return;
+		if(!($e instanceof Player)) return;
 		$f = $this->getFList()->getValidFaction($e);
 		$n = $f->getName();
 		if($n !== $this->getLastFaction($e)){
 			$e->sendMessage("You have entered ".$f->getDisplayName().".");
 		}
-		$this->lastFaction[$e->getID())] = $n;
+		$this->lastFaction[$e->getID()] = $n;
 	}
 	private function getLastFaction(Player $player){
 		return isset($this->lastFaction[$player->getID()]) ? $this->lastFaction[$player->getID()]:false;
+	}
 	/**
 	 * @return string
 	 */

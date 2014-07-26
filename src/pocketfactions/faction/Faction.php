@@ -522,6 +522,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	}
 	public function addLoan_faction($type){
 		if(is_array($loan = $this->main->getLoan($type))){
+			/** @var Entity $this */ // I don't know why I need to do this.
 			$loanObj = new Loan($this->getMain()->getXEconLoanService(), $loan["amount"], $this, time() + $loan["horizon"] * 3600, $loan["interest"]);
 			$loanObj->setName($type." ".$loanObj->getName());
 			$cnt = 1;
