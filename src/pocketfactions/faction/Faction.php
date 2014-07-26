@@ -550,6 +550,9 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	public function __toString(){
 		return $this->getName();
 	}
+	public function getDisplayName(){
+		return "faction ".$this->name; // TODO better representations
+	}
 	/////////////////////////
 	// Inherited functions //
 	/////////////////////////

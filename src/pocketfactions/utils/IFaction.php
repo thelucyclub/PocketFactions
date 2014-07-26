@@ -17,6 +17,10 @@ interface IFaction{
 	 */
 	public function getName();
 	/**
+	 * @return string
+	 */
+	public function getDisplayName();
+	/**
 	 * @param Chunk $chunk
 	 * @return bool
 	 */

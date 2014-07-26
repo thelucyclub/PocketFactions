@@ -36,6 +36,7 @@ use pocketfactions\utils\WildernessFaction;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\entity\EntityMoveEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
@@ -264,6 +265,23 @@ class Main extends Prt implements Listener{
 			$event->setCancelled();
 		}
 	}
+	/**
+	 * @param EntityMoveEvent $ev
+	 * @priority MONITOR
+	 * @ignoreCancelled true
+	 */
+	public function onMove(EntityMoveEvent $ev){
+		$e = $ev->getEntity();
+		if(!$this->isFactionWorld($ev->getLevel()->getName()) or !($e instanceof Player)) return;
+		$f = $this->getFList()->getValidFaction($e);
+		$n = $f->getName();
+		if($n !== $this->getLastFaction($e)){
+			$e->sendMessage("You have entered ".$f->getDisplayName().".");
+		}
+		$this->lastFaction[$e->getID())] = $n;
+	}
+	private function getLastFaction(Player $player){
+		return isset($this->lastFaction[$player->getID()]) ? $this->lastFaction[$player->getID()]:false;
 	/**
 	 * @return string
 	 */
