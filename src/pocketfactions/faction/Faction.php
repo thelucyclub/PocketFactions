@@ -4,9 +4,8 @@ namespace pocketfactions\faction;
 
 use legendofmcpe\statscore\Requestable;
 use legendofmcpe\statscore\StatsCore;
-use pocketfactions\utils\IFaction;
 use pocketfactions\Main;
-use pocketmine\entity\Entity as MCEntity;
+use pocketfactions\utils\IFaction;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\level\Position;
 use pocketmine\Player;
@@ -584,9 +583,6 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	}
 	public function getRequestableIdentifier(){
 		return "PocketFactions Faction #".$this->getID();
-	}
-	public function canFight(MCEntity $attacker, MCEntity $victim){
-		return true;
 	}
 	public function canBuild(Player $player, Position $pos){
 		return $this->getMemberRank($player)->hasPerm(Rank::P_BUILD) and (!$this->isCentreLocation($pos) or $this->getMemberRank($player)->hasPerm(Rank::P_BUILD_CENTRE));

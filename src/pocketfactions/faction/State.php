@@ -3,10 +3,10 @@
 namespace pocketfactions\faction;
 
 class State{
-	const REL_NEUTRAL = 0;
-	const REL_TRUCE = 1;
-	const REL_ALLY = 2;
-	const REL_ENEMY = 3;
+	const REL_ENEMY = 0;
+	const REL_NEUTRAL = 1;
+	const REL_TRUCE = 2;
+	const REL_ALLY = 3;
 	/** @var int */
 	private $state;
 	/** @var Faction */

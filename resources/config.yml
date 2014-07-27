@@ -65,6 +65,24 @@ enable sieging: false
 # If the player is within this number of blocks from the chunk centre, allow them to siege the chunk.
 siege radius: 4
 
+## Attack permissions
+# Pain fight is the permission to fight with damage dealt to the attacker too.
+# If you want the damage to be dealt with the number of hearts given below, put exact for type and the number of hearts for value
+# If you want the damage to be dealt as a percentage of the damage dealt to the victim, put percentage for type and the percentage of the damage dealt to the victim to deal to the attacker for value
+# If you want the damage to be dealt as a percentage of the attacker's health, put self for type and the percentage of the current health to be dealt to the attacker for value
+# TODO help me improve the English expression please
+pain fight damage type: percentage
+pain fight damage value: 20
+
+# Soft fight is the permission to fight with less damage dealt
+# If you want the damage dealt to be reduced by a number of hearts (to a minimum of 0), put exact for type and the number of hearts for value
+# If you want the damage dealt to be reduced by a percentage, put percentage for type and the percentage to reduce for value
+soft fight reduction type: percentage
+soft fight reduction value: 20
+
+# Enemy factions should have special attack permissions that cannot be changed by the faction admins
+#
+
 ## Players can set homes to teleport to their faction homes.
 # This plugin allows multiple homes. What is the maximum number of homes allowed?
 # Note: strange bugs may occur if players already started setting homes but then you decreased this value.

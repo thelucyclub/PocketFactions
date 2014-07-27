@@ -33,12 +33,24 @@ class Rank{
 	const P_OPEN_CHEST =                    0b0000000000000000000000000000000000000000000000000000000000000000;
 	/** Permission to open furnaces (and deposit/remove items into/from it) */
 	const P_OPEN_FURNACE =                  0b0000000000000000000000000000000000000000000000000000000000000000;
-	/** Permission to fight in claimed chunks with less damage received */
-	const P_NORM_FIGHT =                    0b0000000000000000000000000000000000000000000000000000000000000000;
-//	/** Permission to enter normal chunks */
-//	const P_ENTER =                         0b0000000000000000000000000000000000000000000000000000000000000000;
-//	/** Permission to enter center chunks */
-//	const P_ENTER_CENTRE =                  0b0000000000000000000000000000000000000000000000000000000000000000;
+	/**
+	 * Permission to fight normally.
+	 * Must NOT be combined with P_PAIN_FIGHT and P_SOFT_FIGHT. */
+	const P_NORM_FIGHT =                 0b0000000000000000000000000000000000000000000000000000000000000000;
+	/**
+	 * Permission to fight with damage to self too (configured in config.yml).
+	 * Must NOT be combined with P_NORM_FIGHT and P_SOFT_FIGHT
+	 */
+	const P_PAIN_FIGHT =                    0b0000000000000000000000000000000000000000000000000000000000000000;
+	/**
+	 * Permission to fight with less damage dealt (configured in config.yml).
+	 * Must NOT be combined with P_NORM_FIGHT and P_PAIN_FIGHT
+	 */
+	const P_SOFT_FIGHT =                    0b0000000000000000000000000000000000000000000000000000000000000000;
+	/** Permission to deal the last strike that kills a player*/
+	const P_KILL =                          0b0000000000000000000000000000000000000000000000000000000000000000;
+	/** Permission to fight with less damage received (configured in config.yml) */
+	const P_LESS_DAMAGE =                   0b0000000000000000000000000000000000000000000000000000000000000000;
 	/** Permission to set the faction to whitelist or open */
 	const P_SET_WHITE =                     0b0000000000000000000000000000000000000000000000000000000000000000;
 	/** Permission to accept a request to join this faction */
@@ -67,6 +79,8 @@ class Rank{
 	const P_TAKE_DEBT =                     0b0000000000000000000000000000000000000000000000000000000000000000;
 	/** Permission to disband the faction */
 	const P_DISBAND =                       0b0000000000000000000000000000000000000000000000000000000000000000;
+	/** Permission to set faction relations */
+	const P_REL_SET =                       0b0000000000000000000000000000000000000000000000000000000000000000;
 	/** Permission to teleport to any homes */
 	const P_TP_HOME =                       0b0000000000000000000000000000000000000000000000000000000000000000;
 	/** Permission to remove/move/create homes */

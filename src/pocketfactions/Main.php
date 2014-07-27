@@ -25,6 +25,7 @@ use pocketfactions\utils\subcommand\f\Money;
 use pocketfactions\utils\subcommand\f\Motto;
 use pocketfactions\utils\subcommand\f\Perm;
 use pocketfactions\utils\subcommand\f\Quit;
+use pocketfactions\utils\subcommand\f\Rel;
 use pocketfactions\utils\subcommand\f\RmHome;
 use pocketfactions\utils\subcommand\f\Sethome;
 use pocketfactions\utils\subcommand\f\Setopen;
@@ -180,12 +181,11 @@ class Main extends PluginBase implements Listener{
 			new Money($this), // manage own faction's money
 			new Motto($this), // change own faction's motto
 			new Perm($this), // manage own faction's permissions
-//			new Rel($this), // manage own faction's relations with another
+			new Rel($this), // manage own faction's relations with another
 			new Quit($this), // quit current faction, and pass ownership to somebody if is owner
 			new RmHome($this), // remove current faction's home
 			new Sethome($this), // add/move current faction's home(s)
 			new Setopen($this), // view/set whitelist on/off of own faction
-			// new Siege($this),
 			new Unclaim($this), // unclaim chunk
 			new Unclaimall($this) // unclaim all claimed chunks
 		];
@@ -247,7 +247,9 @@ class Main extends PluginBase implements Listener{
 	 * @ignoreCancelled true
 	 */
 	public function onBlockBreak(BlockBreakEvent $event){
-		if(!$this->isFactionWorld($event->getBlock()->getLevel()->getName())) return;
+		if(!$this->isFactionWorld($event->getBlock()->getLevel()->getName())){
+			return;
+		}
 		if(self::$ACTIVITY_DEFINITION === self::ACTIVITY_BUILD){
 			$this->onLoggedIn($event->getPlayer());
 		}
@@ -258,12 +260,19 @@ class Main extends PluginBase implements Listener{
 	 * @ignoreCancelled true
 	 */
 	public function onFight(EntityDamageByEntityEvent $event){
-		if(!$this->isFactionWorld($event->getEntity()->getLevel()->getName())) return;
-		$victim = $event->getEntity();
-		$faction = $this->getFList()->getFaction(Chunk::fromObject($victim));
-		if(!$faction->canFight($event->getDamager(), $event->getEntity())){
-			$event->setCancelled();
+		if(!$this->isFactionWorld($event->getEntity()->getLevel()->getName())){
+			return;
 		}
+		$victim = $event->getEntity();
+		$attacker = $event->getDamager();
+		if(!($attacker instanceof Player) or !($victim instanceof Player)){
+			return;
+		}
+		$at = $this->getFList()->getFaction(Chunk::fromObject($victim));
+		$attackf = $this->getFList()->getFaction($attacker);
+		$victimf = $this->getFList()->getFaction($victim);
+		$state = $this->getFList()->getFactionsState($attackf, $victimf);
+		// TODO
 	}
 	/**
 	 * @param EntityMoveEvent $ev

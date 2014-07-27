@@ -19,6 +19,7 @@ class FactionList{
 	const WILDERNESS = 0;
 	const PVP = 1;
 	const SAFE = 2;
+	const STAFF = 3;
 	/** @var \SQLite3 */
 	private $db = null;
 	/**
@@ -38,8 +39,21 @@ class FactionList{
 	protected function load($async = true){
 		if(!is_file($this->path)){
 			$this->factions = [];
-			Faction::newInstance("PvP-Zone", "console", [0 => new Rank(0, "staff", Rank::P_ALL, "Staff rank"), 1 => new Rank(1, "normal", Rank::P_NORM_FIGHT, "Normal players")], 0, 0, 0, 1, $this->main, $this->server->getDefaultLevel()->getSafeSpawn(), $this->server->getServerName() . " server-owned PvP areas", true, self::PVP);
-			Faction::newInstance("Safe-Zone", "console", [new Rank(0, "staff", 0, "Staff rank"), 1 => new Rank(1, "normal", Rank::P_NONE, "Normal players")], 0, 0, 0, 1, $this->main, $this->server->getDefaultLevel()->getSafeSpawn(), $this->server->getServerName() . " server-owned PvP-free areas", true, self::SAFE);
+			Faction::newInstance("PvP-Zone", "console", [ // console is a banned name
+					0 => new Rank(0, "staff", Rank::P_ALL & ~Rank::P_DISBAND, "Staff rank"),
+					1 => new Rank(1, "normal", Rank::P_NONE, "Normal players") // cannot disband // TODO fix fighting issue
+				], 0, 0, 0, 1, $this->main, [],
+				$this->server->getServerName()." server-owned PvP areas", true, self::PVP, PHP_INT_MAX);
+			Faction::newInstance("Safe-Zone", "console", [ // console is a banned name
+					0 => new Rank(0, "staff", Rank::P_ALL & ~Rank::P_DISBAND, "Staff rank"),
+					1 => new Rank(1, "normal", Rank::P_NONE, "Normal players")], // cannot disband
+				0, 0, 0, 1, $this->main, [],
+				$this->server->getServerName()." server-owned PvP-free areas", true, self::SAFE, PHP_INT_MAX);
+			Faction::newInstance("Staffs", "console", [ // console is a banned name
+					0 => new Rank(0, "staff", Rank::P_ALL & ~Rank::P_DISBAND, "Staff rank"),
+					1 => new Rank(1, "normal", Rank::P_NONE, "Normal players")], // cannot disband
+				0, 0, 0, 1, $this->main, [],
+				$this->server->getServerName()." staffs", true, self::STAFF, PHP_INT_MAX);
 		}
 		else{
 			$this->loadFrom(fopen($this->path, "rb"), $async);
@@ -136,7 +150,7 @@ class FactionList{
 		$this->save();
 	}
 	/**
-	 * @return bool|IFaction[]
+	 * @return bool|Faction[]
 	 */
 	public function getAll(){
 		return $this->factions;
@@ -202,7 +216,7 @@ class FactionList{
 	}
 	/**
 	 * @param $identifier
-	 * @return bool|null|Faction|WildernessFaction
+	 * @return bool|null|IFaction
 	 */
 	public function getValidFaction($identifier){
 		$f = $this->getFaction($identifier);
@@ -228,11 +242,11 @@ class FactionList{
 		$op->execute();
 	}
 	/**
-	 * @param IFaction $f0
-	 * @param IFaction $f1
+	 * @param Faction $f0
+	 * @param Faction $f1
 	 * @return int
 	 */
-	public function getFactionsState(IFaction $f0, IFaction $f1){
+	public function getFactionsState(Faction $f0, Faction $f1){
 		$ids = [$f0->getID(), $f1->getID()];
 		$op = $this->db->prepare("SELECT relid FROM factions_rels WHERE smallid = :small AND largeid = :large");
 		$op->bindValue(":small", min($ids));

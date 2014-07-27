@@ -4,7 +4,6 @@ namespace pocketfactions\utils;
 
 use pocketfactions\faction\Chunk;
 use pocketfactions\Main;
-use pocketmine\entity\Entity;
 use pocketmine\level\Position;
 use pocketmine\Player;
 
@@ -31,9 +30,6 @@ class WildernessFaction implements IFaction{
 		return false;
 	}
 	public function hasChunk(Chunk $chunk){
-		return true;
-	}
-	public function canFight(Entity $a, Entity $v){
 		return true;
 	}
 	public function getMain(){
