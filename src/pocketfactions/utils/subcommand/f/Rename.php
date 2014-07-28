@@ -26,7 +26,7 @@ class Rename extends Subcommand{
 		if(preg_replace($this->main->getFactionNamingRule(), "", $name) !== ""){
 			return $this->getMain()->getFactionNameErrorMsg();
 		}
-		elseif($this->getMain()->getFList()->getFaction($name) instanceof Faction){
+		elseif(is_int($this->getMain()->getFList()->getFactionID($name))){
 			return "A faction with name \"$name\" already exists!";
 		}
 		$fee = $this->getMain()->getFactionRenameFee();
