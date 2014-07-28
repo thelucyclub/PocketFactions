@@ -187,7 +187,9 @@ class FactionList{
 		}
 		switch(true){
 			case is_string($identifier): // faction name
-				$result = $this->db->query("SELECT id FROM factions WHERE name = '$identifier';");
+				$result = $this->db->prepare("SELECT id FROM factions WHERE name = :name COLLATE NOCASE;");
+				$result->bindValue(":name", $identifier);
+				$result = $result->execute();
 				$result = $result->fetchArray(SQLITE3_ASSOC);
 				if($result === false){
 					return false;
