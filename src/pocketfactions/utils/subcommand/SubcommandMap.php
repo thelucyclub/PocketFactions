@@ -96,7 +96,7 @@ class SubcommandMap extends Command implements PluginIdentifiableCommand{
 	}
 	public function testPermissionSilent(CommandSender $sender){
 		if($sender instanceof Position){
-			if(!$this->main->isFactionWorld($sender->getLevel()->getName())){
+			if($this->getName() === "f" and !$this->main->isFactionWorld($sender->getLevel()->getName())){
 				return false;
 			}
 		}
