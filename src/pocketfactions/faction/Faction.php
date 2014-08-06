@@ -179,24 +179,39 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	public function getRanks(){
 		return $this->ranks;
 	}
+	public function setRanks(array $ranks){ // raw
+		$this->ranks = $ranks;
+	}
 	/**
 	 * @return Rank
 	 */
 	public function getDefaultRank(){
 		return $this->ranks[$this->defaultRank];
 	}
+	public function setDefaultRank($id){
+		$this->defaultRank = $id;
+	}
 	public function getTruceRank(){
 		return $this->ranks[$this->truceRank];
+	}
+	public function setTruceRank($id){
+		$this->truceRank = $id;
 	}
 	public function getAllyRank(){
 		return $this->ranks[$this->allyRank];
 	}
+	public function setAllyRank($id){
+		$this->allyRank = $id;
+	}
 	public function getStdRank(){
 		return $this->ranks[$this->stdRank];
 	}
+	public function setStdRank($id){
+		$this->stdRank = $id;
+	}
 	/**
 	 * @param bool $raw
-	 * @return string[] an array of names of members
+	 * @return string[]|int[] an array of names of members if <code>$raw === false</code>, an array of rank IDs indexed by member names otherwise
 	 */
 	public function getMembers($raw = false){
 		return $raw === false ? array_keys($this->members):$this->members;
@@ -255,6 +270,14 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 				}
 			}
 		}
+	}
+	public function getRankByName($name){
+		foreach($this->ranks as $rank){
+			if($rank->getName() === $name){
+				return $rank;
+			}
+		}
+		return null;
 	}
 	/**
 	 * @return bool
