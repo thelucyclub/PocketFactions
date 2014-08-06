@@ -28,7 +28,7 @@ Usage of /f perm|rank|p|r:
 /f perm <desc|description> <rank name> [description ...] Change/view a rank's description
 /f perm <rm|remove> <rank name> [rank to reassign members of the removed rank to = default rank] Remove a rank
 /f perm rename <old rank name> <new rank name> Rename a rank
-/f perm set <rank> <d|default|t|truce|a|ally|s|std|standard>
+/f perm set <rank> <d|default|t|truce|a|ally|s|std|standard|e|enemy|f|foe>
 /f perm list [ranks|perms = ranks] List all ranks in your faction or all permission nodes available.
 /f perm claim Claim all permissions you can have in your faction if you are the faction founder.
 EOH
@@ -198,6 +198,40 @@ EOH
 				}
 				$faction->setMembers($members);
 				return "Rank $name has been removed. All members ($cnt) of the rank $name have been reassigned to rank ".$reassign->getName().".";
+			case "set":
+				if(!isset($args[1])){
+					return self::WRONG_USE;
+				}
+				$name = array_shift($args);
+				$rank = $faction->getRankByName($name);
+				if(!($rank instanceof Rank)){
+					return "Rank $name not found!";
+				}
+				$id = $rank->getID();
+				switch($type = strtolower(array_shift($args[0]))){
+					case "d":
+					case "default":
+						$faction->setDefaultRank($id);
+						return "Default rank set to $rank.";
+					case "t":
+					case "truce":
+						return "Truce rank set to $rank.";
+					case "a":
+					case "ally":
+						$faction->setAllyRank($id);
+						return "Ally rank set to $rank.";
+					case "s":
+					case "std":
+					case "standard":
+					case "e":
+					case "enemy":
+					case "f":
+					case "foe":
+						$faction->setStdRank($id);
+						return "Standard/enemy rank set to $rank.";
+					default:
+						return "Unknown rank type $type.";
+				}
 			case "rename":
 				if(!isset($args[1])){
 					return self::WRONG_USE;

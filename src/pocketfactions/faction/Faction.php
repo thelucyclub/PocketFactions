@@ -188,14 +188,26 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	public function getDefaultRank(){
 		return $this->ranks[$this->defaultRank];
 	}
+	public function setDefaultRank($id){
+		$this->defaultRank = $id;
+	}
 	public function getTruceRank(){
 		return $this->ranks[$this->truceRank];
+	}
+	public function setTruceRank($id){
+		$this->truceRank = $id;
 	}
 	public function getAllyRank(){
 		return $this->ranks[$this->allyRank];
 	}
+	public function setAllyRank($id){
+		$this->allyRank = $id;
+	}
 	public function getStdRank(){
 		return $this->ranks[$this->stdRank];
+	}
+	public function setStdRank($id){
+		$this->stdRank = $id;
 	}
 	/**
 	 * @param bool $raw
