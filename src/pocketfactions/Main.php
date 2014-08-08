@@ -44,6 +44,7 @@ use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
+use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
@@ -589,5 +590,26 @@ class Main extends PluginBase implements Listener{
 	}
 	public function getFounderWithdrawableAccounts(){
 		return $this->xeconConfig->get("accounts withdrawable to founder");
+	}
+	/**
+	 * @param Server $server
+	 * @return \pocketfactions\Main
+	 */
+	public static function getInstance(Server $server){
+		return $server->getPluginManager()->getPlugin("PocketFactions");
+	}
+	/**
+	 * @param Server $server
+	 * @return \xecon\Main
+	 */
+	public static function getXEcon(Server $server){
+		return $server->getPluginManager()->getPlugin("xEcon");
+	}
+	/**
+	 * @param Server $server
+	 * @return \legendofmcpe\statscore\StatsCore
+	 */
+	public static function getStatsCore(Server $server){
+		return $server->getPluginManager()->getPlugin("StatsCore"); // return StatsCore::getInstance();
 	}
 }

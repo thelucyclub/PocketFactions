@@ -131,6 +131,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 				}
 			}
 		}
+		$this->initializeXEconEntity($main->getXEcon($this->server));
 	}
 	///////////////////
 	// API functions //
@@ -548,7 +549,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 			$loanObj = new Loan($this->getMain()->getXEconLoanService(), $loan["amount"], $this, time() + $loan["horizon"] * 3600, $loan["interest"]);
 			$loanObj->setName($type." ".$loanObj->getName());
 			$cnt = 1;
-			foreach($this->liabilities as $acc){
+			foreach($this->loans as $acc){
 				if(strstr($acc->getName(), " ", true) === $type){
 					$cnt++;
 				}
@@ -557,13 +558,13 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 				return "Maximum limit for loan $type exceeded";
 			}
 			$liabilities = 0;
-			foreach($this->getLiabilities() as $l){
+			foreach($this->getLoans() as $l){
 				$liabilities += $l;
 			}
 			if(max(0, -$this->getAccount(self::BANK)) + $liabilities + $loan["amount"] > $this->getMain()->getMaxLiability()){
 				return "Maximum liability exceeded";
 			}
-			$this->liabilities[$loanObj->getName()] = $loanObj;
+			$this->getLoans()[$loanObj->getName()] = $loanObj;
 			return true;
 		}
 		else{

@@ -26,7 +26,7 @@ class Loan extends FactionMemberSubcommand{
 					"creation" => ["borrowed at"],
 					"due" => ["due at"],
 				];
-				foreach($faction->getLiabilities() as $liability){
+				foreach($faction->getLoans() as $liability){
 					if($liability instanceof \xecon\account\Loan){
 						$data["type"][] = strstr($liability->getName(), " ", true);
 						$data["amount"] = "\$".$liability->getAmount();
@@ -69,7 +69,7 @@ class Loan extends FactionMemberSubcommand{
 					return "Loans are repaid via cash. Please withdraw enough money for your faction's cash account.";
 				}
 				$picked = null;
-				foreach($faction->getLiabilities() as $l){
+				foreach($faction->getLoans() as $l){
 					// TODO allow customization here via arg 3
 					if($l instanceof \xecon\account\Loan){
 						if(!($picked instanceof \xecon\account\Loan)){
