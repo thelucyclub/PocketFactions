@@ -2,7 +2,7 @@
 
 namespace pocketfactions\faction;
 
-use legendofmcpe\statscore\Requestable;
+use legendofmcpe\statscore\request\Requestable;
 use legendofmcpe\statscore\StatsCore;
 use pocketfactions\Main;
 use pocketfactions\utils\IFaction;
@@ -387,9 +387,9 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 			if(!($statsCore instanceof StatsCore) or $statsCore->isDisabled()){
 				$this->main->getLogger()->error("StatsCore is not found or is disabled.");
 			}
-			$micro = $statsCore->getMLogger()->getTotalOnlineTime($mbr);
+			$micro = $statsCore->getLog()->getTotalOnline($mbr);
 			$power += (((int) ($micro / 60 / 60)) * $this->main->getPowerGainPerOnlineHour());
-			$power -= $statsCore->getMLogger()->getFullOfflineDays($mbr);
+			$power -= $statsCore->getLog()->getOfflineDays($mbr);
 			// TODO add kills and deaths factors
 		}
 		return $power;

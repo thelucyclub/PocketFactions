@@ -17,7 +17,7 @@ class Backup extends Subcommand{
 	public function getUsage(){
 		return "";
 	}
-	public function checkPermission(ConsoleCommandSender $s){ // can I have a @SuppressWarning annotation here?
+	public function checkPermission(ConsoleCommandSender $s){
 		return true;
 	}
 	public function onRun(){

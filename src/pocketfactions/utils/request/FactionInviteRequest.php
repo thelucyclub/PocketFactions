@@ -2,7 +2,7 @@
 
 namespace pocketfactions\utils\request;
 
-use legendofmcpe\statscore\PlayerRequestable;
+use legendofmcpe\statscore\request\PlayerRequestable;
 use pocketfactions\faction\Faction;
 use pocketmine\Server;
 
@@ -26,5 +26,8 @@ class FactionInviteRequest extends FromFactionRequest{
 	}
 	public function onRejected(){
 		$this->getFaction()->sendMessage("The invitation to {$this->getTo()->getName()} to join this faction has been rejected!");
+	}
+	public function onRemoved(){
+		// TODO
 	}
 }

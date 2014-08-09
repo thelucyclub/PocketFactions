@@ -1,13 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: 15INCH
- * Date: 14年6月17日
- * Time: 下午4:12
- */
+
 namespace pocketfactions\utils\request;
 
-use legendofmcpe\statscore\Request;
+use legendofmcpe\statscore\request\Request;
 use pocketfactions\faction\Faction;
 
 abstract class ToFactionRequest extends Request{

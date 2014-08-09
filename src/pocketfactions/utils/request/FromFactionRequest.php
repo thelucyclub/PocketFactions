@@ -2,8 +2,8 @@
 
 namespace pocketfactions\utils\request;
 
-use legendofmcpe\statscore\Request;
-use legendofmcpe\statscore\Requestable;
+use legendofmcpe\statscore\request\Request;
+use legendofmcpe\statscore\request\Requestable;
 use pocketfactions\faction\Faction;
 
 abstract class FromFactionRequest extends Request{

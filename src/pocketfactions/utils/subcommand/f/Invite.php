@@ -2,7 +2,7 @@
 
 namespace pocketfactions\utils\subcommand\f;
 
-use legendofmcpe\statscore\PlayerRequestable;
+use legendofmcpe\statscore\request\PlayerRequestable;
 use legendofmcpe\statscore\StatsCore;
 use pocketfactions\faction\Faction;
 use pocketfactions\faction\Rank;

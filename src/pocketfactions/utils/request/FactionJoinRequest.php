@@ -28,4 +28,7 @@ class FactionJoinRequest extends ToFactionRequest{
 	public function onRejected(){
 		// TODO
 	}
+	public function onRemoved(){
+		// TODO
+	}
 }

@@ -2,7 +2,7 @@
 
 namespace pocketfactions\utils\request;
 
-use legendofmcpe\statscore\Request;
+use legendofmcpe\statscore\request\Request;
 use pocketfactions\faction\Faction;
 use pocketfactions\faction\State;
 
@@ -48,5 +48,8 @@ class RelationModifyRequest extends Request{
 		/** @var Faction $to */
 		$to = $this->getTo();
 		$this->from->sendMessage("The request to be ".$this->getState()." factions with ".$to->getDisplayName()." has been rejected!");
+	}
+	public function onRemoved(){
+		// TODO
 	}
 }
