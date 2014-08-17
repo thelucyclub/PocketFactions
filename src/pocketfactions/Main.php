@@ -269,9 +269,11 @@ class Main extends PluginBase implements Listener{
 		if(!($attacker instanceof Player) or !($victim instanceof Player)){
 			return;
 		}
+		/** @noinspection PhpUnusedLocalVariableInspection */
 		$at = $this->getFList()->getFaction(Chunk::fromObject($victim));
 		$attackf = $this->getFList()->getFaction($attacker);
 		$victimf = $this->getFList()->getFaction($victim);
+		/** @noinspection PhpUnusedLocalVariableInspection */
 		$state = $this->getFList()->getFactionsState($attackf, $victimf);
 		// TODO
 	}
