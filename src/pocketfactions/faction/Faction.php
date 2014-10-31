@@ -117,7 +117,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 		$this->main = $main;
 		$this->whitelist = $args["whitelist"];
 		$this->reputation = isset($args["reputation"]) ? $args["reputation"]:0;
-		$this->server = Server::getInstance();
+		$this->server = $this->main->getServer();
 		$levels = [];
 		foreach($this->chunks as $chunk){
 			$level = $chunk->getLevel();
@@ -581,11 +581,29 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	// Inherited functions //
 	/////////////////////////
 	public function sendMessage($message, $level = self::CHAT_ADMIN){
+		$fs = true;
+		if($level === self::CHAT_ALL){
+			$inbox = Main::getStatsCore($this->main->getServer())->getOfflineInbox();
+			foreach($this->getMembers() as $member){
+				if(($p = $this->getMain()->getServer()->getPlayerExact($member)) instanceof Player){
+					$p->sendMessage("[PF] $message");
+				}
+				else{
+					$inbox->addMessage($this->getMain(), $member, "[PF] $message");
+				}
+			}
+		}
 		foreach($this->getMain()->getServer()->getOnlinePlayers() as $player){
 			$rank = $this->getMemberRank($player);
 			if(($rank instanceof Rank) and $rank->hasPerm($level)){
 				$player->sendMessage("[$this] $message");
 			}
+			if($player->getName() === $this->founder){
+				$fs = false;
+			}
+		}
+		if($fs){
+			Main::getStatsCore($this->main->getServer())->getOfflineInbox()->addMessage($this->main, $this->founder, $message);
 		}
 	}
 	// xEcon-related

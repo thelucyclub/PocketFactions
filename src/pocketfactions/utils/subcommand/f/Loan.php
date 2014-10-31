@@ -19,7 +19,8 @@ class Loan extends FactionMemberSubcommand{
 			case "types":
 				return "Types of loans: ".implode(", ", array_keys($this->getMain()->getBankLoanTypesRaw()));
 			case "view":
-				$data = [
+				return "Operation not supported";
+				/*$data = [
 					"type" => ["type"],
 					"amount" => ["amount"],
 					"interest" => ["interest"],
@@ -27,13 +28,11 @@ class Loan extends FactionMemberSubcommand{
 					"due" => ["due at"],
 				];
 				foreach($faction->getLoans() as $liability){
-					if($liability instanceof \xecon\account\Loan){
-						$data["type"][] = strstr($liability->getName(), " ", true);
-						$data["amount"] = "\$".$liability->getAmount();
-						$data["interest"][] = "\$".($liability->getAmount() - $liability->getOriginalAmount());
-						$data["creation"][] = date("M j, y H:i", $liability->getCreation());
-						$data["due"][] = date("M j, y H:i", $liability->getDue());
-					}
+					$data["type"][] = strstr($liability->getName(), " ", true);
+					$data["amount"] = "\$".$liability->getAmount();
+					$data["interest"][] = "\$".($liability->getAmount() - $liability->getOriginalAmount());
+					$data["creation"][] = date("M j, y H:i", $liability->getCreationTime());
+					$data["due"][] = date("M j, y H:i", $liability->getDue());
 				}
 				$out = "Your faction's loans: (current datetime is ".date("M j, y H:i:s").")\n";
 				foreach($data as $key => $d){
@@ -51,7 +50,7 @@ class Loan extends FactionMemberSubcommand{
 						$data["due"]];
 					$out .= implode(" | ", $dat);
 				}
-				return $out;
+				return $out;*/
 			case "take":
 				if(!isset($args[0])){
 					return "Usage: /f loan take <type>\n[PF] <type> is listed at /f loan types";
@@ -60,6 +59,8 @@ class Loan extends FactionMemberSubcommand{
 				return $faction->addLoan_faction($type);
 			case "repay":
 			case "return":
+				return "Operation not supported";
+				/*
 				if(!isset($args[0]) or !is_numeric($args[0])){
 					return "Usage: /loan return <amount>"; // TODO filters
 				}
@@ -81,7 +82,7 @@ class Loan extends FactionMemberSubcommand{
 							continue;
 						}
 						if($picked->getDue() === $l->getDue()){
-							if($l->getIncreasePerHour() > $picked->getIncreasePerHour()){
+							if($l->getHourlyIncrease() > $picked->getHourlyIncrease()){
 								$picked = $l;
 								continue;
 							}
@@ -94,7 +95,7 @@ class Loan extends FactionMemberSubcommand{
 				if($picked === null){
 					return "You have no loans to repay!";
 				}
-				$account->pay($picked, $amount, "Repaid a loan");
+				$account->pay($picked, $amount, "Repaid a loan");*/
 		}
 		return self::WRONG_USE;
 	}

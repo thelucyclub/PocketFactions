@@ -37,7 +37,7 @@ use pocketfactions\utils\WildernessFaction;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
-use pocketmine\event\entity\EntityMoveEvent;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
@@ -113,7 +113,7 @@ class Main extends PluginBase implements Listener{
 			}
 		}
 		$this->getLogger()->info("Communicating with dependency plugins...");
-		/** @var \xecon\Main $xEcon */
+		/** @var \xecon\XEcon $xEcon */
 		$xEcon = $this->getServer()->getPluginManager()->getPlugin("xEcon");
 		$service = $xEcon->getService();
 		$service->registerService(self::XECON_SERV_NAME);
@@ -278,20 +278,21 @@ class Main extends PluginBase implements Listener{
 		// TODO
 	}
 	/**
-	 * @param EntityMoveEvent $ev
+	 * @param PlayerMoveEvent $ev
 	 * @priority MONITOR
 	 * @ignoreCancelled true
 	 */
-	public function onMove(EntityMoveEvent $ev){
-		$e = $ev->getEntity();
-		if(!$this->isFactionWorld($e->getLevel()->getName())) return;
-		if(!($e instanceof Player)) return;
-		$f = $this->getFList()->getValidFaction($e);
-		$n = $f->getName();
-		if($n !== $this->getLastFaction($e)){
-			$e->sendMessage("You have entered ".$f->getDisplayName().".");
+	public function onMove(PlayerMoveEvent $ev){
+		$p = $ev->getPlayer();
+		if(!$this->isFactionWorld($p->getLevel()->getName())){
+			return;
 		}
-		$this->lastFaction[$e->getID()] = $n;
+		$f = $this->getFList()->getValidFaction($p);
+		$n = $f->getName();
+		if($n !== $this->getLastFaction($p)){
+			$p->sendMessage("You have entered ".$f->getDisplayName().".");
+		}
+		$this->lastFaction[$p->getID()] = $n;
 	}
 	private function getLastFaction(Player $player){
 		return isset($this->lastFaction[$player->getID()]) ? $this->lastFaction[$player->getID()]:false;
@@ -351,12 +352,10 @@ class Main extends PluginBase implements Listener{
 		return $this->wilderness;
 	}
 	public function getXEconService(){
-		/** @var \xecon\Main $xEcon */
-		$xEcon = $this->getServer()->getPluginManager()->getPlugin("xEcon");
-		return $xEcon->getService()->getService(self::XECON_SERV_NAME);
+		return self::getXEcon($this->getServer())->getService()->getService(self::XECON_SERV_NAME);
 	}
 	public function getXEconLoanService(){
-		/** @var \xecon\Main $xEcon */
+		/** @var \xecon\XEcon $xEcon */
 		$xEcon = $this->getServer()->getPluginManager()->getPlugin("xEcon");
 		return $xEcon->getService()->getService(self::XECON_LOAN_SERV);
 	}
@@ -557,6 +556,9 @@ class Main extends PluginBase implements Listener{
 	public function getMaxLiability(){
 		return $this->xeconConfig->get("max liability");
 	}
+	public function getBankruptOps(){
+		return $this->xeconConfig->get("operations on bankrupt");
+	}
 	public function getChunkClaimFee(){
 		return $this->xeconConfig->get("chunk claim fee");
 	}
@@ -602,7 +604,7 @@ class Main extends PluginBase implements Listener{
 	}
 	/**
 	 * @param Server $server
-	 * @return \xecon\Main
+	 * @return \xecon\XEcon
 	 */
 	public static function getXEcon(Server $server){
 		return $server->getPluginManager()->getPlugin("xEcon");

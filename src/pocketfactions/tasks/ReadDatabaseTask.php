@@ -25,7 +25,7 @@ class ReadDatabaseTask extends AsyncTask{
 		$this->main = $main;
 		if(!$isAsync){
 			$this->onRun();
-			$this->onCompletion(Server::getInstance());
+			$this->onCompletion($main->getServer());
 		}
 	}
 	public function onRun(){
@@ -162,7 +162,7 @@ class ReadDatabaseTask extends AsyncTask{
 		return new Position($x, $y, $z, $world);
 	}
 	protected function forceGetLevel($world){
-		$server = Server::getInstance();
+		$server = $this->main->getServer();
 		if(!$server->isLevelLoaded($world)){
 			if(!$server->isLevelGenerated($world)){
 				$server->generateLevel($world, $this->main->getLevelGenerationSeed());

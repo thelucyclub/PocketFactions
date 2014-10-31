@@ -17,7 +17,7 @@ class WriteDatabaseTask extends AsyncTask{
 		$this->onPreRun();
 		if(!$isAsync){
 			$this->onRun();
-			$this->onCompletion(Server::getInstance());
+			$this->onCompletion($main->getServer());
 		}
 	}
 	public function onPreRun(){
@@ -28,6 +28,7 @@ class WriteDatabaseTask extends AsyncTask{
 			if(!($f instanceof Faction)){
 				continue;
 			}
+			$f->save();
 			$this->buffer .= Bin::writeInt($f->getID());
 			$this->buffer .= Bin::writeByte(strlen($f->getName()) | ($f->isWhitelisted() ? 0b10000000:0));
 			$this->buffer .= $f->getName();

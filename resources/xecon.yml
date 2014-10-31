@@ -61,6 +61,14 @@ loan types:
     interval: 8
 # The total amount of credit (loan + overdraft) allowed
 max liability: 9000
+# When a faction's bank account, even after bank overdraft, cannot pay its loans (i.e. bankrupt), what should we do?
+# You can "disband" the faction, "deposit all cash" of the faction, "unclaim all chunks" of the faction, or "do nothing".
+# Order your choice in descending order (put the most desired action first, and if after doing that the problem is still not settled, it will go to the next operation. "disband" and "do nothing" mark the problem as settled and the things after them  If you don't have "disband" there, it will be automatically added.
+operations on bankrupt:
+  - deposit all cash
+  - unclaim all chunks
+  - deposit all cash # if chunk unclaim repay is set to account cash, this is useful.
+  - disband
 
 ######################
 ## FEES AND CHARGES ##

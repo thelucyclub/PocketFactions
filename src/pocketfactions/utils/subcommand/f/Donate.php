@@ -23,7 +23,7 @@ class Donate extends Subcommand{
 		if(!isset($args[0])){
 			return self::WRONG_USE;
 		}
-		/** @var \xecon\Main $xEcon */
+		/** @var \xecon\XEcon $xEcon */
 		$xEcon = $this->getMain()->getServer()->getPluginManager()->getPlugin("xEcon");
 		$ent = $xEcon->getPlayerEnt($player);
 		$account = $ent->getAccount(PlayerEnt::ACCOUNT_BANK);

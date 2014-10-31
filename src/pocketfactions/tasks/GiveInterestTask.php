@@ -28,11 +28,50 @@ class GiveInterestTask extends PluginTask{
 			}
 			elseif($amount < 0){
 				if(!$account->canPay($interest)){
-					// TODO Do something if the faction cannot pay the overdraft interest (bankrupt)
-					// ideas: clear all cash, unclaim all chunks, disband, etc.
 					return;
 				}
 				$account->pay($main->getXEconService(), $interest, "Bank overdraft interest");
+			}
+			foreach($faction->getLoans() as $loan){
+				$loan->updateInterest();
+				if($loan->isExpired()){
+					$faction->sendMessage("A loan of \${$loan->getOriginalAmount()} plus \${$loan->getInterest()} interest has expired. Bank money is automatically taken from your faction to repay.");
+					$bank = $faction->getAccount(Faction::BANK);
+					$i = 0;
+					$ops = $main->getBankruptOps();
+					while(!$bank->canPay($loan->getAmount())){
+						$op = $ops[$i++];
+						switch(strtolower($op)){
+							case "deposit all cash":
+								$cash = $faction->getAccount(Faction::CASH);
+								$bank = $faction->getAccount(Faction::BANK);
+								if($cash->canPay($loan->getAmount())){
+									$depositable = $loan->getAmount();
+								}
+								else{
+									$depositable = $cash->getAmount();
+								}
+								$cash->pay($bank, $depositable, "Mandatory deposit due to bankrupt");
+								break;
+							case "unclaim all chunks":
+								$faction->unclaimAll();
+								break;
+							case "do nothing":
+								$continue = true;
+								break;
+							case "disband":
+								$faction->sendMessage("Your faction has been disbanded because of loan bankrupt!", Faction::CHAT_ALL);
+								$main->getFList()->disband($faction);
+								$continue = true;
+								break 2;
+						};
+					}
+					if(isset($continue) and $continue === true){
+						continue;
+					}
+					$bank->pay($loan, $loan->getAmount(), "Auto repay expired loan");
+					$faction->removeLoan($loan);
+				}
 			}
 			$cnt++;
 		}
