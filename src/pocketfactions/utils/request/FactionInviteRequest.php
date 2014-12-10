@@ -4,7 +4,6 @@ namespace pocketfactions\utils\request;
 
 use legendofmcpe\statscore\request\PlayerRequestable;
 use pocketfactions\faction\Faction;
-use pocketmine\Server;
 
 class FactionInviteRequest extends FromFactionRequest{
 	protected $extra;
@@ -20,7 +19,7 @@ class FactionInviteRequest extends FromFactionRequest{
 	}
 	public function onAccepted(){
 		$this->getFaction()->sendMessage("The invitation to {$this->getTo()->getName()} to join this faction has been accepted!");
-		$player = Server::getInstance()->getPlayer($this->getTo()); // the player won't be fast enough to quit the game
+		$player = $this->getFaction()->getMain()->getServer()->getPlayer($this->getTo()); // the player won't be fast enough to quit the game
 		$this->getFaction()->join($player, "Invitation");
 		$this->getFaction()->sendMessage("{$this->getTo()->getName()} is now a member of this faction!");
 	}

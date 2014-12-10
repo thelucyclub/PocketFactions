@@ -2,16 +2,15 @@
 
 namespace pocketfactions\utils;
 
-use pocketfactions\faction\Rank;
-use pocketfactions\faction\State;
 use pocketfactions\faction\Chunk;
 use pocketfactions\faction\Faction;
+use pocketfactions\faction\Rank;
+use pocketfactions\faction\State;
 use pocketfactions\Main;
 use pocketfactions\tasks\ReadDatabaseTask;
 use pocketfactions\tasks\WriteDatabaseTask;
 use pocketmine\IPlayer;
 use pocketmine\scheduler\AsyncTask;
-use pocketmine\Server;
 
 class FactionList{
 	const MAGIC_P = "\x00\x00\xff\xffFACTION-LIST";
@@ -32,7 +31,7 @@ class FactionList{
 	public $currentAsyncTask = null;
 	public function __construct(Main $main){
 		$this->path = $main->getFactionsFilePath();
-		$this->server = Server::getInstance();
+		$this->server = $main->getServer();
 		$this->main = $main;
 		$this->load();
 	}

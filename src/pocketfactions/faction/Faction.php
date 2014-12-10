@@ -613,7 +613,7 @@ class Faction implements InventoryHolder, Requestable, IFaction{
 	public function getEconomicEntity(){
 		return $this;
 	}
-	public function initDefaultAccounts(){
+	public function initializeDefaultAccounts(){
 		$this->addAccount("Cash", $this->main->getDefaultCash(), $this->main->getMaxCash());
 		$this->addAccount("Bank", $this->main->getDefaultBank(), $this->main->getMaxBank(), -$this->main->getMaxBankOverdraft());
 	}
