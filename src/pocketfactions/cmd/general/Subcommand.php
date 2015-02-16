@@ -7,12 +7,15 @@ use pocketmine\utils\TextFormat;
 
 abstract class Subcommand{
 	public abstract function canUse(CommandSender $sender);
-	public function getUsageMessage(CommandSender $sender){
-		$sender->sendMessage(
-			TextFormat::AQUA . "/{$this->getName()} " .
+	/**
+	 * @param CommandSender $sender
+	 * @return string
+	 */
+	public function getUsageMessage(/** @noinspection PhpUnusedParameterInspection */
+		CommandSender $sender){
+		return TextFormat::AQUA . "/{$this->getName()} " .
 			TextFormat::GREEN . $this->getUsage() . ": " .
-			TextFormat::YELLOW . $this->getDescription()
-		);
+			TextFormat::YELLOW . $this->getDescription();
 	}
 	public abstract function getName();
 	public function getUsage(){

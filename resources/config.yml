@@ -1,5 +1,54 @@
 ---
+# plugins that provide data to PocketFactions
+dataProviders:
+  # the plugin to provide economy data to PocketFactions
+  # supported plugin(s): xEcon
+  # Reminder: xEcon is recommended because it provides the most extensive API to PocketFactions.
+  economy: xEcon
+  # the plugin to provide statistics to PocketFactions
+  statistics: StatsCore
 # worlds where PocketFactions is enabled in
 factionWorlds:
   - factions
+database:
+  # Database type to use.
+  # Supported database types:
+  # - pfdb: create a pfdb file (location specified below), encoded in PocketFactions database binary format
+  # - mysql: put the data on a MySQL database
+  name: pfdb
+  pfdb:
+    location: factions.pfdb
+  mysql:
+    host: localhost
+    username: root
+    password: ""
+    schema: pocketfactions
+    port: 3306
+# default values that apply to a faction when it is created
+defaultValues:
+  # default economy values
+  econ:
+    # default cash
+    cash: 10
+    bank: 100
+  # default faction ranks
+  ranks:
+    - name: leader
+  # The rank that is give to the faction founder.
+  founderRank: leader
+  # The rank that is given to any new members who join the faction.
+  defaultRank: member
+  # default faction relation permissions. Do NOT remove the enemy relation.
+  relations:
+    - name: foe
+      permissions:
+        - fight
+        - enter
+      excluded permissions:
+    - name: ally
+      permissions:
+        - all
+      excluded permissions: fight
+  # The relation name that refers to the enemy relation. Enemy relation is a special relation that can be declared without mutual agreement, cannot be deleted by any factions, and whose permissions cannot be modified by a faction (but always refer to this config file)
+  enemyRelation: foe
 ...
