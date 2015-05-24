@@ -7,18 +7,18 @@ Bukkit plugin can be found at: http://dev.bukkit.org/bukkit-plugins/factions/
 
 Working stages:
 
-### _Alpha_
+- [x] ### _Alpha_
 
 - [x] Planning
 - [x] Preparing dependencies
 - [ ] Adding basic features
 
-### _Beta_
+- [ ] ### _Beta_
 
 - [ ] Debugging
 - [ ] Testing
 
-### _Release_
+- [ ] ### _Release_
 
 - [ ] Writing description
 - [ ] Releasing on forums
